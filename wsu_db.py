@@ -592,6 +592,7 @@ def create_tp_database(cycle7tab):
     Date        Programmer      Description of Changes
     --------------------------------------------------
     11/20/2023  A.A. Kepley     Original Code
+    8/25/2025   A.A. Kepley     Updated to add goal numbers
     '''
 
     # get MOUS list
@@ -637,12 +638,14 @@ def create_tp_database(cycle7tab):
 
     # WSU info
     wsu_npol_list = []
+    wsu_bandwidth_goal = []
     wsu_bandwidth_later_4x = []
     wsu_bandwidth_early = []
     wsu_bandwidth_spw = []
 
     wsu_nspw_early = []
     wsu_nspw_later_4x = []
+    wsu_nspw_goal = []
 
     wsu_freq_list = []
 
@@ -853,6 +856,22 @@ def create_tp_database(cycle7tab):
                 
             wsu_bandwidth_early.append(bw)
             wsu_nspw_early.append(round(bw/spw_bw))
+
+            # goal = milestone 5 -- bands 4, 5, 9, and 10 not upgraded.
+            if ((band_list == 3) |
+                (band_list == 6) |
+                (band_list == 7) |
+                (band_list == 8) ):
+                bw = 32.0
+            elif ((band_list == 4) | (band_list == 5)):
+                bw = 8.0
+            elif ((band_list == 9) | (band_list == 10)):
+                bw = 16.0
+            else:
+                print('band not recognized')
+
+            wsu_bandwidth_goal.append(bw)
+            wsu_nspw_goal.append(round(bw/spw_bw))
             
             # 4x BW -- assumes band 1 won't be upgraded to 4x.
             if band_list == 1:
@@ -879,6 +898,7 @@ def create_tp_database(cycle7tab):
     blc_nspw = np.array(blc_nspw)
     
     wsu_bandwidth_early = np.array(wsu_bandwidth_early) * u.GHz
+    wsu_bandwidth_goal = np.array(wsu_bandwidth_goal) * u.GHz
     wsu_bandwidth_later_4x = np.array(wsu_bandwidth_later_4x) * u.GHz
     wsu_bandwidth_spw = np.array(wsu_bandwidth_spw) * u.GHz
 
@@ -901,8 +921,8 @@ def create_tp_database(cycle7tab):
                           np.squeeze(blc_specwidth),np.squeeze(blc_freq), np.squeeze(blc_vel_res),
                           np.squeeze(blc_nchan_agg),np.squeeze(blc_nchan_max),np.squeeze(blc_bw_max),np.squeeze(blc_bw_agg),
                           np.squeeze(wsu_freq_list),np.squeeze(wsu_npol_list),
-                          np.squeeze(wsu_bandwidth_early), np.squeeze(wsu_bandwidth_later_4x), np.squeeze(wsu_bandwidth_spw), 
-                          np.squeeze(wsu_nspw_early), np.squeeze(wsu_nspw_later_4x),
+                          np.squeeze(wsu_bandwidth_early), np.squeeze(wsu_bandwidth_goal),np.squeeze(wsu_bandwidth_later_4x), np.squeeze(wsu_bandwidth_spw), 
+                          np.squeeze(wsu_nspw_early), np.squeeze(wsu_nspw_goal),np.squeeze(wsu_nspw_later_4x),
                           np.squeeze(wsu_specwidth_stepped2), np.squeeze(wsu_chanavg_stepped2), np.squeeze(wsu_velres_stepped2)],
                          names=('mous','proposal_id',
                                 'gous', 'schedblock_name',
@@ -915,8 +935,8 @@ def create_tp_database(cycle7tab):
                                 'blc_specwidth','blc_freq','blc_velres',
                                 'blc_nchan_agg','blc_nchan_max','blc_bandwidth_max','blc_bandwidth_agg',
                                 'wsu_freq','wsu_npol',
-                                'wsu_bandwidth_early','wsu_bandwidth_later_4x','wsu_bandwidth_spw',
-                                'wsu_nspw_early', 'wsu_nspw_later_4x',
+                                'wsu_bandwidth_early','wsu_bandwidth_goal','wsu_bandwidth_later_4x','wsu_bandwidth_spw',
+                                'wsu_nspw_early', 'wsu_nspw_goal','wsu_nspw_later_4x',
                                 'wsu_specwidth_stepped2','wsu_chanavg_stepped2','wsu_velres_stepped2'))                              
     
 
@@ -942,12 +962,14 @@ def create_tp_database(cycle7tab):
     #for veltype in ['finest','stepped','stepped2']:
     for veltype in ['stepped2']:
         if_mous_tab['wsu_nchan_agg_'+veltype+'_early'] = if_mous_tab['wsu_nchan_spw_'+veltype] * if_mous_tab['wsu_nspw_early']
+        if_mous_tab['wsu_nchan_agg_'+veltype+'_goal'] = if_mous_tab['wsu_nchan_spw_'+veltype] * if_mous_tab['wsu_nspw_goal']
         if_mous_tab['wsu_nchan_agg_'+veltype+'_later_4x'] = if_mous_tab['wsu_nchan_spw_'+veltype] * if_mous_tab['wsu_nspw_later_4x']
         
     # fractional bandwidth
     # ---------------------
     
     if_mous_tab['wsu_frac_bw_early'] = if_mous_tab['wsu_bandwidth_early']/if_mous_tab['wsu_freq']
+    if_mous_tab['wsu_frac_bw_goal'] = if_mous_tab['wsu_bandwidth_goal']/if_mous_tab['wsu_freq']
     if_mous_tab['wsu_frac_bw_later_4x'] = if_mous_tab['wsu_bandwidth_later_4x']/if_mous_tab['wsu_freq']
     if_mous_tab['wsu_frac_bw_spw'] = if_mous_tab['wsu_bandwidth_spw']/if_mous_tab['wsu_freq']
     
@@ -1243,7 +1265,32 @@ def calc_datarate(Nbyte, Napc, Nant, Nchannels, Npols, Tintegration):
     datarate = (( 2.0 * Nbyte * Napc * Nant * (Nant-1.0)/2.0 + 4 * Nant) * Nchannels * Npols) * u.GB / Tintegration / 1e9 # GB/s
     
     return datarate
+
+def calc_tp_datarate(Nant, Nchannels, Npols, Tintegration):
+    '''
+    Purpose: Calculate total power data rate
+
+    Inputs:
+    * Nant: Number of antennas
+    * Nchannels: Number of channels
+    * Npols: number of polarizations
+    * Tintegration: integration time.
+    '''
+
+    datarate = 4.0 * Nant * Nchannels * Npols / Tintegration / 1e9 # GB/s
+
+    datarate = datarate * u.GB / u.s
     
+    return datarate 
+
+def calc_tp_datavol(datarate, t_obs):
+    '''
+    Purpose: Calculate total power data volume
+    '''
+
+    datavol = datarate * t_obs
+
+    return datavol #GB
 
 def calc_visrate(Nant, Npols, Nchannels, Tintegration):
     '''
@@ -1342,6 +1389,9 @@ def create_per_mous_db(mydb):
                 myval = np.sum(mygroup[mykey])
                 newdb_dict[mykey].append(myval)
 
+            elif (mykey == 't_obs'):
+                myval = np.sum(mygroup[mykey])
+                newdb_dict[mykey].append(myval)
                 
             # take mean
             elif mykey in ['blc_freq','wsu_freq']:
@@ -1458,6 +1508,24 @@ def aggregate_tdump_db(mydb):
     sb_db.rename_column('PRJ_CODE','proposal_id')
     sb_db.rename_column('SB_NAME','schedblock_name')
 
+
+    # create a time based columnt
+
+    t_obs_s = sb_db['ESTIMATED_EXECUTION_TIME_PRJ'].copy()
+    
+    idx = sb_db['ESTIMATED_EXECUTION_TIME_PRJ_UNIT'] == 'd'
+    t_obs_s[idx] = sb_db['ESTIMATED_EXECUTION_TIME_PRJ'][idx] * 3600.0 * 24.0 * u.s #convert to s
+    
+    idx = sb_db['ESTIMATED_EXECUTION_TIME_PRJ_UNIT'] == 'h'
+    t_obs_s[idx] = sb_db['ESTIMATED_EXECUTION_TIME_PRJ'][idx] * 3600.0 * u.s #convert to s
+
+    idx = sb_db['ESTIMATED_EXECUTION_TIME_PRJ_UNIT'] == 'min'
+    t_obs_s[idx] = sb_db['ESTIMATED_EXECUTION_TIME_PRJ'][idx] * 60.0 * u.s #convert to s
+
+    t_obs_s = t_obs_s * u.s
+    
+    sb_db.add_column(t_obs_s,name='t_obs')
+    
     return sb_db
                 
 
