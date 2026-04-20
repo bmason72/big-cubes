@@ -1,0 +1,30 @@
+\definecolor{myband}{RGB}{255,235,205}
+\definecolor{myinitial}{RGB}{181,110,110}
+\definecolor{mygoal}{RGB}{152,168,214}
+\definecolor{my2x}{RGB}{115, 112, 138}
+\definecolor{my4x}{RGB}{251, 206, 177}
+
+\begin{sidewaystable}
+\centering
+\caption{Overview of System Performance Related Quantities for  WSU \label{tab:overview_sysperf}}
+\begin{tblr}{colspec={|[2pt]Q[l]|Q[l]|[1pt]c|c|c|c|c|c|c|c|c|c|c|c|[2pt]},
+width=\textwidth,
+cells = {font=\scriptsize}}
+\hline[2pt]
+\SetCell[c=2,r=2]{c} & & \SetCell[c=3]{c,bg=myinitial} IWS & & & \SetCell[c=3]{c,bg=my2x} MWS  & & & \SetCell[c=3]{c,bg=mygoal} GWS & & & \SetCell[c=3]{c,bg=my4x} FWS & &   \\ \hline[1pt]
+& & 12m & 7m & both & 12m & 7m & both & 12m & 7m & both & 12m & 7m & both \\ \hline[1pt]
+Data Rate & {Median (GB/s)}& $0.020$& $0.001$& $0.006$& $0.063$& $0.001$& $0.015$& $0.134$& $0.002$& $0.029$& $0.136$& $0.002$& $0.035$\\ 
+ & {Time Weighted \\ Average (GB/s)}& $0.047$& $0.002$& $0.028$& $0.222$& $0.005$& $0.128$& $0.477$& $0.010$& $0.275$& $0.518$& $0.011$& $0.298$\\ 
+ & Maximum (GB/s)& $0.182$& $0.007$& $0.182$& $1.741$& $0.026$& $1.741$& $3.481$& $0.052$& $3.481$& $3.481$& $0.052$& $3.481$\\ 
+\hline 
+Visibility Rate & {Median (Gvis/hr)}& $ 34.4$& $  1.5$& $ 10.1$& $107.9$& $  1.6$& $ 25.4$& $230.5$& $  3.2$& $ 50.0$& $235.4$& $  3.3$& $ 54.8$\\ 
+ & {Time Weighted \\ Average (Gvis/hr)}& $ 81.3$& $  3.5$& $ 47.6$& $383.6$& $  7.5$& $220.7$& $822.1$& $ 15.0$& $472.5$& $893.9$& $ 15.9$& $513.6$\\ 
+ & Maximum (Gvis/hr)& $313.5$& $  9.6$& $313.5$& $3002.8$& $ 38.5$& $3002.8$& $6005.5$& $ 76.9$& $6005.5$& $6005.5$& $ 76.9$& $6005.5$\\ 
+\hline 
+{System \\ Performance} & {Median (PFLOP/s)}& $  0.010 $& $  0.000 $& $  0.003 $& $  0.025 $& $  0.001 $& $  0.007 $& $  0.050 $& $  0.001 $& $  0.011 $& $  0.051 $& $  0.001 $& $  0.018 $\\ 
+ & {Time Weighted \\ Average (PFLOP/s)}& $  0.035 $& $  0.003 $& $  0.021 $& $  0.185 $& $  0.007 $& $  0.108 $& $  0.364 $& $  0.015 $& $  0.213 $& $  0.401 $& $  0.016 $& $  0.234 $\\ 
+ & Maximum (PFLOP/s)& $  0.390 $& $  0.012 $& $  0.390 $& $  3.740 $& $  0.048 $& $  3.740 $& $  7.480 $& $  0.096 $& $  7.480 $& $  7.480 $& $  0.096 $& $  7.480 $\\ 
+
+\hline[2pt]
+\end{tblr}
+\end{sidewaystable}   

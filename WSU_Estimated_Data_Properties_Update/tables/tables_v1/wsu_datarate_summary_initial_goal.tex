@@ -1,0 +1,27 @@
+\definecolor{myband}{RGB}{255,235,205}
+\definecolor{myinitial}{RGB}{181,110,110}
+\definecolor{mygoal}{RGB}{152,168,214}
+\definecolor{my2x}{RGB}{115, 112, 138}
+\definecolor{my4x}{RGB}{251, 206, 177}
+        
+\begin{sidewaystable}
+\centering
+\caption{Overview of Data Rate Properties for  WSU \label{tab:overview_datarates}}
+\begin{tblr}{colspec={|[2pt]Q[l]|Q[l]|[1pt]c|c|c|c|c|c|c|c|c|c|c|c|[2pt]},
+width=\textwidth,
+cells = {font=\scriptsize}}
+\hline[2pt]
+\SetCell[c=2,r=2]{c} & & \SetCell[c=3]{c,bg=myinitial} IWS & & & \SetCell[c=3]{c,bg=my2x} MWS  & & & \SetCell[c=3]{c,bg=mygoal} GWS & & & \SetCell[c=3]{c,bg=my4x} FWS & &   \\ \hline[1pt]
+& & 12m & 7m & both & 12m & 7m & both & 12m & 7m & both & 12m & 7m & both \\ \hline[1pt]
+Data Rate & {Median (GB/s)}& $0.020$& $0.001$& $0.006$& $0.061$& $0.001$& $0.015$& $0.133$& $0.002$& $0.029$& $0.136$& $0.002$& $0.035$\\ 
+ & {Time Weighted \\ Average (GB/s)}& $0.048$& $0.002$& $0.028$& $0.225$& $0.005$& $0.130$& $0.479$& $0.010$& $0.277$& $0.522$& $0.011$& $0.301$\\ 
+ & Maximum (GB/s)& $0.182$& $0.007$& $0.182$& $1.741$& $0.026$& $1.741$& $3.481$& $0.052$& $3.481$& $3.481$& $0.052$& $3.481$\\ 
+\hline 
+{Number of \\ of Channels} & {Median }& 16,466& 23,842& 22,706& 20,480& 24,701& 22,836& 45,238& 49,805& 46,376& 46,376& 51,635& 47,490\\ 
+ & {Time Weighted \\ Average }& 38,723& 53,227& 44,991& 75,285& 113,024& 91,594& 159,974& 228,433& 189,559& 174,511& 241,804& 203,591\\ 
+ & Maximum & 148,144& 148,144& 148,144& 592,592& 592,592& 592,592& 1,185,184& 1,185,184& 1,185,184& 1,185,184& 1,185,184& 1,185,184\\ 
+
+\hline[2pt]
+\end{tblr}
+\end{sidewaystable}   
+    

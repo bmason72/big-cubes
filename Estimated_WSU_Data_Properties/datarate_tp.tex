@@ -1,0 +1,68 @@
+\appendix
+\section{Mean Data Rates for Total Power Array} \label{sec:tp_data_rates}
+
+%{\bf (12/13/2023) The estimates presented in this Appendix are preliminary and may change in the future. We anticipate that any changes from the current values will be relatively minor.}
+
+This section estimates mean data rates and data volumes for the Total Power (TP) Array observations. 
+The data rate for the Total Power Array is estimated using the following formula, 
+\begin{equation}
+  datarate \,  [GB/s] = 4 n_{ant} * n_{chan} * n_{pol} / t_{int} [s] / 10^9. 
+\end{equation}
+The data volume per MOUS is
+\begin{equation}
+  datavol_i \,  [GB] = datarate_i * time_{obs,i}, 
+\end{equation}
+and the total data volume is 
+\begin{equation}
+  datavol \,  [TB] = \sum^{i=n_{mous}}_{i=0} datavol_i \,  [GB] / 10^3. 
+\end{equation}
+The current plan is to upgrade the TP spectrometer to process the increased bandwidth and provide the requisite spectral resolution for the WSU. 
+Although the specifications of the upgraded spectrometer (Total Power GPU spectrometer; TPGS) are not yet finalized, the same number of channels as in the ATAC calculation are adopted here, assuming that the same velocity resolution as in the 12-m and 7-m arrays will be achieved.
+We use the MOUSes of the approved Cycles 7 and 8 projects to estimate the data rates and the number of channels per spw in the WSU era. 
+We assume the TP array will have four antennas ($n_{ant} = 4$), the number of polarizations of two ($n_{pol} = 2$), and the total number of hours available for observation is unlikely to change significantly. 
+We estimate the spectral resolution that PIs might request by dividing the finest spectral resolutions into five bins. 
+The distribution of the spectral resolution per MOUS used in the Cycle 7 and 8 observations is shown in Figure~\ref{fig:velres_distribution_tp}. 
+
+
+Since the Cycle 7 and 8 database does not include observations from either Bands 1 and 2, we attempt to have them in our estimation. 
+We assume that Bands 1 and 2 will have 3\% of the total observing time. 
+Following the estimations of the 12-m and 7-m arrays, we assume that this time can be randomly taken from Bands 3, 6, and 7 in equal proportion. 
+The second assumption is that Bands 1 and 2 will have a similar distribution of science use cases to Band 3. 
+We select randomly from Band 3 projects and set their frequencies to the fiducial values for either Band 1 or 2 (39 or 75 GHz) and their total bandwidth to the appropriate value for the two WSU stages. 
+We generated 1,000 realizations of our sample with Bands 1 and 2 included to characterize the distribution of these estimates.
+
+
+The estimated median data rate, time-weighted average data rate, maximum data rate, and aggregate number of channels are presented in Table~\ref{tab:datarate_tp}. 
+The time-weighted average is calculated by weighting each MOUS by the observing time. 
+The overview of data volume properties for TP Array is presented in Table~\ref{tab:datavol_tp}. 
+Figure~\ref{fig:datarate_tp_distribution} shows the distribution of data rates weighted by observing time for Cycles 7 \& 8, early WSU, and later WSU. 
+
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.75\linewidth]{figures/velres_distribution_tp.png}
+\caption{
+Distribution of velocity resolution per MOUS in the sample of the Cycle 7 and 8 data sets for Total Power
+Array. 
+%The fraction of spectral windows per receiver band in each bin is shown. 
+}
+\label{fig:velres_distribution_tp}
+\end{figure}
+
+
+\input{tables/datarate_tp}
+
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=0.75\linewidth]{figures/datarate_tp_distribution.png}
+\caption{
+Complementary cumulative distribution of data rates weighted based on observing time for Cycle 7 \& 8, 
+ early and later WSU. 
+The vertical dashed line represents the maximum data rate of 17 MB s$^{-1}$ in the specification of the current ACA Spectrometer. 
+}
+\label{fig:datarate_tp_distribution}
+\end{figure}
+
+
+\input{tables/datavol_tp}

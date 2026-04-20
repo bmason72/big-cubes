@@ -1,0 +1,45 @@
+%\startlongtable
+\begin{deluxetable}{llp{0.4\textwidth}}
+  \tabletypesize{\scriptsize}
+%  \tablewidth{\textwidth}
+  \tablecolumns{3}
+  \tablecaption{WSU Data Properties\label{tab:database_wsu_properties}}
+  \tablehead{
+  \colhead{Variable} & 
+  \colhead{Unit} &
+  \colhead{Description} }
+  \startdata
+  \cutinhead{Assumed WSU Properties}
+    wsu\_freq & $\mathrm{GHz}$ & Frequency at center of bandwidth for WSU observations\\ 
+    wsu\_npol & \nodata & Number of polarization products \\ 
+    wsu\_tint & $\mathrm{s}$ & integration (dump) time\\ 
+    wsu\_bandwidth\_early & $\mathrm{GHz}$ &  total bandwidth for early WSU\\ 
+ %   wsu\_bandwidth\_later\_2x & $\mathrm{GHz}$ & total bandwidth for later (2x) WSU \\ 
+    wsu\_bandwidth\_later & $\mathrm{GHz}$ & total bandwidth for later  WSU \\ 
+    wsu\_bandwidth\_spw & $\mathrm{GHz}$ & bandwidth per spectral window \\ 
+    wsu\_nspw\_early & \nodata & number of spectral windows for early WSU \\ 
+%    wsu\_nspw\_later\_2x & \nodata & number of spectral windows for later (2x) WSU \\ 
+    wsu\_nspw\_later & \nodata & number of spectral windows for later WSU \\ 
+    wsu\_specwidth\_stepped2 & $\mathrm{kHz}$ & assumed  ATAC spectral resolution \\ 
+    wsu\_chanavg\_stepped2 & \nodata & number of ATAC channels that will be averaged to provide that resolution\\ 
+    wsu\_velres\_stepped2 & $\mathrm{\frac{km}{s}}$ & corresponding velocity resolution\\ 
+    \cutinhead{Stage Independent Calculated WSU Properties}
+    wsu\_nchan\_spw\_stepped2 & $\mathrm{}$ & number of channels per spectral window \\ 
+%    wsu\_frac\_bw\_spw & $\mathrm{}$ & fraction bandwidth per spectral window [remove? not presented]\\ 
+    mfssize & $\mathrm{Gbyte}$ & size of one mfs image (same for both WSU and BLC/ACA)\\ 
+    wsu\_cubesize\_stepped2 & $\mathrm{Gbyte}$ & size of one WSU cube \\ 
+    \cutinhead{Stage Dependent Calculated WSU Properties}
+%    wsu\_frac\_bw\_[early,later] & $\mathrm{}$ & WSU fractional bandwidth  [remove? not presented]\\ 
+    wsu\_productsize\_[early,later]\_stepped2 & $\mathrm{Gbyte}$ & product size both per source and per mous\\ 
+    wsu\_datarate\_[early,later]\_stepped2\_typical & $\mathrm{\frac{Gbyte}{s}}$ & WSU data rate  \\ 
+    wsu\_visrate\_[early,later]\_stepped2\_typical & $\mathrm{\frac{Gvis}{h}}$ & WSU visibility rate \\ 
+    wsu\_datavol\_[early,later]\_stepped2\_typical\_target & $\mathrm{Gbyte}$ & WSU visibility data volume for a single science target observation (per src) \\
+    wsu\_datavol\_[early,later]\_stepped2\_typical\_target\_tot & $\mathrm{Gbyte}$ & WSU visibility data volume for all science target observations (per mous) \\
+    wsu\_datavol\_[early,later]\_stepped2\_typical\_cal & $\mathrm{Gbyte}$ & WSU visibility data volume for all calibrator observations (per mous)\\ 
+    wsu\_datavol\_[early,later]\_stepped2\_typical\_total & $\mathrm{Gbyte}$ & WSU visibility data volume for calibrator and science observations (per mous)\\ 
+ %   wsu\_nvis\_[early,later]\_stepped2\_typical\_target\_tot & $\mathrm{Gvis}$ & Total number of WSU visibilities for a single science target observation (per src)  \\ 
+%    wsu\_nvis\_[early,later]\_stepped2\_typical\_target\_tot & $\mathrm{Gvis}$ & Total number of WSU visibilities for all science target observations (per mous)  \\ 
+%    wsu\_nvis\_[early,later]\_stepped2\_typical\_cal & $\mathrm{Gvis}$ & Total number of WSU visibilities for all calibrator observations (per mous)\\ 
+%    wsu\_nvis\_[early,later]\_stepped2\_typical\_total & $\mathrm{Gvis}$ & Total number of WSU visibilities for both science and calibrator observations (per mous)\\  \hline
+\enddata
+\end{deluxetable}

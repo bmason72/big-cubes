@@ -1,0 +1,66 @@
+%\startlongtable
+\begin{deluxetable*}{llp{0.8\textwidth}}[!t]
+  \tabletypesize{\scriptsize}
+  %\tablewidth{\textwidth}
+  \tablecolumns{3}
+  \tablecaption{WSU Database Inputs\label{tab:database_inputs}}
+  \tablehead{
+  \colhead{Variable} & 
+  \colhead{Unit} &
+  \colhead{Description} }
+  \startdata
+     mous & \nodata & Member Observing Unit Set UID \\ 
+     proposal\_id & \nodata &  Proposal Code \\ 
+     schedblock\_name & \nodata & Scheduling block name \\ 
+     cycle\_info & \nodata & Cycle the data were obtained in\\ 
+     array & \nodata & 12-m or 7-m array \\ 
+     science\_keyword & \nodata & Scientific keyword\\ 
+     scientific\_category & \nodata & Science category\\ 
+     band & \nodata & Band\\ 
+     ntarget & \nodata & Number of Targets in MOUS\\ 
+     target\_name & \nodata & Name of target (per source only) \\
+     s\_fov & $\mathrm{{}^{\circ}}$ & Field of View returned by the  Archive\\ 
+     s\_resolution & $\mathrm{{}^{\prime\prime}}$ & Angular Resolution returned by the Archive\\ 
+     mosaic & \nodata & Was the source mosaicked? \\ 
+     L80 & $\mathrm{m}$ & 80th percentile baseline\\ 
+     blc\_npol & \nodata &  Number of polarizations for BLC/ACA observations\\ 
+     blc\_nspw & \nodata & Number of spectral windows for BLC/ACA observations\\ 
+     blc\_specwidth & $\mathrm{kHz}$ & Spectral width for BLC/ACA observations \\ 
+     blc\_freq & $\mathrm{GHz}$ & Frequency for BLC/ACA observations\\ 
+     blc\_velres & $\mathrm{\frac{km}{s}}$ &  Velocity resolution for BLC/ACA observations \\ 
+    blc\_nchan\_max & \nodata & Maximum number of channels in a spw \\ 
+     blc\_nchan\_agg & \nodata & Total aggregate number of channels across all BLC/ACA spectral windows (does not take into account overlap between windows) \\ 
+     blc\_bandwidth\_max & $\mathrm{GHz}$ & Maximum spw bandwidth\\ 
+     blc\_bandwidth\_agg & $\mathrm{GHz}$ & Total aggregate bandwidth across all BLC/ACA spectral windows (does not take into account overlap between windows)\\ 
+     blc\_tint & $\mathrm{s}$ & Integration (dump) time for BLC/ACA \\ 
+     blc\_ntunings & \nodata & Number of tunings for BLC/ACA observations \\ 
+     bp\_time & $\mathrm{s}$ & Total time per MOUS spent on bandpass calibrations \\ 
+     flux\_time & $\mathrm{s}$ & Total time per MOUS spent on flux calibration \\ 
+     phase\_time & $\mathrm{s}$ & Total time per MOUS spent on phase calibration \\ 
+     pol\_time & $\mathrm{s}$ & Total time spent per MOUS on polarization calibration \\ 
+     check\_time & $\mathrm{s}$ & Total time spent per MOUS on the check source \\ 
+     target\_time & $\mathrm{s}$ & Time on science target (per source only)\\
+     target\_time\_tot & $\mathrm{s}$ & Total time spent per MOUS observing the science target(s)\\ 
+     cal\_time & $\mathrm{s}$ & Total time spent per MOUS observing the calibration targets\\ 
+     time\_tot & $\mathrm{s}$ & Total time spent per MOUS observing calibration and science targets \\
+    \cutinhead{Assumed Values}
+    nant\_typical & \nodata & Assumed typical number of antennas \\ 
+    nant\_array & \nodata & Assumed  total number of antennas in the array \\ 
+    nant\_all & \nodata & Assumed total possible number of antennas over all arrays \\ 
+    \cutinhead{Calculated Values}
+    pb & $\mathrm{{}^{\prime\prime}}$ & Calculated primary beam (HPBW) \\ 
+    imsize & pixels & Estimated image size\\ 
+    cell & $\mathrm{{}^{\prime\prime}}$ & Estimated cell size for imaging \\ 
+    nbase\_typical & \nodata &  Calculated typical number of baselines\\ 
+    nbase\_array & \nodata & Calculated number of baselines for entire array \\ 
+    nbase\_all & \nodata & Calculated number of baselines for all arrays\\
+    weights\_all & \nodata & Observing time based weights (per mous only). \\   
+    \cutinhead{Information from Pipeline (all per MOUS only)}
+%    nEB & \nodata & Number of execution blocks (EBs) \\
+%    npt & \nodata & Number of pointings ($>1$ for mosaics)  \\
+    predcubesize & $\mathrm{Gbyte}$ & Predicted cube size with no mitigation \\ 
+    mitigatedcubesize & $\mathrm{Gbyte}$ & Mitigated cube size \\ 
+    initialprodsize & $\mathrm{Gbyte}$ & Initial product size\\ 
+    mitigatedprodsize & $\mathrm{Gbyte}$ & Mitigated product size \\ 
+   \enddata
+\end{deluxetable*}

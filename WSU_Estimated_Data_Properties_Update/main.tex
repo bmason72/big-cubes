@@ -1,0 +1,278 @@
+%% using aastex version 6.3
+\documentclass[preprint]{aastex631}
+
+
+
+%% The default is a single spaced, 10 point font, single spaced article.
+%% There are 5 other style options available via an optional argument. They
+%% can be invoked like this:
+%%
+%% \documentclass[arguments]{aastex631}
+%% 
+%% where the layout options are:
+%%
+%%  twocolumn   : two text columns, 10 point font, single spaced article.
+%%                This is the most compact and represent the final published
+%%                derived PDF copy of the accepted manuscript from the publisher
+%%  manuscript  : one text column, 12 point font, double spaced article.
+%%  preprint    : one text column, 12 point font, single spaced article.  
+%%  preprint2   : two text columns, 12 point font, single spaced article.
+%%  modern      : a stylish, single text column, 12 point font, article with
+%% 		  wider left and right margins. This uses the Daniel
+%% 		  Foreman-Mackey and David Hogg design.
+%%  RNAAS       : Supresses an abstract. Originally for RNAAS manuscripts 
+%%                but now that abstracts are required this is obsolete for
+%%                AAS Journals. Authors might need it for other reasons. DO NOT
+%%                use \begin{abstract} and \end{abstract} with this style.
+%%
+%% Note that you can submit to the AAS Journals in any of these 6 styles.
+%%
+%% There are other optional arguments one can invoke to allow other stylistic
+%% actions. The available options are:
+%%
+%%   astrosymb    : Loads Astrosymb font and define \astrocommands. 
+%%   tighten      : Makes baselineskip slightly smaller, only works with 
+%%                  the twocolumn substyle.
+%%   times        : uses times font instead of the default
+%%   linenumbers  : turn on lineno package.
+%%   trackchanges : required to see the revision mark up and print its output
+%%   longauthor   : Do not use the more compressed footnote style (default) for 
+%%                  the author/collaboration/affiliations. Instead print all
+%%                  affiliation information after each name. Creates a much 
+%%                  longer author list but may be desirable for short 
+%%                  author papers.
+%% twocolappendix : make 2 column appendix.
+%%   anonymous    : Do not show the authors, affiliations and acknowledgments 
+%%                  for dual anonymous review.
+%%
+
+\usepackage{amsmath}
+\usepackage{tabularray}
+\usepackage{rotating}
+
+\newcommand{\vdag}{(v)^\dagger}
+\newcommand\aastex{AAS\TeX}
+\newcommand\latex{La\TeX}
+
+
+\newcommand{\kms}{\ensuremath{\rm{ km \, s^{-1}}}}
+\newcommand{\pflops}{\ensuremath{\rm{PFLOP \, s^{-1}}}}
+\newcommand{\tflops}{\ensuremath{\rm{TFLOP \, s^{-1}}}}
+
+\usepackage[table,dvipsnames]{xcolor}
+
+
+\renewcommand{\floatpagefraction}{0.8}
+
+
+%% If you wish, you may supply running head information, although
+%% this information may be modified by the editorial offices.
+\shorttitle{Estimated WSU Data Properties}
+\shortauthors{Kepley et al.}
+%%
+%% You can add a light gray and diagonal water-mark to the first page 
+%% with this command:
+%\watermark{draft}
+
+
+\begin{document}
+
+%\include{cover_page.tex}
+%\setcounter{page}{1}
+
+\title{Updated Estimates of ALMA WSU Data Properties for IWS and MWS}
+
+
+\author{Amanda A. Kepley}
+\affiliation{National Radio Astronomy Observatory, 520 Edgemont Road, Charlottesville, VA 22903, USA}
+
+\author{Additional authors TBD}
+
+%\author{Crystal Brogan}
+%\affiliation{National Radio Astronomy Observatory, 520 Edgemont Road, Charlottesville, VA 22903, USA}
+
+%\author{John Carpenter}
+%\affiliation{Joint ALMA Observatory, Avenida Alonso de Córdova 3107, Vitacura, Santiago, Chile}
+
+%\author{Mar\'ia D\'iaz Trigo}
+%\affiliation{European Southern Observatory, Karl-Schwarzschild-Str. 2, 85748 Garching bei München, Germany}
+
+%\author{Bunyo Hatsukade}
+%\affiliation{National Astronomical Observatory of Japan, 2-21-1 Osawa, Mitaka, Tokyo 181-8588, Japan}
+%\affiliation{Graduate Institute for Advanced Studies, SOKENDAI, Osawa, Mitaka, Tokyo 181-8588, Japan}
+%\affiliation{Institute of Astronomy, Graduate School of Science, The University of Tokyo, 2-21-1 Osawa, Mitaka, Tokyo 181-0015, Japan}
+
+%\author{Jonathan Antognini}
+%\affiliation{Joint ALMA Observatory, Avenida Alonso de Córdova 3107, Vitacura, Santiago, Chile}
+
+\date{}
+
+\begin{abstract}
+
+
+\end{abstract}
+
+\section{Introduction} \label{sec:intro}
+
+The goal of the ALMA Wideband Sensitivity Upgrade is to increase the correlated bandwidth of ALMA by at least a factor of two with a goal of a factor of 4 as well as increase the overall sensitivity due to improvements to the entire digital signal chain. \citet{Kepley2024DataProperties} estimated the properties of WSU data by extrapolating from the properties of current observations. These properties were used to estimate an order-of-magnitude size of compute for WSU \citep{Kepley2024DataEstimate}.  These estimates were done for two nominal stages of the WSU: early WSU and later WSU. In early WSU, ATAC was assumed to capable of processing two times the current bandwidth and bands 2, 6, and 8 have been upgraded to four times the bandwidth. In later WSU, ATAC was assumed to be capable of processing four times the current bandwidth and all bands have been upgraded to four times the bandwidth.
+
+Recently AMT has defined four different stages of the WSU [xxx cite AMT memo and IST science priorities memo]: Initial WSU System (IWS), Minimum WSU System (WSU), Goal WSU System (GWS), and Full WSU System (FWS). The MWS and FWS are equivalent to early WSU and later WSU stages in \citet{Kepley2024DataProperties}, respectively.  For IWS, ATAC is assumed to be capable of providing two times the current bandwidth and Band 2 has upgraded to four times the current bandwidth along with at least 36 12\,m antennas. The FWS has Bands 2, 6, 7, and 8 upgraded  to four times the current bandwidth and ATAC upgraded to four times the current bandwidth.
+
+This memo estimates the properties of WSU data produced in the IWS and GWS stages and calculates an order-of-magnitude size of compute. We present the values along with numbers from the MWS (AKA early) and FWS (AKA later) WSU taken from \citet{Kepley2024DataProperties} and \citet{Kepley2024DataEstimate}.
+
+\section{Method} \label{sec:method}
+
+
+
+We use the same methodology as in \citet{Kepley2024DataProperties} and \citep{Kepley2024DataEstimate}. Below we provide an outline of the additional steps that were necessary to compute the IWS and GWS properties and size of compute.
+
+For the IWS, we assumed that only Band 2 upgraded and the maximum bandwidth provided by ATAC for that receiver was two times the current bandwidth (16~GHz). All other receivers were assumed to  have their current bandwidths.  To calculate the spectral resolution, we use the same methodology as in \citet{Kepley2024DataProperties} with the exception that when the number of channels averaged together is less than the band-dependent value given in Table 2 of [xxxx IST memo], we set the channel average to that value and recalculate the velocity and spectral resolution assuming that minimum channel averaging.
+
+We calculated the number of spectral windows by dividing the receiver bandwidth by our assumed spectral window bandwidth of 2~GHz. For Band 6, the total bandwidth is 11.5~GHz. In that case, we rounded up to 6 spectral windows under the assumption that the full bandwidth should be prioritized. The total number of aggregate channels for this case was calculated by taking the total receiver bandwidth and dividing by the spectral resolution for a particular observations and thus is independent of our assumption of the number of spectral windows.
+
+The integration time was assumed to be 6.144s for all cases in IWS. We note that the IST Science Priority memo recommends that long baseline projects that do not exceed the maximum data rate use shorter integration times of 3.072s (see footnote 4 in that memo). However, we do not attempt to account for this practice in our current estimates.
+
+We assume 47 12\,m antennas for IWS. The minimum number of 12\,m antennas for the start IWS is 36, but we assume that more antennas will be added into the array as the IWS proceeds. The maximum data rates given in Table 2 of [xxx IST Science Priorities memo] assume 50 antennas, but that is because they are focused on the maximum possible data rate. Although the 7\,m array is not included in IWS, we calculate those values as well for informational purposes and present their statistics separately.
+
+For GWS, we assume that Bands 2, 6, 7, and 8 are all upgraded to four times the current bandwidth and that ATAC has been upgraded to four times the current bandwidth. The rest of the assumptions are identical to those used for Early and Later WSU in \citet{Kepley2024DataProperties}.
+
+\section{Results} \label{sec:results}
+
+Tables~\ref{tab:overview_datarates}, \ref{tab:overview_datavol}, and \ref{tab:overview_sysperf} present the properties of the IWS, MWS (AKA early), GWS, and FWS (AKA later). We note that for MWS and FWS some of the values are very slightly different than those in \citet{Kepley2024DataProperties} and \citet{Kepley2024DataEstimate}. This difference is due to the fact that we re-ran the monte-carlo for the Band 1 and 2 estimates to produce these numbers (see \citet{Kepley2024DataProperties} for more details on how the Band 1 and 2 estimates were produced).
+
+
+\input{tables/wsu_datarate_summary_initial_goal_v2}
+\input{tables/wsu_datavol_summary_initial_goal_v2}
+\input{tables/wsu_sysperf_summary_initial_goal_v2}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/datarate_distribution_initial_goal.png}
+    \caption{Complementary cumulative distribution of data rates weighted based on observing time for the current BLC/ACA and the four WSU stages (IWS, MWS, GWS, and FWS) showing the fraction of observing time that the data rate will exceed the given value on the x-axis. The solid lines indicate the initial WSU estimates and the dotted lines indicate the median WSU estimates including Bands 1 and 2 with the shaded region indicating the upper and lower bounds of these estimates. Dotted horizontal lines indicate the thresholds for 10\%, 5\%, and 1\% of the observing time. The current 70 MB/s data rate limit, a notional 500 MB/s limit and the 12m array peak data rates calculated in Carpenter et al. (2023, 1.98 GB/s for early WSU and 3.95 GB/s) are shown.}
+    \label{fig:datarate_dist}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/datavol_distribution_initial_goal.png}
+    \caption{Complementary cumulative distribution of the total visibility data volume for the BLC/ACA and the four WSU stages (IWS, MWS, GWS, and FWS showing the fraction of times that the visibility data volume will be larger than the value shown on the x-axis.  The solid lines indicate the initial WSU estimates and the dotted lines indicate the median WSU estimates with Bands 1 and 2 with the shaded region indicating the upper and lower bounds of these estimates. Dotted horizontal lines indicate thresholds for 10\%, 5\%, and 1\% of the MOUSes.}
+    \label{fig:datavol_dist_all}
+\end{figure*}
+
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/datavol_distribution_target_tot_initial_goal.png}
+    \caption{Complementary cumulative distribution of the visibility data volume for science targets only for the BLC/ACA and the four WSU stages (IWS, MWS, GWS, and FWS showing the fraction of times that the visibility data volume will be larger than the value shown on the x-axis.  The solid lines indicate the initial WSU estimates and the dotted lines indicate the median WSU estimates with Bands 1 and 2 with the shaded region indicating the upper and lower bounds of these estimates. Dotted horizontal lines indicate thresholds for 10\%, 5\%, and 1\% of the MOUSes.}
+    \label{fig:datavol_dist_target}
+\end{figure*}
+
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/datavol_comparison_initial.png}
+    \caption{A two dimensional histogram showing the distribution of visibility data volume for the BLC and the IWS. The ratio of the WSU visibility data volume to the BLC/ACA visbility data volume is shown as solid diagonal lines with the ratios indicated next to the line. The median ratio is shown as a dotted line. The points below a ratio of 1 are due to lower integration values being used for the BLC/ACA than we assume here for the WSU for a subset of projects with low numbers of aggregate channels. The plot to the right of the main panel shows the distribution of the WSU visibility data volumes as a gray histogram with the cumulative distribution of data volume shown as an orange line. The top plot shows the equivalent for current BLC/ACA data. Since we are comparing present day data with future WSU data, we have included our Band 1 and 2 estimates for the WSU since there is no comparable present-day data.}
+    \label{fig:datavol_comparison_initial}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/datavol_comparison_goal.png}
+    \caption{A two dimensional histogram showing the distribution of visibility data volume for the BLC and the GWS. The ratio of the WSU visibility data volume to the BLC/ACA visbility data volume is shown as solid diagonal lines with the ratios indicated next to the line. The median ratio is shown as a dotted line. The points below a ratio of 1 are due to lower integration values being used for the BLC/ACA than we assume here for the WSU for a subset of projects with low numbers of aggregate channels. The plot to the right of the main panel shows the distribution of the WSU visibility data volumes as a gray histogram with the cumulative distribution of data volume shown as an orange line. The top plot shows the equivalent for current BLC/ACA data. Since we are comparing present day data with future WSU data, we have included our Band 1 and 2 estimates for the WSU since there is no comparable present-day data.}
+    \label{fig:datavol_comparison_goal}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/productsize_distribution.png}
+    \caption{The complementary cumulative distribution of products sizes for the BLC/ACA (mitigated), BLC/ACA (unmitigated), and the four stages of the WSU (IWS, MWS, GWS, and FWS). The solid lines for the WSU indicate the initial WSU estimates and the dotted lines for the WSU indicate the median WSU estimates with Bands 1 and 2 with the shaded region indicating the upper and lower bounds of these estimates. The current default maximum product size (500 GB) is indicated as a dotted vertical line. The thresholds for 1\%, 5\%, and 10\% of the products are shown as dotted gray horizontal lines.}
+    \label{fig:productsize_distribution}
+\end{figure*}
+
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/productsize_comparison_initial.png}
+    \caption{A comparison of current mitigated ALMA product sizes from the BLC/ACA to the unmitigated estimated product sizes from IWS is shown in the main panel. The ratio between the mitigated BLC/ACA product sizes and the estimated unmitigated WSU product sizes are shown as solid gray lines with the ratio indicated next to the line. The median ratio is indicated with a dotted line. The panel to the right of the main panel shows a histogram of the distribution of unmitigated WSU data product sizes shaded in gray and the cumulative distribution of data product sizes as an orange line. The panel above the main panel shows the plot for the current mitigated BLC/ACA data. Since we are comparing present day data with future WSU data, we have included our Band 1 and 2 estimates for the WSU since there is no comparable present-day data.}
+    \label{fig:productsize_comparison_initial}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/productsize_comparison_goal.png}
+    \caption{A comparison of current mitigated ALMA product sizes from the BLC/ACA to the unmitigated estimated product sizes from GWS is shown in the main panel. The ratio between the mitigated BLC/ACA product sizes and the estimated unmitigated WSU product sizes are shown as solid gray lines with the ratio indicated next to the line. The median ratio is indicated with a dotted line. The panel to the right of the main panel shows a histogram of the distribution of unmitigated WSU data product sizes shaded in gray and the cumulative distribution of data product sizes as an orange line. The panel above the main panel shows the plot for the current mitigated BLC/ACA data. Since we are comparing present day data with future WSU data, we have included our Band 1 and 2 estimates for the WSU since there is no comparable present-day data.}
+    \label{fig:productsize_comparison_goal}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/cubesize_distribution_initial_goal.png}
+    \caption{The complementary cumulative distribution for the size of a single representative cube per MOUS for the BLC/ACA (mitigated and unmitigated), IWS, and WSU (unmitigated) showing the fraction of observing time that will be spent making cubes larger than the value on the x-axis. The WSU (unmitigated) values hold for MWS, GWS, and FWS. For our estimates, we assume that the spectral windows in a MOUS are identical and have the same fixed 2.0 GHz width. The size of a single representative cube is independent of WSU stage; the difference between early and later WSU is only in the number of spectral windows and thus the number of cubes produced. The current threshold at which cubes start to be reduced in quality (40 GB) is shown as a vertical dotted line and the maximum cube size (60 GB) is shown as a solid vertical line. The cubes beyond the cube size mitigation limit were generated by manually lifting the cube size limit in operations. }
+    \label{fig:enter-label}
+\end{figure*}
+
+
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/nspw_all_initial_goal.png}
+    \caption{Distribution of spectral windows for the BLC/ACA and the four WSU stages (IWS, MWS, FWS, GWS). The distribution of spectral windows for WSU stages should be considered a only rough guide since it dependent on future decisions by the ALMA project on how PIs are allowed to setup their spectral windows within the configurations allowed by ATAC. }
+    \label{fig:nspw_dist}
+\end{figure*}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\linewidth]{figures/sysperf_distribution_aprojonly_initial_goal.png}
+    \caption{The complementary cumulative distribution of the required system performance estimated for the current BLC and the early and later stages of the WSU. The y-axis shows the fraction of times that the required system performance will be larger than the value shown on the x-axis. The shaded regions indicate range of the estimates including Bands 1 and 2 with the median indicated as a dotted line. Dotted horizontal lines indicate where the probability of a larger required system performance is 1\%, 5\%, and 10\%.}
+    \label{fig:sysperf_dist}
+\end{figure*}
+
+
+\section{Discussion} \label{sec:discussion}
+
+
+
+
+\section{Summary} \label{sec:summary}
+
+
+\vspace{10ex}
+
+This work made use of Astropy:\footnote{http://www.astropy.org} a community-developed core Python package and an ecosystem of tools and resources for astronomy \citep{astropy:2013, astropy:2018, astropy:2022}.
+
+
+
+
+  
+%- felix, Richard simon for data files??
+%- kern  and Ryan loomis for useful conversations
+%- Thodori for hosting me at JAO where a portion of this work was done
+%- astropy astroquery package
+
+
+%% For this sample we use BibTeX plus aasjournals.bst to generate the
+%% the bibliography. The sample631.bib file was populated from ADS. To
+%% get the citations to show in the compiled file do the following:
+%%
+%% pdflatex sample631.tex
+%% bibtext sample631
+%% pdflatex sample631.tex
+%% pdflatex sample631.tex
+
+\bibliography{references}{}
+\bibliographystyle{aasjournal}
+
+%% This command is needed to show the entire author+affiliation list when
+%% the collaboration and author truncation commands are used.  It has to
+%% go at the end of the manuscript.
+%\allauthors
+
+%% Include this line if you are using the \added, \replaced, \deleted
+%% commands to see a summary list of all changes at the end of the article.
+%\listofchanges
+
+
+
+\end{document}
+
+% End of file `sample631.tex'.

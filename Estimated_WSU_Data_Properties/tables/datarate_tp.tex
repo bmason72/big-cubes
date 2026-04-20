@@ -1,0 +1,26 @@
+\definecolor{myband}{RGB}{255,235,205}
+\definecolor{my2x}{RGB}{182, 208, 226}
+\definecolor{my4x}{RGB}{251, 206, 177}
+
+\begin{table}
+\centering
+\caption{Data Rate Properties for TP Array\label{tab:datarate_tp}}
+\begin{tblr}{colspec={|[2pt]Q[l]|Q[l]|[1pt]c|c|c|[2pt]},
+width=\textwidth,
+cells = {font=\scriptsize}}
+\hline[2pt]
+\SetCell[c=2,r=1]{c} & &  
+\SetCell[c=1]{c,bg=myband} Cycle 7 \& 8 & 
+\SetCell[c=1]{c,bg=my2x} Early WSU & 
+\SetCell[c=1]{c,bg=my4x} Later WSU \\ 
+\hline[1pt]
+Data Rate & Median (GB/s) & 0.001 & 0.007 & 0.016 \\ 
+ & Time Weighted Average (GB/s) & 0.003 & 0.016 & 0.033 \\ 
+ & Maximum (GB/s) & 0.017 & 0.132 & 0.263 \\ 
+\hline 
+{Number of Channels} & Median & 14,272 & 118,516  & 296,288 \\ 
+ & {Time Weighted Average} & 37,103 & 296,288 & 415,688  \\ 
+ & Maximum & 135,234 & 666,222 & 1,332,443 \\ 
+\hline[2pt]
+\end{tblr}
+\end{table}

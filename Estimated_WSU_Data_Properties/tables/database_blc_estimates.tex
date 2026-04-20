@@ -1,0 +1,25 @@
+\begin{deluxetable}{llp{0.8\textwidth}}
+  \tabletypesize{\scriptsize}
+%  \tablewidth{\textwidth}
+  \tablecolumns{3}
+  \tablecaption{Calculated BLC/ACA Data Properties\label{tab:database_blc_properties}}
+  \tablehead{
+  \colhead{Variable} & 
+  \colhead{Unit} &
+  \colhead{Description} }
+  \startdata
+    blc\_cubesize & $\mathrm{Gbyte}$ & Maximum unmitigated  BLC cube size (per mous) \\ 
+    blc\_cubesize\_sum & $\mathrm{Gbyte}$ & Sum of unmitigated BLC cube sizes (per mous)\\ 
+    blc\_productsize & $\mathrm{Gbyte}$ & Unmitigated BLC product size (per src for src database and per mous for mous database) \\ 
+    blc\_datarate\_typical & $\mathrm{\frac{Gbyte}{s}}$ & BLC/ACA data rate\\ 
+    blc\_visrate\_typical & $\mathrm{\frac{Gvis}{h}}$ &  BLC/ACA visibility rate\\ 
+    blc\_datavol\_typical\_target & $\mathrm{Gbyte}$ & BLC/ACA visibility data volume for a single science target (per source)\\ 
+    blc\_datavol\_typical\_target\_tot & $\mathrm{Gbyte}$ & BLC/ACA visibility data volume for science target(s) (per mous)\\ 
+    blc\_datavol\_typical\_cal & $\mathrm{Gbyte}$ & BLC/ACA visibility data volume for calibrators (per mous)\\ 
+    blc\_datavol\_typical\_total & $\mathrm{Gbyte}$ & BLC/ACA visibility data volume for all science targets and calibrators (per mous) \\ 
+    blc\_nvis\_typical\_target & $\mathrm{Gvis}$ & Total number of BLC/ACA visibilities for a single science target (per source database only) \\ 
+    blc\_nvis\_typical\_target\_tot & $\mathrm{Gvis}$ & Total number of BLC/ACA visibilities for all science target(s) (per mous value) \\ 
+    blc\_nvis\_typical\_cal & $\mathrm{Gvis}$ & Total number of BLC/ACA visibilities for calibrators (per mous) \\ 
+    blc\_nvis\_typical\_total & $\mathrm{Gvis}$ & Total number of BLC/ACA visibilities for calibrators and all science targets (per mous)\\ 
+\enddata
+\end{deluxetable}

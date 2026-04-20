@@ -1,0 +1,25 @@
+\definecolor{myband}{RGB}{255,235,205}
+\definecolor{my2x}{RGB}{182, 208, 226}
+\definecolor{my4x}{RGB}{251, 206, 177}
+
+\begin{table}
+\centering
+\caption{Overview of Data Rate Properties for  WSU \label{tab:overview_datarates}}
+\begin{tblr}{colspec={|[2pt]Q[l]|Q[l]|[1pt]c|c|c|c|c|c|[2pt]},
+width=\textwidth,
+cells = {font=\scriptsize}}
+\hline[2pt]
+\SetCell[c=2,r=2]{c} & & \SetCell[c=3]{c,bg=my2x} Early WSU  & & & \SetCell[c=3]{c,bg=my4x} Later WSU & &  \\
+& & 12m & 7m & both & 12m & 7m & both \\ \hline[1pt]
+Data Rate & {Median (GB/s)}& $0.060$& $0.001$& $0.015$& $0.136$& $0.002$& $0.035$\\ 
+ & {Time Weighted \\ Average (GB/s)}& $0.220$& $0.005$& $0.127$& $0.513$& $0.011$& $0.296$\\ 
+ & Maximum (GB/s)& $1.741$& $0.026$& $1.741$& $3.481$& $0.052$& $3.481$\\ 
+\hline 
+{Number of \\ Channels} & {Median }& 19,807& 24,627& 22,818& 46,385& 51,566& 47,509\\ 
+ & {Time Weighted \\ Average }& 73,764& 114,205& 91,250& 171,226& 244,219& 202,786\\ 
+ & Maximum & 592,592& 592,592& 592,592& 1,185,184& 1,185,184& 1,185,184\\ 
+
+\hline[2pt]
+\end{tblr}
+\end{table}   
+    

@@ -1,0 +1,38 @@
+\begin{deluxetable*}{llp{0.8\textwidth}}
+  \tabletypesize{\scriptsize}
+%  \tablewidth{\textwidth}
+  \tablecolumns{3}
+  \tablecaption{Information from Pipeline Runs\label{tab:database_pl_info}}
+  \tablehead{
+  \colhead{Variable} & 
+  \colhead{Unit} &
+  \colhead{Description}  }
+  \startdata
+     plversion & \nodata & Pipeline Version Number\\ 
+     procedure & \nodata & Pipeline receipe\\ 
+     nant & \nodata & Number of antennas used in observations\\ 
+     nEB & \nodata & Number of execution blocks (EBs) \\ 
+     npt & \nodata & Number of pointings (values $>1$ indicates a mosaic) \\ 
+     nscan & \nodata & Number of target scans \\ 
+     reptgt & \nodata & Representative target name \\ 
+     pl_totaltime & $\mathrm{h}$ & Total Pipeline run time \\ 
+     pl_imgtime & $\mathrm{h}$ & Total Pipeline imaging time (mfs, aggregate continuum, and cube) [xxx does this include findcont]\\ 
+     pl_cubetime & $\mathrm{h}$ & Total Pipeline cube imaging time \\ 
+     pl_aggtime & $\mathrm{h}$ & Total Pipeline aggregate continuum imaging time\\ 
+     pl_fctime & $\mathrm{h}$ & Total Pipeline find continuum time\\ 
+     pl_caltime & $\mathrm{h}$ & Total Pipeline calibration time\\ 
+     allowedcubesize & $\mathrm{Gbyte}$ &  Size at which cubes start being mitigated in the Pipeline \\ 
+     allowedcubelimit & $\mathrm{Gbyte}$ & Maximum permitted cube size \\ 
+     predcubesize & $\mathrm{Gbyte}$ & Predicted cube size with no mitigation \\ 
+     mitigatedcubesize & $\mathrm{Gbyte}$ & Mitigated cube size \\ 
+     allowedprodsize & $\mathrm{Gbyte}$ & Allowed product size \\ 
+     initialprodsize & $\mathrm{Gbyte}$ & Initial product size\\ 
+     mitigatedprodsize & $\mathrm{Gbyte}$ & Mitigated product size \\ 
+     mitigated & \nodata & Was data base mitigated? \\ 
+     mit_nbins & \nodata & Nbin mitigation values \\ 
+     mit_hm_imsize & \nodata & imsize mitigation values  \\ 
+     mit_hm_cell & \nodata & cell size mitigation values \\ 
+     mit_field & \nodata & field mitigation values\\ 
+     mit_spw & \nodata & spw mitigation values \\ 
+     \enddata
+     \end{deluxetable*}

@@ -1,0 +1,28 @@
+# Images / binaries
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.pdf
+
+# Common compiled artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.bbl
+*.blg
+
+# Other binaries
+*.zip
+*.tar
+*.gz
+*.so
+*.o
+*.a
+*.dylib
+*.exe
+
