@@ -88,8 +88,8 @@
 
 \author{Additional authors TBD}
 
-%\author{Crystal Brogan}
-%\affiliation{National Radio Astronomy Observatory, 520 Edgemont Road, Charlottesville, VA 22903, USA}
+\author{Brian Mason}
+\affiliation{National Radio Astronomy Observatory, 520 Edgemont Road, Charlottesville, VA 22903, USA}
 
 %\author{John Carpenter}
 %\affiliation{Joint ALMA Observatory, Avenida Alonso de Córdova 3107, Vitacura, Santiago, Chile}
@@ -118,10 +118,9 @@ The goal of the ALMA Wideband Sensitivity Upgrade is to increase the correlated 
 
 Recently AMT has defined four different stages of the WSU [xxx cite AMT memo and IST science priorities memo]: Initial WSU System (IWS), Minimum WSU System (WSU), Goal WSU System (GWS), and Full WSU System (FWS). The MWS and FWS are equivalent to early WSU and later WSU stages in \citet{Kepley2024DataProperties}, respectively.  For IWS, ATAC is assumed to be capable of providing two times the current bandwidth and Band 2 has upgraded to four times the current bandwidth along with at least 36 12\,m antennas. The FWS has Bands 2, 6, 7, and 8 upgraded  to four times the current bandwidth and ATAC upgraded to four times the current bandwidth.
 
-This memo estimates the properties of WSU data produced in the IWS and GWS stages and calculates an order-of-magnitude size of compute. We present the values along with numbers from the MWS (AKA early) and FWS (AKA later) WSU taken from \citet{Kepley2024DataProperties} and \citet{Kepley2024DataEstimate}.
+Subsequent to that AMT defined 5 milestones for the WSU project, in order to align documentation for the preliminary design review in 2025. Those most crucial for data properties are milestone 1, milestone 4, and milestone 5. This memo estimates the properties of WSU data produced at M1, M4 and M5 and calculates an order-of-magnitude size of compute.  For further details see \citet{Kepley2024DataProperties} and \citet{Kepley2024DataEstimate}.
 
 \section{Method} \label{sec:method}
-
 
 
 We use the same methodology as in \citet{Kepley2024DataProperties} and \citep{Kepley2024DataEstimate}. Below we provide an outline of the additional steps that were necessary to compute the IWS and GWS properties and size of compute.
@@ -136,6 +135,8 @@ We assume 47 12\,m antennas for IWS. The minimum number of 12\,m antennas for th
 
 For GWS, we assume that Bands 2, 6, 7, and 8 are all upgraded to four times the current bandwidth and that ATAC has been upgraded to four times the current bandwidth. The rest of the assumptions are identical to those used for Early and Later WSU in \citet{Kepley2024DataProperties}.
 
+SUBSEQUENTLY SIMILAR STEPS WERE FOLLOWED TO UPDATE THE DATA FOR M1, M4 AND M5, IN CONFORMANCE WITH AMT SPECIFICATIONS FOR THOSE.
+
 \section{Results} \label{sec:results}
 
 Tables~\ref{tab:overview_datarates}, \ref{tab:overview_datavol}, and \ref{tab:overview_sysperf} present the properties of the IWS, MWS (AKA early), GWS, and FWS (AKA later). We note that for MWS and FWS some of the values are very slightly different than those in \citet{Kepley2024DataProperties} and \citet{Kepley2024DataEstimate}. This difference is due to the fact that we re-ran the monte-carlo for the Band 1 and 2 estimates to produce these numbers (see \citet{Kepley2024DataProperties} for more details on how the Band 1 and 2 estimates were produced).
@@ -148,14 +149,14 @@ Tables~\ref{tab:overview_datarates}, \ref{tab:overview_datavol}, and \ref{tab:ov
 \begin{figure*}
     \centering
     \includegraphics[width=1.0\linewidth]{figures/datarate_distribution_initial_goal.png}
-    \caption{Complementary cumulative distribution of data rates weighted based on observing time for the current BLC/ACA and the four WSU stages (IWS, MWS, GWS, and FWS) showing the fraction of observing time that the data rate will exceed the given value on the x-axis. The solid lines indicate the initial WSU estimates and the dotted lines indicate the median WSU estimates including Bands 1 and 2 with the shaded region indicating the upper and lower bounds of these estimates. Dotted horizontal lines indicate the thresholds for 10\%, 5\%, and 1\% of the observing time. The current 70 MB/s data rate limit, a notional 500 MB/s limit and the 12m array peak data rates calculated in Carpenter et al. (2023, 1.98 GB/s for early WSU and 3.95 GB/s) are shown.}
+    \caption{CAPTION MAY BE INCORRECT - Complementary cumulative distribution of data rates weighted based on observing time for the current BLC/ACA and the four WSU stages (IWS, MWS, GWS, and FWS) showing the fraction of observing time that the data rate will exceed the given value on the x-axis. The solid lines indicate the initial WSU estimates and the dotted lines indicate the median WSU estimates including Bands 1 and 2 with the shaded region indicating the upper and lower bounds of these estimates. Dotted horizontal lines indicate the thresholds for 10\%, 5\%, and 1\% of the observing time. The current 70 MB/s data rate limit, a notional 500 MB/s limit and the 12m array peak data rates calculated in Carpenter et al. (2023, 1.98 GB/s for early WSU and 3.95 GB/s) are shown.}
     \label{fig:datarate_dist}
 \end{figure*}
 
 \begin{figure*}
     \centering
     \includegraphics[width=1.0\linewidth]{figures/datavol_distribution_initial_goal.png}
-    \caption{Complementary cumulative distribution of the total visibility data volume for the BLC/ACA and the four WSU stages (IWS, MWS, GWS, and FWS showing the fraction of times that the visibility data volume will be larger than the value shown on the x-axis.  The solid lines indicate the initial WSU estimates and the dotted lines indicate the median WSU estimates with Bands 1 and 2 with the shaded region indicating the upper and lower bounds of these estimates. Dotted horizontal lines indicate thresholds for 10\%, 5\%, and 1\% of the MOUSes.}
+    \caption{CAPTION MAY BE INCORRECT - Complementary cumulative distribution of the total visibility data volume for the BLC/ACA and the four WSU stages (IWS, MWS, GWS, and FWS showing the fraction of times that the visibility data volume will be larger than the value shown on the x-axis.  The solid lines indicate the initial WSU estimates and the dotted lines indicate the median WSU estimates with Bands 1 and 2 with the shaded region indicating the upper and lower bounds of these estimates. Dotted horizontal lines indicate thresholds for 10\%, 5\%, and 1\% of the MOUSes.}
     \label{fig:datavol_dist_all}
 \end{figure*}
 
@@ -163,7 +164,7 @@ Tables~\ref{tab:overview_datarates}, \ref{tab:overview_datavol}, and \ref{tab:ov
 \begin{figure*}
     \centering
     \includegraphics[width=1.0\linewidth]{figures/datavol_distribution_target_tot_initial_goal.png}
-    \caption{Complementary cumulative distribution of the visibility data volume for science targets only for the BLC/ACA and the four WSU stages (IWS, MWS, GWS, and FWS showing the fraction of times that the visibility data volume will be larger than the value shown on the x-axis.  The solid lines indicate the initial WSU estimates and the dotted lines indicate the median WSU estimates with Bands 1 and 2 with the shaded region indicating the upper and lower bounds of these estimates. Dotted horizontal lines indicate thresholds for 10\%, 5\%, and 1\% of the MOUSes.}
+    \caption{CAPTION MAY BE INCORRECT - Complementary cumulative distribution of the visibility data volume for science targets only for the BLC/ACA and the four WSU stages (IWS, MWS, GWS, and FWS showing the fraction of times that the visibility data volume will be larger than the value shown on the x-axis.  The solid lines indicate the initial WSU estimates and the dotted lines indicate the median WSU estimates with Bands 1 and 2 with the shaded region indicating the upper and lower bounds of these estimates. Dotted horizontal lines indicate thresholds for 10\%, 5\%, and 1\% of the MOUSes.}
     \label{fig:datavol_dist_target}
 \end{figure*}
 
@@ -171,21 +172,21 @@ Tables~\ref{tab:overview_datarates}, \ref{tab:overview_datavol}, and \ref{tab:ov
 \begin{figure*}
     \centering
     \includegraphics[width=1.0\linewidth]{figures/datavol_comparison_initial.png}
-    \caption{A two dimensional histogram showing the distribution of visibility data volume for the BLC and the IWS. The ratio of the WSU visibility data volume to the BLC/ACA visbility data volume is shown as solid diagonal lines with the ratios indicated next to the line. The median ratio is shown as a dotted line. The points below a ratio of 1 are due to lower integration values being used for the BLC/ACA than we assume here for the WSU for a subset of projects with low numbers of aggregate channels. The plot to the right of the main panel shows the distribution of the WSU visibility data volumes as a gray histogram with the cumulative distribution of data volume shown as an orange line. The top plot shows the equivalent for current BLC/ACA data. Since we are comparing present day data with future WSU data, we have included our Band 1 and 2 estimates for the WSU since there is no comparable present-day data.}
+    \caption{CAPTION MAY BE INCORRECT - A two dimensional histogram showing the distribution of visibility data volume for the BLC and the IWS. The ratio of the WSU visibility data volume to the BLC/ACA visbility data volume is shown as solid diagonal lines with the ratios indicated next to the line. The median ratio is shown as a dotted line. The points below a ratio of 1 are due to lower integration values being used for the BLC/ACA than we assume here for the WSU for a subset of projects with low numbers of aggregate channels. The plot to the right of the main panel shows the distribution of the WSU visibility data volumes as a gray histogram with the cumulative distribution of data volume shown as an orange line. The top plot shows the equivalent for current BLC/ACA data. Since we are comparing present day data with future WSU data, we have included our Band 1 and 2 estimates for the WSU since there is no comparable present-day data.}
     \label{fig:datavol_comparison_initial}
 \end{figure*}
 
 \begin{figure*}
     \centering
     \includegraphics[width=1.0\linewidth]{figures/datavol_comparison_goal.png}
-    \caption{A two dimensional histogram showing the distribution of visibility data volume for the BLC and the GWS. The ratio of the WSU visibility data volume to the BLC/ACA visbility data volume is shown as solid diagonal lines with the ratios indicated next to the line. The median ratio is shown as a dotted line. The points below a ratio of 1 are due to lower integration values being used for the BLC/ACA than we assume here for the WSU for a subset of projects with low numbers of aggregate channels. The plot to the right of the main panel shows the distribution of the WSU visibility data volumes as a gray histogram with the cumulative distribution of data volume shown as an orange line. The top plot shows the equivalent for current BLC/ACA data. Since we are comparing present day data with future WSU data, we have included our Band 1 and 2 estimates for the WSU since there is no comparable present-day data.}
+    \caption{CAPTION MAY BE INCORRECT - A two dimensional histogram showing the distribution of visibility data volume for the BLC and the GWS. The ratio of the WSU visibility data volume to the BLC/ACA visbility data volume is shown as solid diagonal lines with the ratios indicated next to the line. The median ratio is shown as a dotted line. The points below a ratio of 1 are due to lower integration values being used for the BLC/ACA than we assume here for the WSU for a subset of projects with low numbers of aggregate channels. The plot to the right of the main panel shows the distribution of the WSU visibility data volumes as a gray histogram with the cumulative distribution of data volume shown as an orange line. The top plot shows the equivalent for current BLC/ACA data. Since we are comparing present day data with future WSU data, we have included our Band 1 and 2 estimates for the WSU since there is no comparable present-day data.}
     \label{fig:datavol_comparison_goal}
 \end{figure*}
 
 \begin{figure*}
     \centering
     \includegraphics[width=1.0\linewidth]{figures/productsize_distribution.png}
-    \caption{The complementary cumulative distribution of products sizes for the BLC/ACA (mitigated), BLC/ACA (unmitigated), and the four stages of the WSU (IWS, MWS, GWS, and FWS). The solid lines for the WSU indicate the initial WSU estimates and the dotted lines for the WSU indicate the median WSU estimates with Bands 1 and 2 with the shaded region indicating the upper and lower bounds of these estimates. The current default maximum product size (500 GB) is indicated as a dotted vertical line. The thresholds for 1\%, 5\%, and 10\% of the products are shown as dotted gray horizontal lines.}
+    \caption{CAPTION MAY BE INCORRECT - The complementary cumulative distribution of products sizes for the BLC/ACA (mitigated), BLC/ACA (unmitigated), and the four stages of the WSU (IWS, MWS, GWS, and FWS). The solid lines for the WSU indicate the initial WSU estimates and the dotted lines for the WSU indicate the median WSU estimates with Bands 1 and 2 with the shaded region indicating the upper and lower bounds of these estimates. The current default maximum product size (500 GB) is indicated as a dotted vertical line. The thresholds for 1\%, 5\%, and 10\% of the products are shown as dotted gray horizontal lines.}
     \label{fig:productsize_distribution}
 \end{figure*}
 
@@ -193,21 +194,21 @@ Tables~\ref{tab:overview_datarates}, \ref{tab:overview_datavol}, and \ref{tab:ov
 \begin{figure*}
     \centering
     \includegraphics[width=1.0\linewidth]{figures/productsize_comparison_initial.png}
-    \caption{A comparison of current mitigated ALMA product sizes from the BLC/ACA to the unmitigated estimated product sizes from IWS is shown in the main panel. The ratio between the mitigated BLC/ACA product sizes and the estimated unmitigated WSU product sizes are shown as solid gray lines with the ratio indicated next to the line. The median ratio is indicated with a dotted line. The panel to the right of the main panel shows a histogram of the distribution of unmitigated WSU data product sizes shaded in gray and the cumulative distribution of data product sizes as an orange line. The panel above the main panel shows the plot for the current mitigated BLC/ACA data. Since we are comparing present day data with future WSU data, we have included our Band 1 and 2 estimates for the WSU since there is no comparable present-day data.}
+    \caption{CAPTION MAY BE INCORRECT - A comparison of current mitigated ALMA product sizes from the BLC/ACA to the unmitigated estimated product sizes from IWS is shown in the main panel. The ratio between the mitigated BLC/ACA product sizes and the estimated unmitigated WSU product sizes are shown as solid gray lines with the ratio indicated next to the line. The median ratio is indicated with a dotted line. The panel to the right of the main panel shows a histogram of the distribution of unmitigated WSU data product sizes shaded in gray and the cumulative distribution of data product sizes as an orange line. The panel above the main panel shows the plot for the current mitigated BLC/ACA data. Since we are comparing present day data with future WSU data, we have included our Band 1 and 2 estimates for the WSU since there is no comparable present-day data.}
     \label{fig:productsize_comparison_initial}
 \end{figure*}
 
 \begin{figure*}
     \centering
     \includegraphics[width=1.0\linewidth]{figures/productsize_comparison_goal.png}
-    \caption{A comparison of current mitigated ALMA product sizes from the BLC/ACA to the unmitigated estimated product sizes from GWS is shown in the main panel. The ratio between the mitigated BLC/ACA product sizes and the estimated unmitigated WSU product sizes are shown as solid gray lines with the ratio indicated next to the line. The median ratio is indicated with a dotted line. The panel to the right of the main panel shows a histogram of the distribution of unmitigated WSU data product sizes shaded in gray and the cumulative distribution of data product sizes as an orange line. The panel above the main panel shows the plot for the current mitigated BLC/ACA data. Since we are comparing present day data with future WSU data, we have included our Band 1 and 2 estimates for the WSU since there is no comparable present-day data.}
+    \caption{CAPTION MAY BE INCORRECT - A comparison of current mitigated ALMA product sizes from the BLC/ACA to the unmitigated estimated product sizes from GWS is shown in the main panel. The ratio between the mitigated BLC/ACA product sizes and the estimated unmitigated WSU product sizes are shown as solid gray lines with the ratio indicated next to the line. The median ratio is indicated with a dotted line. The panel to the right of the main panel shows a histogram of the distribution of unmitigated WSU data product sizes shaded in gray and the cumulative distribution of data product sizes as an orange line. The panel above the main panel shows the plot for the current mitigated BLC/ACA data. Since we are comparing present day data with future WSU data, we have included our Band 1 and 2 estimates for the WSU since there is no comparable present-day data.}
     \label{fig:productsize_comparison_goal}
 \end{figure*}
 
 \begin{figure*}
     \centering
     \includegraphics[width=1.0\linewidth]{figures/cubesize_distribution_initial_goal.png}
-    \caption{The complementary cumulative distribution for the size of a single representative cube per MOUS for the BLC/ACA (mitigated and unmitigated), IWS, and WSU (unmitigated) showing the fraction of observing time that will be spent making cubes larger than the value on the x-axis. The WSU (unmitigated) values hold for MWS, GWS, and FWS. For our estimates, we assume that the spectral windows in a MOUS are identical and have the same fixed 2.0 GHz width. The size of a single representative cube is independent of WSU stage; the difference between early and later WSU is only in the number of spectral windows and thus the number of cubes produced. The current threshold at which cubes start to be reduced in quality (40 GB) is shown as a vertical dotted line and the maximum cube size (60 GB) is shown as a solid vertical line. The cubes beyond the cube size mitigation limit were generated by manually lifting the cube size limit in operations. }
+    \caption{CAPTION MAY BE INCORRECT -  The complementary cumulative distribution for the size of a single representative cube per MOUS for the BLC/ACA (mitigated and unmitigated), IWS, and WSU (unmitigated) showing the fraction of observing time that will be spent making cubes larger than the value on the x-axis. The WSU (unmitigated) values hold for MWS, GWS, and FWS. For our estimates, we assume that the spectral windows in a MOUS are identical and have the same fixed 2.0 GHz width. The size of a single representative cube is independent of WSU stage; the difference between early and later WSU is only in the number of spectral windows and thus the number of cubes produced. The current threshold at which cubes start to be reduced in quality (40 GB) is shown as a vertical dotted line and the maximum cube size (60 GB) is shown as a solid vertical line. The cubes beyond the cube size mitigation limit were generated by manually lifting the cube size limit in operations. }
     \label{fig:enter-label}
 \end{figure*}
 
@@ -216,14 +217,14 @@ Tables~\ref{tab:overview_datarates}, \ref{tab:overview_datavol}, and \ref{tab:ov
 \begin{figure*}
     \centering
     \includegraphics[width=1.0\linewidth]{figures/nspw_all_initial_goal.png}
-    \caption{Distribution of spectral windows for the BLC/ACA and the four WSU stages (IWS, MWS, FWS, GWS). The distribution of spectral windows for WSU stages should be considered a only rough guide since it dependent on future decisions by the ALMA project on how PIs are allowed to setup their spectral windows within the configurations allowed by ATAC. }
+    \caption{CAPTION MAY BE INCORRECT - Distribution of spectral windows for the BLC/ACA and the four WSU stages (IWS, MWS, FWS, GWS). The distribution of spectral windows for WSU stages should be considered a only rough guide since it dependent on future decisions by the ALMA project on how PIs are allowed to setup their spectral windows within the configurations allowed by ATAC. }
     \label{fig:nspw_dist}
 \end{figure*}
 
 \begin{figure*}
     \centering
     \includegraphics[width=1.0\linewidth]{figures/sysperf_distribution_aprojonly_initial_goal.png}
-    \caption{The complementary cumulative distribution of the required system performance estimated for the current BLC and the early and later stages of the WSU. The y-axis shows the fraction of times that the required system performance will be larger than the value shown on the x-axis. The shaded regions indicate range of the estimates including Bands 1 and 2 with the median indicated as a dotted line. Dotted horizontal lines indicate where the probability of a larger required system performance is 1\%, 5\%, and 10\%.}
+    \caption{CAPTION MAY BE INCORRECT - The complementary cumulative distribution of the required system performance estimated for the current BLC and the early and later stages of the WSU. The y-axis shows the fraction of times that the required system performance will be larger than the value shown on the x-axis. The shaded regions indicate range of the estimates including Bands 1 and 2 with the median indicated as a dotted line. Dotted horizontal lines indicate where the probability of a larger required system performance is 1\%, 5\%, and 10\%.}
     \label{fig:sysperf_dist}
 \end{figure*}
 
@@ -239,7 +240,6 @@ Tables~\ref{tab:overview_datarates}, \ref{tab:overview_datavol}, and \ref{tab:ov
 \vspace{10ex}
 
 This work made use of Astropy:\footnote{http://www.astropy.org} a community-developed core Python package and an ecosystem of tools and resources for astronomy \citep{astropy:2013, astropy:2018, astropy:2022}.
-
 
 
 

@@ -29,7 +29,12 @@ Our tasks:
     properties projections; 2) the TSI cost projection report; 3) the
     two WSU data properties memos.
 
-3- I would like, in the near future, to make the projections more
+3- related to 1 and 2, once we have some solid reference points, we should define some tests centered around the core
+    products. probably those should be the entries in the tables of the SDD
+    data properties appendix, and the current data properies (BLC, ACA).
+    Any code we make should ultimately be validated against these products.
+
+4- I would like, in the near future, to make the projections more
    sophisticated.  Notable elements to include would be: "smart
    mitigation"; smarter channel-resolution assumptions (instead of
    assuming, say, all spectral windows are at the very highest
@@ -37,7 +42,7 @@ Our tasks:
    baseline; 6sec for not-long baseline probably C6 and shorter); using 3 instead
    of 5 pixels per synthesized beam.
 
-4- I have considered that it could be helpful to have a GUI interface
+5- I have considered that it could be helpful to have a GUI interface
    where we can explore the projections characteristics, potentially as
    a function of assumptions.  The python notebooks were essential that,
    but i find them fidgety and fragile. If there were a robust way to do this
