@@ -1,0 +1,416 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The WSU Processes}
+\label{sec:wsu_processes}
+
+
+This section describes the ALMA operational processes during steady state operations  at the end of the WSU Program~\cite{imp_plan_b}. These processes span the full observational lifecycle, beginning with proposal submission and project preparation,  continuing through data acquisition, array calibrations (to correct for atmospheric and instrumental effects) and science observing strategies, and concluding with data processing, quality assurance (\acs{QA}), and delivery of  data products to \acp{PI} via the \ac{ASA}. The flow of these processes is depicted in Fig.~\ref{fig:processes}. At the level presented in this section, the basic WSU processes are the same as the current system.
+
+The processes outlined here are agnostic to the type or name of the software infrastructure associated with them, and hence include no specific mention of current ALMA subsystems (with very few exceptions).  A description of the \textit{current} ALMA processes is provided in Section~3 of~\cite{CSA-IA} and the references therein. 
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htb]
+\centering
+\includegraphics[width=\textwidth]{Figures/SDD-Processes.png}
+\caption{Overview of the ALMA WSU processes at the end of the WSU Program~\cite{imp_plan_b}. At the level presented here, these processes are identical to the current ALMA processes.   
+\label{fig:processes}} 
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Proposal Submission and Project Preparation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Proposal Submission and Queue Building}
+
+The lifecycle of an ALMA science observing project begins with the preparation and submission of an observing proposal by the \ac{PI}. This is carried out primarily using the ALMA \ac{OT}, although other tools are also used during proposal preparation (i.e., sensitivity calculator, observing simulators). This process is generally referred to as proposal submission or Phase 1, as it culminates in the generation of Phase 1 \acp{SB} for all science goals in the submitted proposals. Further details about the current proposal preparation process can be found in Section~3.1 of~\cite{CSA-IA}.
+
+In the WSU era, the Phase 1 process is expected to remain similar to the current one, although significant changes will be required in the supporting software tools, primarily the \ac{OT} and \ac{APDM}. Most of these changes are driven by the introduction of the new, highly flexible spectral setup capabilities. To support the increased configurability enabled by \ac{ATAC}, the current tools for defining spectral setups will need to be redesigned to preserve both flexibility and user-friendliness.
+
+ALMA issues an annual Call for Proposals, including updated and comprehensive documentation for the following cycle together with the proposal submission tools. Submissions are peer-reviewed by the astronomical community. Large Programs are assessed by the \ac{APRC}, while other  proposals in the main call are evaluated through distributed peer review. \ac{DDT} proposals may be submitted year-round and are reviewed by a standing committee. No substantial changes to the review process are anticipated in the WSU era, although the definition of Large Programs may be revised to include criteria such as expected data volume (see~\cite{TWO}). 
+
+After the proposal review process establishes the scientific rankings, a queue-building exercise determines which proposals are accepted into the observing queue. 
+Selection is based on scientific rank, the allotted share of time across the ALMA executives, requested array configurations, the weather conditions required for the observing frequency, the Right Ascension of the sources, and high level management priorities (i.e. ensuring enough high frequency or low frequency projects exist). Small modifications to the configuration calendar are performed at this point based on the pressure of highly ranked projects. 
+In the WSU era, this process is expected to remain largely unchanged, although data rate and data volume may be added as additional selection criteria due to the need to impose data volume caps (see~\cite{TWO}).
+
+Additionally, duplications and resubmissions are also identified to avoid duplication of existing observations and to properly account for partially completed projects. The duplication criteria are defined based on the user policies and will be revised in the WSU era (see \cite{TWO}). 
+
+
+%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Project Preparation}
+%%%%%%%%%%%%%%%%%%%%%
+
+Once a project is accepted into the observing queue, the observatory prepares the \acp{SB} that will be observed (i.e., Phase 2 \acp{SB}). This process, also known as Phase2 SB Generation, ensures that each \ac{SB}: 
+%%%%%%%%%%%%%%
+\begin{enumerate}[label=\roman*]
+  \item Is observed with a valid frequency setup that can achieve the \acp{PI} scientific goals.  
+  \item Follows the appropriate calibration strategies (Section~\ref{sec:calibrations}).
+  \item Includes valid calibrators (Sections~\ref{subsec:cone}, ~\ref{sec:gridsurvey}).
+  \item Has valid time constraints, if requested by the \ac{PI}, and 
+  \item Contains all technical considerations that will allow the correct execution of the observations. 
+\end{enumerate}
+%%%%%%%%%%%%%%%%
+
+Given the potentially larger number of \acp{spw} and the increased flexibility for the spectral setup per \ac{spw} during the WSU era, the tools used in Phase 2 SB generation will need an enhanced level of automation. In particular, an enhanced batch mode in the Phase 2 OT (Section~\ref{subsec:OT}), batch mode state transitions in \ac{ProTrack} (Section~\ref{sec:pro_track}),\index{Project Tracker, ProTrack} and the use of scripting tools via Dataiku,\footnote{Dataiku is a collaborative data science and machine learning platform. Details can be found at \url{https://www.dataiku.com}.} will be required to manage the workload and reduce human errors.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Data Acquisition}
+\label{sec:daq}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The data acquisition process includes preparing the antenna array for scientific observations, selecting and executing the most suitable \ac{SB} based on the current array configuration and weather conditions, securely storing the acquired data in the ALMA Archive, logging all observational activities conducted in the control room, and systematic reporting of problems encountered. This process directly follows project preparation and precedes  Quality Assurance Level 0/1 process (QA0/1), which verifies the quality and integrity of the acquired data.  Additional details of the current process can be found in Section 3.2 of \cite{CSA-IA}.
+
+In the WSU era, data acquisition activities are expected to remain broadly similar. However, software used by Array Operators and \acp{AoD} to prepare the array, manage the observing queue, monitor operations, and control \ac{SB} execution  will require updates (see Section~\ref{sec:wsu_compu_sw} for details).
+
+
+\subsubsection{Observing with Multiple Arrays}
+\label{sec:da-multiple-arrays}
+A key enhancement to data acquisition in the WSU era is the improved capability to observe with multiple Arrays.\footnote{An ``Array'' is a set of one or more antennas and associated hardware resources grouped, by software, together to perform observations. A ``correlator subarray'' refers to a portion of correlator resources configured for an observation with that Array.} Currently, observations are conducted using up to five independent Arrays, each associated with a separate photonic reference \cite{CSA-IA}. 
+%In the future, a single photonic reference may support multiple arrays, potentially enabling up to eight Arrays to operate simultaneously \cite{sys_reqs}. In addition, \ac{ATAC} will support Phased Array (a.k.a., Beamforming) and interferometric observations in separate correlator subarrays (see Section~\ref{sec:ATAC}), yielding an opportunity for increased efficiency compared to the current system. 
+In principle, a future upgrade of control software could allow a single photonic reference to support multiple arrays, which would enable up to eight Arrays, adding greater flexibility for some use cases. \ac{ATAC} will support Phased Array (a.k.a., Beamforming) and interferometric observations in separate correlator subarrays concurrently (see Section~\ref{sec:ATAC}), yielding an opportunity for increased efficiency compared to the current system. 
+
+
+In the WSU era, new operational constraints to the scheduling process may require observations to be strategically organized to efficiently utilize available resources without exceeding operational limits, for example if resource management for data transfer and correlator usage shifts from a fixed, predefined, maximum allocation per execution to a dynamic allocation model \cite{sys_reqs}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Scheduling}
+\label{sec:scheduling}
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+The ALMA scheduling process efficiently manages the execution of approved observations throughout each observing cycle using a dynamic scheduling system.  This system continuously selects the most suitable \acp{SB} for execution based on both scientific and operational considerations. Scientific factors include a project's completion status, anticipated data quality, and scientific ranking. Operational considerations include weather conditions, array configuration, and balance of observing time among the ALMA executives. The primary objective is to maximize the acquisition of high-quality observational data (QA0 Pass) while minimizing telescope idle time.
+
+As atmospheric conditions and operational conditions evolve, the scheduling system must adapt in real time to maintain observing efficiency and align with ALMA's strategic goals. It is therefore essential that the system be configurable and easily updated so that insights about optimal observing conditions can be promptly incorporated into scheduling decisions.
+
+To accommodate the evolution of operational needs and priorities, enhancements to the dynamic scheduling system are recommended as part of the transition to WSU operations \cite{TWO}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Array Calibration and Science Observing Strategies}
+\label{sec:calibrations}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{Antenna Calibration}
+\label{sec:ant_calib}
+%%%%%%%%%%%%%%%%%%
+
+In the WSU, the antenna calibration tasks\index{Calibration!Tasks} will continue to be needed to maintain the readiness and efficiency of all AEs for PI science observations (see Section~3.3.1 of~\cite{CSA-IA}).  The fundamental nature of ALMA as a reconfigurable interferometer means that all antenna integration processes will be executed each time an antenna is relocated, including pointing model verification, delay adjustment\index{Calibration!Delay} and position\index{Calibration!Antenna position} determination. All these integration processes are executed in a separate Array, to avoid the need of stopping science observations to perform calibrations. The performance requirements in these areas will remain the same, but per-EB calibration (see Section~\ref{sec:dpqa}) will require a faster cadence for antenna position corrections and/or modifications to the current QA0 processes. Modifications of the total power detector and its control will require an update of the antenna integration and maintenance workflow. The components of the instrumental delay model will be adapted to the new IF arrangement with only two baseband pairs.  
+
+One aspect of antenna calibration that happens ``online'' is the measurement of local pointing\index{Calibration!Pointing} and focus corrections to the underlying models. Pointing scans are typically
+included within PI science SBs, while focus scans are executed less frequently and outside of PI science SBs.  This practice is not expected to change in the WSU, and \ac{TelCal} (Section~\ref{sec:TelCal}) will handle most of the changes associated with observations and the initial analysis of antenna calibration, minimizing the impact on the antenna calibration workflows.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Grid Survey} 
+\label{sec:gridsurvey}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ALMA maintains a grid of quasars that serve as primary flux calibrators for science observations. Their flux densities are regularly monitored through the Grid Survey process to ensure consistency and accuracy. These measurements are stored in the ALMA Calibrator Source Catalogue (Section~\ref{subsec:caldatabase}; hereafter, Source Catalogue). The broader spectral coverage enabled by the WSU will allow more precise characterization of the frequency dependence of quasar fluxes.
+
+The absolute flux density scale for the grid calibrators is anchored by observations of solar system objects, particularly Uranus and Neptune (\cite{c12_thb, Farren2021}; see Section~3.1.5 of~\cite{CSA-IA}). These planets provide stable, well-modeled references across most of ALMA’s frequency range, and ongoing improvements to their models are expected to further increase calibration accuracy. In the lowest-frequency bands, the use of quasars is needed due to the uncertainty of Uranus and Neptune's models.
+
+
+\ac{PSO} considers the flux calibrators used in science observations to optimize the scheduling of their monitoring observations. In the future, \ac{PSO} will be integrated into the scheduling subsystem (Sections~\ref{sec:scheduling} and \ref{sec:scheduling_software}), and the resulting data will be automatically reduced. The flux values will then be reviewed in AQUA (Section~\ref{sec:aqua}) and ingested into the Source Catalogue. The entire process is expected to operate with a high degree of automation, guided by heuristics informed by expert review and validation.
+
+%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Cone Searches}
+\label{subsec:cone}
+%%%%%%%%%%%%%%%%%%%
+Cone Searches are observing campaigns designed to identify suitable phase calibrators and check sources for long-baseline configurations (7, 8, 9, and 10) and for high-frequency observations with either the 7-m or 12-m Arrays (see also Section 3.3.3 of~\cite{CSA-IA}). In the WSU era, this process will be streamlined and largely automated. Cone Search observations will target candidate sources selected automatically from the Source Catalogue to obtain an updated  flux measurement and to verify that they are unresolved. The catalogue will, in turn, be updated automatically with QA0 fluxes, following validation by the \ac{AoD} (\cite{acsos}, Sections 6.2 and 6.4.15).
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Online Calibration}
+%%%%%%%%%%%%%%%%%%%%
+Besides the measurement of local pointing and focus corrections, the concept of ``online'' calibration\index{Calibration!Online} refers to the calculation and application of quantization corrections\index{Calibration!Quantization Correction} and the normalization\index{Calibration!Normalization} of visibility spectra, along with the calculation of atmospheric calibration\index{Calibration!Atmospheric} tables that can be used in offline processing to convert the stored visibilities into antenna temperature-calibrated spectra (see Section~3.3.4 of~\cite{CSA-IA}). These techniques have been implemented in the current system, but changes will be needed for the WSU.
+Quantization corrections\index{Calibration!Quantization Correction} will
+be applied for all Imaging Correlation \index{Imaging Correlation} \acp{spw}, in contrast to the current system in which the \ac{BLC} does not apply them in \ac{FDM} spectral setups.  Visibility normalization by the autocorrelation spectra will continue to be performed at full spectral resolution. In the context of this normalization, in order to achieve the correct frequency-dependent amplitude in Kelvin, atmospheric calibration\index{Calibration!Atmospheric} will be performed on-source and at full spectral resolution \cite{normalizationAndTsys}. The atmospheric calibration\index{Calibration!Atmospheric} tables will be (promptly) computed offline at full resolution due to processing resource limitations of the online environment (Section~\ref{sec:TelCal}).
+The atmospheric calibration observing strategy will be considered for optimization as part of \cite{TWO} in order to avoid the need for any offline re-normalization for WSU data (see \cite{normalizationAndTsys}).
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Standard Interferometry Visibility Calibration}\label{subsubsec:std_int_cal}
+%%%%%%%%%%%%%%%%%%%%%%
+
+The standard interferometry observing modes involve a series of calibration strategies, many of which also require the observation of appropriate calibrators. Most of the calibrations are applied to the data offline using automated data reduction workflows (see Section~\ref{sec:radps-alma}). These workflows also include detailed heuristics developed by Commissioning Scientists and the Pipeline Working Group to achieve automated data flagging, calibration, imaging, and \ac{QA} scoring (see Section~\ref{sec:dpqa}). Below we provide a high-level summary of the calibration strategies and heuristics for the standard interferometry observing modes.
+
+%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+\item {\bf \ac{WVR} correction:} 
+The \acp{WVR} installed in the 12-m antennas measure the temporal variations in brightness temperature of the 183 GHz water line caused by changes in \ac{pwv} along the line of sight in their pointing direction. These are modeled as antenna-based path length (phase) corrections that are used to improve the coherence of the data.
+%These are then corrected in the data as phase corrections. 
+The method and cadence of the \ac{WVR} correction's calculation, and application, will generally remain as it is now (see Section~3.3.4 of \cite{CSA-IA}), i.e.:
+%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+\item Offline (in the Pipeline\index{Pipeline!Imaging}\index{Pipeline!Interferometry}) for imaging correlation modes, and 
+\item Online (in the correlator, using the WVR calibration\index{Calibration!Water Vapor Radiometer} coefficients supplied by telescope calibration SW) for VLBI/Phased Array (a.k.a., Beamforming) mode (see 
+Section~3.3.7 of~\cite{CSA-IA}).
+\end{itemize}
+%%%%%%%%%
+
+The implementation details of the latter will be adapted to the new correlator architecture. 
+\item{\bf Bandpass Calibration:} 
+The basic concept of bandpass calibration\index{Calibration!Bandpass}, i.e., using an observation of a strong point source to solve for the antenna-based spectral response in amplitude and phase, will 
+remain the same in the WSU. Details about the current bandpass calibrations can be found in Section~3.3 of~\cite{CSA-IA}). 
+
+With fewer analog components in the IF signal chain, the temporal stability of the WSU instrumental bandpass may
+improve compared to current performance. However, it will need to be measured and demonstrated  during commissioning that the current cadence (once per \ac{EB}\index{Execution Block}) remains sufficient. 
+
+One significant change envisioned is that the spectral resolution of the bandpass scan may be limited to $1-2$\,MHz if the science target spectral resolution is $<$2\,MHz, in order to
+reduce data volume and processing time (particularly for QA0, see section 3.4.4 of \cite{da}) while not adversely affecting science data products in terms of \ac{SNR} achieved on the data cubes~\cite{bandpassMemo}. 
+
+With this limitation, combined with the improved digital efficiency of the WSU, the current moderate-length scans ($5-30$~min, depending on array and frequency band) will be sufficient to achieve the critical \ac{SNR} of 50 in many cases.  In cases where this is not sufficient, automated channel pre-averaging will be invoked  by the Pipeline solver in other cases. Due to differences in spectral resolution, and hence spectral setup, the Pipeline\index{Pipeline} will  apply a bandpass measured from one \ac{spw} to a different \ac{spw}, matching by the baseband name and spectral window number contained in the \ac{spw} name.  For broad \acp{spw} at low frequency, the spectral index across the bandwidth may vary significantly enough to require a more involved treatment in the Pipeline.
+%%%%%%%%%
+\item{\bf Gain Calibration:}
+The methods of measuring temporal changes in the antenna-based complex gain (amplitude and phase)\index{Calibration!Complex Gain}\index{Calibration!Amplitude}\index{Calibration!Phase}, via in-band\index{Calibration!In-Band} or Band-to-Band calibration\index{Calibration!Band-to-Band}, will continue in the WSU (see Section~3.3.5 of~\cite{CSA-IA}). The improvements in sensitivity, due to the general increase in 
+aggregate correlated bandwidth, will likely be traded for reduced integration time on calibrators (hence reducing overheads) and for selecting gain calibrators closer to the science target, thus achieving better overall removal of atmospheric phase errors while also providing more resilience to antenna position errors.
+%%%%%%%%%
+\item{\bf Flux Density Calibration:}
+Flux calibration in science datasets is achieved by observing a quasar whose flux is regularly monitored (see Section~\ref{sec:gridsurvey} and Chapter 10 of \cite{c12_thb}). Occasionally, a \ac{SSO} with a flux density model is observed as flux calibrator, if feasible and requested as user calibration in the observing proposal.
+
+The flux service, which estimates the source flux density, spectral index and curvature at a time and frequency given the measurements, will continue to be an essential component of ALMA in the WSU. The resulting flux calibration will be linear with respect to the flux scaling to allow for the re-scaling of the fluxes for individual EBs prior to imaging, as necessary. This will allow the per-EB calibration to be run as close as possible to the time the data were acquired, later re-scaling the fluxes, if necessary, either because the  Source Catalogue values changed or to equalize the flux between EBs.
+Spectral windows with wider fractional bandwidth enabled by the WSU will need improved treatment in the Pipeline\index{Pipeline!Calibration} of the spectral curvature of the grid calibrators, to  maintain the accuracy of the flux scale. 
+%%%%%%%%%
+\item{\bf Polarization Calibration:} Measurement of the antenna-based polarization calibration\index{Calibration!Polarization} of the WSU analog signal path will, as now, require observing a polarized quasar over sufficient parallactic angle rotation to solve for the necessary quantities (see Section~3.3.5 of~\cite{CSA-IA}).  To achieve sufficient angular coverage, multiple EBs typically need to be observed, and in a session block that prevents changes to the IF attenuator settings in order to avoid changing the relative path delay and phase of the two linear feeds.  The WSU use of wide
+fractional bandwidths in the new low frequency bands may require solving for the frequency dependence of the calibrator’s Stokes Q and U when computing the XY-phase estimate.
+\item{\bf Band-to-Band Gain Calibration:} \ac{B2B} is a phase calibration technique that transfers phase solutions between two ALMA bands. Specifically, B2B is used for high frequency observations (Band $7-10$), where suitable phase calibrators (i.e., strong enough and/or close enough to the science target) are not always available. Despite the increased bandwidth of the WSU system, B2B is expected to be required for many high-frequency observations. In the B2B method, a phase calibrator observed at a lower-frequency band is used to transfer phase solutions to the target at a higher frequency.  An additional calibrator, known as the Differential-Gain-Calibrator (DGC or DIFFGAIN), is required to account for  phase offsets between the ALMA bands. 
+%B2B will use a "harmonic mode" where fast frequency switching (i.e., band changes) can occur within 2s.
+
+\acc{B2B} can operate in two modes with different receiver band switching times. The “harmonic” mode can provide band switching times $<2$ s by using "paired" frequency setups that require minimal changes in the electronics when switching bands. The WSU should have no substantial negative impact on the receiver band switching time in “harmonic” mode, although some constraints on the IF ranges for the selected paired bands might be required to avoid reconfigurations in ATAC that would take longer than 2 s. The use of “non-harmonic” B2B mode, in which the time to switch receiver bands is longer than 2 s, will be restricted to cases where it is strictly necessary given the spectral setup.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%
+\subsubsection{Total Power (TP) Data Calibration}
+%%%%%%%%%%%%%%%%%%
+WSU \ac{TP}\index{Total Power} observations will follow a similar procedure to the current one. On-source observations will be performed in the current \ac{OTF} mode, during which the antenna(s) scan the sky at a constant speed, while the \ac{TPGS}\index{Total Power GPU Spectrometer} continuously captures spectra with a short integration duration.
+Amplitude calibration\index{Calibration!Amplitude}\index{Calibration!Total Power} will be achieved by observing a nearby, emission-free
+position, to compute a differential signal in temperature units, and then scaling by the gain factor (Jy/K) of the antenna.
+The large fractional bandwidths enabled by WSU may cause deviations from current imaging assumptions (e.g., cell size relative to HPBW), potentially affecting the Jy/K conversion and requiring further investigation (see Section~3.3.6 of \cite{CSA-IA}). As for the Standard Interferometry modes (Section~\ref{subsubsec:std_int_cal}), TP calibration is applied offline using automated data reduction workflows (Section~\ref{sec:radps-alma}) and including heuristics for automated data flagging, calibration, and QA scoring (Section~\ref{sec:dpqa}).
+
+
+
+%%%%%%%%%%%%%%%%%
+\subsubsection{VLBI and Phased Array}\label{sub:vlbi}
+%%%%%%%%%%%%%%%%%
+ALMA can participate in \ac{VLBI}\index{VLBI} observations coordinated by the \ac{GMVA} and the \ac{EHT} Consortium\index{EHT}. This capability is enabled by the \ac{APS}, which allows the array to operate  as a single, phased station. The same system also supports standalone Phased Array (a.k.a., Beamforming) observations, allowing time-domain science at timing samplings significantly shorter than the  standard 1-second limit of regular ALMA observations. 
+
+While the general VLBI calibration strategies will remain similar in the WSU era, some changes are expected. VLBI is dependent on \ac{TelCal} (Section~\ref{sec:TelCal}), which uses the interferometric and water vapor radiometer data streams to compute phase solutions, and communicate them  to the tunable digital filter bank via phase shift commands.
+Similarly, VLBI calibration will depend on how full-polarization observations will be conducted in the WSU era. More details about VLBI and Phased Array (a.k.a. Beamforming) can be found in \cite{acsos}.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+ \subsubsection{Solar}\label{sub:solar}
+%%%%%%%%%%%%%%%%%%%%%%
+
+ALMA is capable of performing solar observations following a special observing and calibration strategy, which is not expected to change significantly as a result of the WSU upgrade. Firstly, solar observations require observing simultaneously with a heterogeneous array with 7-m and 12-m antennas, as well as with the TP Array. For a subset of the ALMA bands based on SIS mixers (specifically Bands 3, 5, and 6), a \ac{MD}\index{Mixer-Detuning} observational mode (employing a less than optimal voltage bias) will be used to ensure receivers are not saturated when observing the Sun. Solar observing with the upgraded Band 6v2 will follow the same procedure, and it will be  commissioned to identify the new optimal \ac{MD} parameters. When using the \ac{MD} observational mode with any of these bands, total power detector data will be recorded and used to estimate the antenna temperatures. Solar observing in Band 7v2 will be possible without detuning, similarly to the legacy Band 7. Solar observations have not yet been commissioned with the legacy system in Bands 1 and 2 - which are based on \ac{HEMT} amplifiers - and in Band 8. This observing mode will need to be fully commissioned and is expected to be implemented with the WSU system (including the upgraded Band 8v2) for the first time. For Band 8v2, a similar approach to the one used in the other bands based on SIS mixers might be used. For the HEMT bands 1 and 2, LNA de-tuning might be used, but a full commissioning is required to verify system performance and compliance to solar observing requirements.
+
+
+%For the ALMA bands based on SIS mixers (Bands $3-10$), a \ac{MD}\index{Mixer-Detuning} mode is used to ensure receivers are not saturated when observing the Sun. Furthermore, total power detector data are recorded and used to estimate the antenna temperatures. Solar observations are expected to be performed following this same process in the WSU era, unless \ac{MD} mode is unavailable in the upgraded receivers. In such a case, a new observing strategy would need to be developed. For Bands 1 and 2, which are based on \ac{HEMT} amplifiers, solar observing has not been commissioned with the legacy system and will be implemented with the WSU system for the first time.  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%
+\subsection{Data Processing and Quality Assurance}
+\label{sec:dpqa}
+%%%%%%%%%%%%
+After science observations are conducted (Section~\ref{sec:daq}), the data will be calibrated and used to make science products -- usually images and spectral cubes -- which are delivered to the PI and held as a community resource in the \ac{ASA}. The following sections describe the process by which these products are created and then quality assured.  There will be  several primary levels of quality  assurance performed on ALMA science data.\footnote{Note that there is an additional level, 
+Quality Assurance Level 1 (QA1). QA1 is intended to be the
+process by which the observatory monitors the behavior of 
+the instrument over time, looking for trends and triggering 
+fixes as needed. There are some tools which provide QA1 
+functionality, but to date ALMA has never defined or 
+put into place any formal QA1 workflows. If QA1 is later
+determined to be important for WSU, clearly defined 
+workflows will be developed and deployed.}  Following the terminology
+used by \cite{dpomrTsi}, these will be: 
+ 
+%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+\item QA0, described in detail  in Section~\ref{sec:qa0}, will be carried on each \ac{EB} shortly after it is taken. Its purpose is to verify the integrity of the 
+entire signal path from the atmosphere to the correlator; 
+thereby determining which data merit further, more resource 
+intensive processing and \ac{QA}, as well as identifying 
+instrumental issues that need to be investigated or 
+rectified. 
+\item QAcal,  described in detail in Section~\ref{sec:qa2eb}, will be performed shortly after QA0, also on a per-EB basis. It  comprises calibrating the individual \ac{EB} of data, as well as assessing the suitability of the data for creation of science products and rectifying any identified defects, if  needed.
+\item \ac{MOUS} QA2: creation and review of science products, described in detail in Section~\ref{sec:qa2mous}. The aim of \ac{MOUS} QA2 is to
+ensure that all applicable quality standards are met, including verification of PI-defined quantitative performance parameters
+tied to the observation's science goal. 
+\item \ac{GOUS} QA2: creation and review of  science products that need data from more than one MOUS (when applicable), described in detail in Section~\ref{sec:qa2gous}.
+As for \ac{MOUS} QA2, its purpose is to verify that all applicable quality standards are met.
+\item Ingestion and delivery of products, described in Section~\ref{subsec:archiveIngestion}.
+\end{itemize}
+%%%%%%%%%%%%%%%
+
+
+When problems are found with delivered science products, they will be addressed using the Quality Assurance Level 3 (QA3) process, described in Section~\ref{sec:qa3}. 
+Data will also be periodically reprocessed as described in Section~\ref{sec:reprocessing}.   The data processing and \ac{QA} workflow is depicted schematically in Fig.~\ref{fig:dpoverview}.
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[t!]
+\includegraphics[width=0.7\linewidth]{Figures/processFlowV4.png}
+\caption{An overview of the WSU data processing workflow. } 
+\label{fig:dpoverview}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%
+
+
+The design for the WSU data processing builds on previous
+work \cite{cosdd_c,dpda,dp,dpomrTsi,groupTsi,weblogTsi}.  
+Principal design considerations include more evenly distributing the compute load over time, rapidly
+verifying alignment among system elements, avoiding 
+unnecessary reprocessing, and ensuring sufficiently
+rapid evaluation to enable timely 
+re-observation when needed. Ultimately, the workflows 
+must support producing complete science products without omitting targets or \acp{spw}, including products derived from multiple arrays or configurations.
+
+All workflow stages will be as automated as feasible while
+reliably delivering high-quality, defect-free products.
+Specific quantitative and categorical \ac{QA} sub-assessments, or QA scores,  will be calculated at multiple  stages of processing to support
+robust automation, complemented by random sample reviews
+to detect new or unanticipated issues. Manually-assisted
+processing will remain available primarily for
+capabilities that cannot be reliably automated (e.g.,
+VLBI), with the incidence of other datasets requiring manual
+assistance  being strictly controlled. Manual processing is described in more
+detail in Section~\ref{sec:mdr}. To ensure seamless compatibility across workflows -- such as automated Pipeline Calibration or Pipeline Imaging, manual calibration and/or imaging,
+and QA3 -- the system will automatically reorganize products
+as needed,  where subsystem interfaces so require.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{QA0: Initial Assessment}
+\label{sec:qa0}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Soon after each execution, the quality of the data will
+be rapidly assessed using channel-binned WSU datasets.
+The assessment will be carried out by automated classifiers augmented by \ac{AoD} review when needed.
+The goals of this assessment are to identify any hardware
+issues that may need to be fixed, and to identify datasets 
+which are clearly of too poor quality to merit more 
+resource intensive processing and \ac{QA}. Three assessments
+are possible: 
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+    \item Pass (QA0 standards are met and the data will be used in subsequent processing).
+    \item Semi-pass (QA0 standards are not met, so the data will not be used in subsequent processing but are available to users), and 
+    \item Fail (data are so fully corrupted as to be entirely useless).
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+EBs that are not recommended as QA0 Fail or Semi-Pass by the AoD or the automatic classifier will advance to the next stage, QAcal.
+
+%%%%%%%%%%%%%%%%%%%
+\subsubsection{QAcal: Calibration}
+\label{sec:qa2eb}
+%%%%%%%%%%%%%%%%%%
+
+After this initial review of data quality is complete, and once antenna positions are known with the required accuracy, the applicable calibration workflow will be launched.
+ When  calibration processing is complete, the \ac{EF} of the \ac{EB} will be automatically updated to reflect the detailed calibration and flagging that 
+were performed.  If the pipeline fails to complete successfully, an issue is automatically raised for investigation. Performing calibration at the EB 
+level confirms that the data can be calibrated and quickly verifies that SB preparation, scheduling, data acquisition, and 
+calibration processes are aligned.
+
+
+After per-\ac{EB} pipeline calibration processing completes successfully, the products will be reviewed as needed, based on \ac{QA} scores plus a random sampling of products; in steady state operations most EBs should pass through with no human review needed. The purpose of this review is to identify and address issues compromising the quality of the calibrated data that are not sufficiently reliably handled by the automated processing. In this stage, the main actions the Data Reducer will be able to take (besides passing the data to the next processing stage) will be to flag data and rerun the calibration pipeline, or to rerun the calibration workflow with manually specified input parameters (in current operations, the corresponding process is called a modified-PPR run). Issues encountered at this stage should be rare and unlikely to require full manual processing, since calibrating after each execution guarantees tight alignment between the observing and calibration processes.
+
+After this review and optimization, the calibration products -- such as calibration tables, data reduction reports, and manifests -- will, for most datasets, be stored and used to generate science products in subsequent processing and \ac{QA} stages (Sections~\ref{sec:qa2mous} and~\ref{sec:qa2gous}).
+
+Because their respective calibration processes require more data than are present in a single execution,  full-polarization and total power data will instead be fully 
+calibrated  at the MOUS level.\footnote{Full-polarization data could be calibrated at the session level instead. \cite{dpomrTsi} considered
+that the fraction of cases immediately benefiting from per-session calibration -- full polarization observations, $\sim 1\%$ of all observations -- did not justify this approach. Per session calibration could, however,  offer efficiency improvements if implemented more broadly in the future, for instance to share bandpass calibrations between  executions.} Data requiring manual calibration (Section~\ref{sec:mdr})  will also be  calibrated at the MOUS level to minimize human overheads associated with manual calibration. For all of these cases, per-EB automated calibration will either be skipped -- in which case QAcal will be skipped -- or they will receive a nominal calibration  at the EB level with the 
+goal of improving \ac{EF} estimation, but the calibration 
+products will not be  used for creating science products.
+Therefore, the final review of calibration products will in these cases be at the corresponding level (MOUS QA2; Section~\ref{sec:qa2mous}).
+
+
+%%%%%%%%%%%%%%%%%%%%
+\subsubsection{MOUS QA2: Science Product Creation and Review}
+\label{sec:qa2mous}
+%%%%%%%%%%%%%%%%%%%
+
+Once all required observations of an SB are acquired and pass through QAcal, and all needed  {\it a priori} calibration information is available, the calibrated data from the individual EBs is retrieved, and the automated imaging workflow is launched. Early in the Pipeline Imaging workflow, representative products will be generated.  If these products do not appear to satisfy  quantitative QA2 performance requirements (such as angular resolution or sensitivity),  the pipeline will exit early so that a Data Reducer can review them and recommend  Pass,  Semi-pass, or Fail. If the  data are determined to Fail QA2, the SB will return to the observing queue. Otherwise -- i.e., if the Data Reducer's recommendation based on the representative product was Pass or Semi-pass, or if the automated heuristics did not flag the representative products for early review -- then the pipeline will continue to make the  MOUS science products. 
+
+After imaging is complete, the products will be reviewed if needed. If issues are identified, they will be investigated and addressed when necessary, usually by flagging and/or reprocessing with modified parameters. Once the MOUS products either (a) meet applicable QA2 criteria (Pass) or (b) are deemed unable to do so (Semi-pass) -- either because further observations would not help, or because the observing window has closed -- the MOUS QA2 state is set and the products are ingested into the \ac{ASA} together with the per-EB calibration products and delivered to the PI. It will also be possible to Fail a MOUS at this final stage of review  and send them back for more observations, though this should be rare.
+
+
+Full-polarization, total power, and manually calibrated data will be fully calibrated, and their calibrations reviewed, at the MOUS level. Science products for these datasets will also be generated and  reviewed at the MOUS level.
+
+%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{GOUS QA2: Combined Science Product Creation and Review}
+\label{sec:qa2gous}
+%%%%%%%%%%%%%%%%%%%%%
+
+For science goals that require science products to be created from multiple configurations or arrays, those combined products will be created at the \ac{GOUS} level, after all the component MOUS are either delivered or -- if the group imaging heuristics can handle the missing component(s) -- TimedOut. To create the GOUS products, the calibrated MS from the component MOUSs will be assembled, and any calibrations needed to align the data performed (e.g., astrometric corrections or flux scale equalization). GOUS imaging will then be performed to create final, combined science products. \cite{groupTsi} presents more detailed discussion of the historical and proposed future structure and uses of GOUS in data processing.
+
+The GOUS review process will be similar to the MOUS science 
+product review process, with human review only when needed. 
+GOUS products will be evaluated against QA2 performance 
+parameters (such as angular resolution or sensitivity), in order to track performance and facilitate 
+subsystem alignment, but in general re-observation is not 
+expected to occur as a result of this evaluation. GOUS 
+products will have their own proprietary periods; how they 
+are set  is a policy decision that will be made in the future. 
+
+More detailed discussion of considerations and statistics  related to group processing is presented by \cite{groupTsi}.
+
+%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Archive Ingestion} \label{subsec:archiveIngestion}
+%%%%%%%%%%%%%%%%%%%%%
+
+After an \ac{OUS} has successfully passed QA2, the science products, together with additional products like the \ac{QA} reports and flagging tables from per-EB calibration, are fetched into a staging area. The product files are then analyzed and potentially renamed before being ingested into the \ac{ASA}. The metadata of the products is also identified and linked so that products can be visualized in previews and through \ac{CARTA}.
+
+Ingestion of products into the ASA only happens at the OUS level after QA2. All products except the raw data are ingested together. 
+At the moment, only MOUS level and GOUS level ingestions are expected (possible changes to the OUS structure definition will be decided at a later stage).  For the ingestion of Large Program value-added data products, staff from the \ac{APO} group at \ac{SCO} triggers the ingestion manually. The ingestion of preview and \ac{ADMIT} products will also happen at the MOUS and GOUS level.
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{QA3}
+\label{sec:qa3}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+If a dataset is found not to comply with applicable quality standards after it is delivered to the PI, it will be reprocessed, re-ingested and re-delivered. The process for rectifying the data products is the ALMA Quality Assurance level 3 (QA3) process. In WSU operations, QA3 can be initiated at the MOUS and/or GOUS levels, depending on which products need to be corrected. 
+
+
+%%%%%%%%%%%%%%%%%%
+\subsubsection{Reprocessing}
+\label{sec:reprocessing}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+In order to sustain access to ALMA data products and to improve their quality, the WSU operating processes will support periodic, bulk, largely automated  reprocessing of archival data.  Such reprocessing is a standard procedure in most modern observatories, with the aim of maintaining the products held for the community at the highest achievable level of quality using the latest version of the pipeline. For ALMA-WSU, this reprocessing will support calibration as well as imaging, at both MOUS and GOUS levels. 
+
+Production tools will support this reprocessing. The  process will be  similar to QA3, but will not block data access,  affect release dates, or result in a delivery email to the original PI. Existing QA states  will  
+normally remain unchanged.  See Section~8 of \cite{dpomrTsi} for additional considerations.  
+Operational policies and resource‑manager configurations will ensure that sufficient reserved capacity is always available so that processing and QA of new observations consistently receive top priority.
+
+Upon the replacement of MOUS or GOUS products  in the ASA, calibration tables, scripts, and processing software version information from previous calibrations will be kept, as mandated by \cite{isopt_implementation_plan}, so that previous products could be reproduced should the need arise.
+
+Other details of the reprocessing workflow -- as well as the extent and nature of the \ac{QA} upon reprocessed products -- will be determined in the future.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Data Delivery and Access}\label{subsec:data_delivery}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Once ALMA data are ingested into the archive without errors after the QA2 process, and once the system has verified that the data have reached the ARC of the PI, an email notification is sent to the PI to announce the delivery of the data. The proprietary clock for that \ac{OUS} starts counting after this email notification.
+
+Access to the ALMA data, both after the notification email to a PI or independently for archival research, is primarily through the \ac{ASA}, deployed at each of the three ARCs. Besides the “raw” visibilities, users can download calibration tables, scripts to generate the calibrated visibilities, image cubes, continuum images, and data reduction reports (Section~\ref{subsec:data_red_report}). 
+The \ac{ASA} includes various services to facilitate the exploration and visualization of archival data, such as interactive previews of the images and cubes, or one-click remote visualization through CARTA (Section~\ref{sec:carta}).  More details of all services in \ac{ASA} can be found in Section~3.5 of \cite{CSA-IA}. 
+
+Some of the current functionality in the ASA to provide data access to users will be augmented to handle the larger data sizes in the WSU era (Section~\ref{subsec:ASA}). Additionally, the content of the ASA will be regularly reprocessed with the latest version of the data processing software (Section~\ref{sec:reprocessing}).
+
+With the WSU, an increasing number of users is anticipated to need Observatory support with handing the increased data volumes.  A new service for the restoration of calibrated data will be provided through the \ac{ASA}. This service will simultaneously reduce the overheads in maintaining and updating the three independent services currently provided by the individual ARCs at a time where calibration is transitioning to RADPS-ALMA. The new service will allow users to request calibrated measurement sets from Cycle 3 onward (exact starting cycle to be confirmed), as well as the extraction of calibrator data from proprietary data-sets and visibility averaging. Additional functionality -- such as source selection or other features described in Section 7.3 and 7.4 of \cite{uid} -- will be considered in the future.
+
+The user access to WSU data could be enhanced further by providing additional new services that could expedite the scientific analysis of datasets. Various of these services have been discussed in \cite{uid}. A user-initiated remote re-imaging and re-combination service would allow users to submit requests to image datasets on the ASA, with customized parameters to meet their specific science goals. Computing infrastructure that can be accessed remotely to recalibrate data and analyze images and visibility data (a.k.a., science platforms) would enable users with modest computing resources to analyze larger datasets. Advanced data products have the potential to greatly facilitate data mining by providing lists of sources in two dimensional images, detected lines in cubes, extracted spectra, moment maps of detected lines, and flux measurements of sources and lines. These new services and other enhancements to the users' data access will be explored further as part of the Archive 2030 Vision Working Group \cite{2030_archive_vision} and the User Support 2030 process \cite{2030_user_support}.
+
+
+\newpage

@@ -1,0 +1,948 @@
+WSU data processing infrastructure initial
+cost/resource estimates TSI Report
+ALMA-05.15.00.00-3026-1-REP
+2024-09-18
+Prepared by: Organization and Role: Date and Signature:
+Liza Videla JAO DMG Manager
+Maxs Simmonds JAO APO Deputy Manager
+Eisuke Morita ICT-EA Database Administrator
+Alejandro Barrientos NA Computing
+Felix Stoehr Archive SSS and EU infrastructure
+domain expert
+Brian Mason DRM representative
+Approved by: Organization and Role: Date and Signature:
+Released by: Organization and Role: Date and Signature:
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 2 of 26
+Table of Contents
+Executive Summary ............................................................................................................................ 3
+1. Introduction .................................................................................................................................. 5
+1.1 Purpose ................................................................................................................................................. 5
+1.2 Scope .................................................................................................................................................... 5
+1.3 Applicable Documents ........................................................................................................................... 5
+1.4 Reference Documents ........................................................................................................................... 6
+1.5 Charges ................................................................................................................................................. 6
+1.6 Acronyms .............................................................................................................................................. 6
+1.7 Verb Conventions ................................................................................................................................. 7
+1.8 Current Scenario ................................................................................................................................... 7
+1.9 Considered States of the System ........................................................................................................... 7
+2. Cost Estimates .............................................................................................................................. 8
+2.1 Data Processing ..................................................................................................................................... 9
+2.1.1 IWS Contradiction .......................................................................................................................................... 9
+2.1.2 IWS ................................................................................................................................................................. 9
+2.1.3 MWS ............................................................................................................................................................ 12
+2.1.4 WSU processing IWS and MWS Combined .................................................................................................. 13
+2.1.5 WSU processing IWS and MWS Combined .................................................................................................. 14
+2.2 Hardware Replacement ....................................................................................................................... 14
+2.3 Storage ................................................................................................................................................ 14
+2.4 Data Transfer SCO to ARCs .................................................................................................................. 16
+2.5 Shared scratch space for Processing (e.g. Lustre) ................................................................................ 17
+2.6 Rack Space .......................................................................................................................................... 18
+2.7 Power and Cooling ............................................................................................................................. 19
+2.8 Cost Summary ..................................................................................................................................... 20
+2.8.1 Operating Cost ............................................................................................................................................. 22
+3. Avenues to Save Cost .................................................................................................................. 23
+4. Risks ............................................................................................................................................ 23
+Appendix 1, Assumptions ................................................................................................................... 24
+Appendix 2, Sanity Check ................................................................................................................... 25
+A2.1 Top-down approach for today .......................................................................................................... 25
+A2.2 Bottom-up approach for today ......................................................................................................... 26
+A2.3 Conclusion ....................................................................................................................................... 26
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 3 of 26
+Disclaimer: Due to the extremely short time-scale of the TSI and the large number of assumptions that had
+to be made about the system that has so far only been designed conceptually, all numbers presented in this
+document are only rough ball-park estimates. All numbers here presented are subject to change by easily a
+factor of 3 if assumptions are different and/or a further detailed analysis is done.
+We also note that prices are confidential and should not be shared outside of the group that strictly needs it.
+Executive Summary
+This Technical Solution Investigation (TSI) provides ball-park cost and resource estimates for WSU data-
+processing and storage based on the current operational model, the ‘baseline model’. In this model, data
+are processed (predominantly) at SCO, are stored there in the main archive, and are then replicated to the
+three ARCs which each hold a full copy.
+Charge 1: We find no show-stoppers operating the WSU in this model. Two states have been considered in
+the analysis, the Initial WSU System (IWS) starting with Cycle 16 observing and the Minimum WSU System
+(MWS) assumed to start with Cycle 19.
+We find that it will be possible to host the processing and storage equipment in the existing computer rooms
+at SCO and at the ARCs assuming that modern hardware (concentrating CPU cores per server, having
+large capacity hard drives) replaces the existing legacy hardware in the WSU era. The total rack-space
+required for data processing nodes, and storage nodes, and a shared scratch space for processing (e.g
+Lustre) will likely be even less than the currently used space at each site. Also for power, cooling and floor-
+weight, for the data processing nodes, and storage nodes, and scratch space, the required hardware
+(assuming it replaces existing hardware) will fit within the same infrastructure with some headroom.
+Charge 2: As an initial ball-park estimate we find cost for the data-processing hardware at SCO is estimated
+to be 100 kUSD per year averaged over a 10-year operating period from Cycle 16 onward. For each ARC
+the cost is of the order of 21 kUSD per year.
+For the IWS we base our estimates on the current processing with legacy CASA, scaled up by the expected
+ratio of products sizes. For the MWS we use the values provided in [RD01] multiplied by a factor of 3 to
+take into account overheads like deconvolution, Input/Output, and others. For the data-rates in both cases
+we refer to [AD03]. All of the estimations done are driven by imaging compute on the assumption that per-
+EB calibration and other planned workflow changes permit calibration to be run much more efficiently than
+currently the case.
+We note a serious contradiction that has been identified: The IWS data-rate estimate assumes data-
+products will be created up to several TB in size and that CASA is used to create them ([RD03] Phase 1 /
+State 4). However at the time of writing, CASA can robustly only produce data-cubes up to about 100 GB.
+91% of the data-volume (9% of the number of MOUS) can not be imaged with the current CASA. A solution
+to this conflict will have to be found. We size the IWS system assuming no mitigation.
+Assuming that the current CASA will be used for processing of the IWS and a cube size solution is found,
+more than 90% of the total WSU processing cost is driven by IWS although the data-rate is only about 1/4th
+of the MWS.
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 4 of 26
+Given that a significant fraction of the WSU compute cost over 10 years is likely to be driven by
+architectural requirements of current CASA (which will become obsolete), we consider that the actual profile
+of compute purchasing and architectures needs to be considered in the future. If it was possible to improve
+CASA’s parallelization during imaging to make efficient use of the available compute resources, the cost
+could be reduced by a factor of about 9!
+For the scratch space used to store the processing products until they get quality controlled and ingested
+into the archive, we estimate 23.4 kUSD per year at SCO and 6.5 kUSD per year at each ARC.
+The cost for hardware from vendors in Chile can be up to 1.7 times higher than the cost for the same
+hardware in North America, Europe or Japan, and it has been already considered in the cost estimates.
+We estimate that the FTE resources for operating the processing hardware infrastructure will be roughly
+similar to the current operational scenario.
+Charge 3: Based on the IWS and MWS stages, the corresponding data-rates and start-dates as well as
+quotes from vendors, we estimate the hardware cost for storing a full copy of the archive at one site to be
+roughly 200 kUSD per year at the SCO and 76 kUSD per year at the ARCs, again averaged over a 10-year
+operating period starting October 2029.
+Assumptions and risks related to this analysis are listed in Appendix 1 and section 4, respectively.
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 5 of 26
+1. Introduction
+1.1 Purpose
+This Technical Solution Investigation TSI estimates cost and resources for the data processing and
+archiving infrastructure in the current operational model of ALMA where data is predominantly processed at
+SCO (90% at SCO and 10% at the ARCs together) and the data are stored at SCO and then replicated to
+each ARC.
+1.2 Scope
+This TSI is strictly focusing on answering the charges. In particular this TSI is not a system design. Such a
+design is expected to be carried out in an ALMA-wide effort after the WSU cost exercise has taken place,
+for which this TSI is requested to provide input.
+In order to arrive at actual cost estimates without a detailed system design in hand, we however are
+required to make a large number of assumptions, detailed in the text and in the section Appendix 1.
+In the given six weeks, this TSI had to produce a report and evaluating many different possibilities of
+implementations was unfeasible.
+Out of the scope of this TSI are:
+• resource estimates for QA2 evaluation (treated in a separate TSI)
+• resource estimates for the development of software including processing software
+• whether ALMA will process 100% of the data at SCO or go for a 90%/10% split,
+• evaluate different data processing scenarios and/or related implementation
+• a system design
+1.3 Applicable Document
+The following documents are part of this document to the extent specified herein. If not explicitly stated
+otherwise, the latest issue of the document is valid.
+In the event of any conflict with this document, the Specification takes precedence.
+Appl. Document Title ALMA Doc. Number
+[AD01]
+“Technical Solution Investigation (TSI): WSU data processing
+infrastructure initial cost/resource estimates” charges
+[AD02] Definition of the different stages of the ALMA2030 WSU System ALMA-05.15.00.00-3021-A-DSN
+[AD03] Updated Estimates of ALMA WSU Data Properties for IWS and MWS
+[AD04] Wideband Sensitivity Upgrade Conceptual System Design Description ALMA-05.00.00.00-3015-C-DSN
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 6 of 26
+1.4 Reference Documents
+The following documents are referenced within the present document to the extent specified herein. If not
+explicitly stated otherwise, the latest issue of the document is valid.
+Ref. Document Title ALMA Doc. Number
+[RD01] ALMA WSU Size of Compute Estimate ALMA-05.00.00.00-3064-A-REP
+[RD02] WSU Data Transfer and Archive Storage Working Group Report ALMA-05.00.00.00-3055-A-REP
+[RD03] Data Processing Transition Working Group Report ALMA-05.15.00.00-3019-1-REP
+[RD04] Wideband Sensitivity Upgrade Data Processing Working Group report ALMA-05.00.00.00-3057-A-REP
+[RD05] Cube Parallelization with CASA6 CASA Memo 13
+[RD06] Wideband Sensitivity Upgrade Data Processing, Distribution, and
+Accessibility Impact Assessment ALMA-05.00.00.00-3016-A-DSN
+[RD07] Data Rates Ramp-Up Plan Working Group Report: Estimates of ALMA
+WSU Data Properties ALMA-05.00.00.00-3053-A-GEN
+[RD08] ALMA Operations Plan version D
+1.5 Charges
+The charges to the TSI WG provided by the AMT (see [AD01] for the full document) are:
+1. 2. 3. Identify whether keeping the current model creates any major impacts to the WSU Data Processing
+Transition Plan (DPT WG report will be submitted August 02).
+Provide initial cost and resource estimates associated with data processing infrastructure for the
+baseline scenario to give an initial “ballpark” estimate for the AMT to consider in the WSU Cost
+Review.
+Provide a brief description of the implications of the baseline scenario for the Archive storage cost
+estimates that were presented in the DTAS-WG report (ALMA-05.00.00.00-3055-A-REP; refer to
+Section 9.2).
+1.6 Acronyms
+The more complete list of acronyms and abbreviations used within this document are given below. For a
+complete set of acronyms and abbreviations, please go to the ALMA Acronym Finder web page.
+ALMA Atacama Large Millimeter Array
+ARC ALMA Regional Center
+ASA ALMA Science Archive
+CASA Common Astronomy Software Applications
+DTAS Data Transfer and Archive Storage Working Group
+DP Data Processing Working Group
+DPT Data Processing Transition Working Group
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 7 of 26
+1.7 Verb Conventions
+“Shall” is used to express a binding specification.
+“Will” is used to represent a declaration of purpose on part of the design activity.
+1.8 Current Scenario
+The charges of this TSI restrict the investigations and state that “only the current scenario of data
+processing and archive replication at the JAO and all three ARCs (hereafter “baseline scenario”)
+should be considered.”
+In this scenario – as opposed to alternative scenarios like those mentioned in [RD02] section 8.5 – once
+raw data arrive at SCO they are mirrored to each of the ARCs. Once the required data has been acquired,
+90% of this raw data is processed at SCO and 10% is processed at the ARCs. The resulting products from
+the ARCS are sent to SCO to be stored in the main Archive, in the same way as the products generated at
+SCO are. The products are then replicated to the three ARCs using dedicated private networks with VPN
+tunnels. PIs and archival researchers are only interacting with the copies of the data at the ARCs which
+protects the main copy of the data at SCO.
+This model was specified in the ALMA Operations Plan D [RD08] and has been used since the start of
+operations with the change that about 10% of the data are processed at the ARCs and then sent back to
+SCO for ingestion and replication.
+For the initial ball-park estimate of the cost of the processing infrastructure we only considered the current
+scenario of 90%-10% data processed at SCO and the ARCs, and not alternative scenarios such as
+processing 100% of the data at SCO, or the cloud or others.
+1.9 Considered States of the System
+Two states of the WSU system are to be considered for this TSI [AD02].
+IWS: The Initial WSU system (Cycle 16)
+The initial WSU system comes with an average data-rate of 0.464 PB/yr of raw data and 2.190 PB/yr of
+(unmitigated) products1
+.
+The IWS also assumes that the minimal software upgrades to the system are carried out. For the context of
+this TSI, this means
+1. per-EB/session calibration with restore ([RD03])
+1 Note that these values do not assume that the .pb.fits files are compressed which reduces the size of the products
+actually stored to 0.65 of the given value.
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 8 of 26
+2. RADPS-ALMA workflow manager but legacy CASA calibration and imaging ([RD03] Phase 1 / State
+4)
+3. Product ingestion and data-transfer augmented with single-file parallelization as necessary pre-
+condition for WSU data-handling ([RD02] section 7.3).
+MWS: The Minimum WSU system (Cycle 19)
+The Minimum WSU system comes with an average data-rate of 2.143 PB/yr of raw data and 5.966 PB/yr of
+(unmitigated) products2
+.
+The MWS also assumes that the minimal software upgrades to the system are carried out. For the context
+of this TSI this means the minimal upgrades of IWS plus
+1. RADPS-ALMA with new and efficient calibration and imaging, and GOUS processing ([RD03] Phase
+3 / State 10)
+2. Product ingestion and data-transfer augmented with single-file parallelization as necessary pre-
+condition for WSU data-handling ([RD02] section 7.3).
+2. Cost estimates
+2.1. Data Processing
+For IWS and MWS it is important to buy machines with large numbers of cores to reduce the amount of
+rack-space, cooling, power-consumption and total cost.
+For IWS where CASA will be used, we need 32GB/core for processing. A typical machine we currently can
+configure has 128 cores/4.1TB of RAM costing roughly 48 kUSD at NA and 80 kUSD from Lenovo at SCO;
+see Table 1. A large fraction of the cost is driven by the high RAM/core requirement.
+For MWS we assume that less memory per core is necessary3 as RADPS will be highly parallelizable over
+cores. A reference machine quoted today with, for example, 192 cores/1.5TB of RAM (which means 8GB
+RAM/core) costs 40kUSD at NA and 60kUSD at JAO both including local storage. See Table 1.
+2 These values also do not assume that the .pb.fits files are compressed. In the MWS ALMA will however also carry
+out GOUS processing which adds products. These effects nearly cancel; we multiply the estimated uncompressed
+product sizes by 0.89 = 0.65*1.37 to account for their net effect when comparing to measured, current (compressed)
+product sizes.
+3 According to the CASA team 16x more memory is needed during processing of a channel than to hold the data in
+float precision itself. Estimating the actual average memory need of all the FITS files in the ALMA archive, the average
+need of RAM with that measurement is 67.2 Mbytes/channel.
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 9 of 26
+2.1.1. IWS Contradiction
+We have identified a serious contradiction between the requirements and the capabilities. As per [AD02] the
+IWS contains ‘the Level 1 scientific priorities’ as well as System state 4 of [RD03]. This state uses CASA for
+calibration and imaging together with a new workflow management system. Just as it is the case today,
+however, CASA has a limitation in that it cannot robustly create data-cubes that are larger than about
+60-100 GB. Currently, ALMA applies ‘mitigation’ by either reducing the quality and the size of the products,
+or does not create such products at all [RD07].
+With the limit of 100 GB per cube, we find that only 9% of the IWS data-volume can be created with
+CASA! In particular, this of course concerns the very largest cubes with the most challenging but potentially
+highly rewarding science projects. The fraction of the MOUS that could be delivered, however, is 91% as
+most of the data-volume is concentrated in the few very largest projects.
+Solutions could include to
+1. Fix the CASA problem related to the 100GB limit
+2. Advance the delivery schedule of RADPS-ALMA imaging to 2029
+3. Use alternative software for example along the lines of [RD05], assuming that the large cubes can
+then be analyzed with CASA in the first place
+4. Modify the spectral set up in the OT to split up Spectral Windows so that each does not lead to data-
+cubes of more than 100GB. This would require the OT to split up the largest SPW into 76 SPWs and
+DMG to perform quality control on them.
+If none of those or equivalent solutions is employed, ALMA would have to ‘mitigate’ i.e to discard creating
+92% of the IWS data-product volume! This situation would be similar to the current operational scenario,
+where only ~1/10 of the total BLC product volume is created due to these mitigations.
+In this case, the aggregate IWS science product data volume per cycle would be only 118 TB per cycle
+instead of 1.4 PB per cycle. The total product volume would then be similar to what is produced today 71.8
+TB. This in turn, of course, would reduce the values for storage and processing cost and rackspace needs
+for the IWS by about a factor of 10.
+2.1.2. IWS
+We use a bottom-up approach to estimate the processing cost for IWS. As we will be using CASA for
+calibration and imaging, we use the current amount of compute (46 compute nodes of which 8 cores are
+used in a PL run) together with the current amount of data processed, averaged over Cycle7 and 8 to
+match the methodology used in [RD01]: currently we have been producing 101 TB/yr of raw data (as
+measured from the main Archive) and 71.8 TB/yr of final products (with some of these compressed, as
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 10 of 26
+discussed below). We have also measured from the processing log files in the ASA, that over the two
+cycles 1/3 of the processing time is spent in calibration and 2/3 is spent in imaging4
+.
+The IWS raw data estimation from the [AD03] is 0.464 PB/yr. The product size is estimated to be 2.190
+PB/yr. That value however is the value without compressing the .pb.fits files as ALMA does. We have
+measured the compression factor for all files in the ALMA Science Archive [RD07] to be
+(1.3092/2.0)=0.6546. The scaled product size for IWS will be therefore 0.6546 * 2.190 PB/yr = 1.433 PB/yr.
+The unmitigated IWS product sizes relative to current (sometimes heavily) mitigated product sizes, are
+therefore estimated to be 1.433/0.0718 = 19.9x larger on average.
+2.1.2.1. IWS Imaging
+For IWS imaging we estimate the number of cores that will be needed by scaling from the science product
+sizes: 1.433 PB/yr for IWS and 71.8TB for current operations. Both of these numbers assume pb.fits files
+are compressed as they currently are in the Archive. Other things being equal, this predicts a 19.9x
+increase in the compute need. Two thirds of the total processing time is spent in imaging and 46 machines
+are available at JAO where 8 cores are used per imaging run. The machines are not used at 100%
+efficiency throughout the entire year but we conservatively assume that they are. We thus expect to be
+needing about 19.9 (increase) * 8 cores/node * 46 nodes * 0.66 (imaging) = 4833 cores.
+To estimate the cost of compute, we assume that the compute available at a given price in the market—
+and within a fixed 1U form factor, with fixed power and heat dissipation requirements— increases by 1.29x
+per year (showing as increased number of compute cores per processor) which is a conservative estimate
+of the current slope of Moore’s law. A less conservative measure would be 1.4x per year. We deem all of
+these assumptions to be reasonable, with the caveat that the assumed “Moore’s law” has a significant
+impact and is uncertain.
+Using a quote from NA for a 128 core/4.1TB RAM compute node, i.e 32GB/core at a cost of about 48kUSD.
+We find that 4833 cores / (128 cores/node * 1.29**5 years) = 10.57 nodes would be required to image the
+IWS for a cost of 507 kUSD. With the less conservative value for Moore’s law 7 compute nodes would be
+required. We assume that each ARC will procure 33% of the total compute bought at JAO with a cost of
+about 169 kUSD per ARC.
+Now, prices in Chile differ substantially from prices at the ARCs. The cost for the same hardware bought
+from a vendor in Chile, Lenovo, is 80 kUSD, 1.7 times more expensive than NA quote, leading to a total
+cost of 845 kUSD for processing at SCO.
+Assuming the prices shown, the total cost for IWS processing is 845 + 3*169 = 1.352 MUSD for all sites
+together.
+4 Note that the fraction spent in imaging is lower as the largest products are not created due to ‘mitigation’. In the WSU
+era, without mitigation, the fraction of the time spent in imaging will be one order of magnitude larger [RD07])
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 11 of 26
+We recommend the project to look into using different brands in Chile, or consider shipping hardware (with
+extra spare parts) from one of the ARCs allowing for a potential saving of up to 350 kUSD.
+Alternatively, ALMA could invest into using more efficient software during IWS by bringing e.g. RADPS-
+ALMA into production earlier or looking into solutions like [RD05].
+2.1.2.2. IWS Calibration
+As per IWS definition containing [RD03] Phase 1 / State 4, per-EB calibration will be available.
+Measurements of CPU and RAM usage during EA’s 7m cloud testing, SCO data processing, and EU’s
+calMS (private communication Eisuke Morita-san, Jorge Garcia, Felix Stoehr) calibration requires only one
+core and approximately 20GB of RAM. We conservatively assume 32GB of RAM per core. With 0.33 of the
+processing time spent in calibration we find
+46 nodes * 0.33 cal-only * 0.464 PB / 0.101 PB = 70 parallel runs are constantly needed. This corresponds
+to approximately 0.15 compute nodes of the 128C/4.1TB reference IWS compute node (with expected core
+count in 2029).
+This estimate critically requires expected steps to increase compute efficiency and smooth out the demand
+curve, notably per-EB calibration (available for IWS per the AMT definition of IWS as containing [RD03]
+Phase 1 / State 4). It will also be necessary to migrate toward pipeline calibration runs with efficient
+compute resource requirements, specifically: to allocate only a single core for pipeline calibration, until the
+calibration pipeline is efficiently parallelized with RADPS-ALMA.
+The baselined hardware would have 128 x 1.29**5 = 457 cores for each node, with each requiring 14.6 TB
+of RAM to comply with the current 32 GB/node requirement. This may not be the optimal configuration from
+file Input/Output (I/O) or price/performance point of view, but we regard it as indicative of the cost.
+This work has sized all compute for fully unmitigated products. We note how crucial the total size of the
+products that gets generated in the WSU era, strongly depending on choices for mitigation, is for the total
+cost estimate, for the usability of the observatory, and for the scientific impact. Indeed, most of the potential
+increase in product size between now and IWS comes from reductions in cube and aggregate product size
+mitigations. We also note that [RD03] Phase 1 / State 4 says that the current cube size limits will be still in
+place like it is pointed out in the section on IWS contradiction in this document. ALMA will have to make
+cost-benefit estimates for the different possibilities.
+As mentioned above, the estimate is sized for no cube size or product size mitigations. This is contrary to
+what we expect in [RD03] System State 4, which still includes cube size mitigation representing a factor of
+10 compared to the full IWS data-rate. The reason we did so is that the subsequent stages of the transition
+plan call for progressively less mitigation over time; furthermore, product mitigation (skipping targets or
+SPWs) comprise 75% of current mitigations, and are fundamentally at odds with key scientific goals of
+WSU. We therefore consider it important to size compute with it in mind to move away from mitigation. See
+also Section 2.1.1, ‘IWS contradiction’
+.
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 12 of 26
+2.1.3. MWS
+As per definition of MWS and thus [RD03] Phase 3 / State 10, RADPS-ALMA will be available both for
+calibration and imaging (note that the exact technical infrastructure requirements for RADPS-ALMA as well
+as the exact performance it will deliver are not yet known, see also sections 4,
+‘Risks’
+, and Appendix 1,
+‘Assumptions’). The [AD03] provides an estimation of the conversion between the product size in GB and
+the PFLOPS required. Note that the values from the [RD01] are averaged over the observing time of about
+4000h per year whereas processing happens during the entire calendar year. Note also that the values in
+[RD01] do not assume that the .pb.fits files are compressed which leads to a total products size reduced by
+(1.3092/2.0) = 0.6546. With those we find
+0.185 PFLOPS * 4000h/8760h / 5.966 PB / 0.6546 = 0.02165 PFLOPS/PB
+[RD01] estimates only the FLOPS needed for gridding. As the authors clearly state, other processing needs
+and effects like calibration, deconvolution and I/O will require additional processing power. We apply a
+safety factor of 3 to the processing values estimated from the [RD01] to be conservative. In Appendix
+2, ‘Sanity Check’, we compare the bottom-up and the top-down models applied to BLC data to confirm the
+estimations can predict the current state.
+The estimated values from [AD03] give for MWS imaging 5.966 PB of products. As for IWS this value does
+not take into account the compression of the .pb.fits files and the value is thus lower by a factor of 0.6546.
+At the same time, in MWS we will have GOUS processing and assuming that we make all MOUS products
+and all GOUS products for multi-MOUS GOUS (which is not taken into account in the [RD01] nor [AD03]),
+we estimate from the ASDM sizes of Cycle 7 and 8 that creating those products will be 1.36 times larger
+than only the MOUS products. Combining both factors gives 0.6546 * 1.36 = 0.89.
+Using a reference compute node with 192 cores, 8GB RAM/core and TFLOPS: 10.752, quotes from 2023
+and 2024 of 33 kUSD, 38kUSD, 33 kUSD for the ARCs and 60 kUSD for SCO, and including the
+conservative value of 1.29 for the Moore’s law, we find that:
+5.966 PB * 0.89 * 0.02165 PFLOPS/PB / (0.0108 PFLOPS/node) / 1.29**9 years * 3 = 3.22
+So, 3.22 compute nodes of 2032 will be required to process MWS data, i.e. a total of
+3.22 nodes * 1.29**9 * 192 cores = 6115 cores.
+Assuming an even more conservative safety factor of 5 where RADPS-ALMA would be less efficient than
+[RD05], we would need 5.3 nodes for MWS.
+Note that the 9 years elapsed time in the projection is to account for the fact that the quote we scale from in
+this case is from 2023. So this would translate into a cost of 3.22 nodes * 34.6 kUSD (as an average cost
+for the ARCs) = 111.4 kUSD for the ARCs. And for SCO, 3.22 nodes * 60 kUSD = 193.2 kUSD.
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 13 of 26
+Following the calculations for IWS and assuming we purchased all of those, we will have 4736 cores
+already available. Therefore for MWS we will need 6115 - 4736 = 1379 cores, buying 0.73 of a compute
+node with 8GB RAM/core in 2032 (1node * 192 cores * 1.29**9 years = 1900 cores) will be enough to cover
+the MWS processing.
+The needs for calibration are already covered in the conservative safety factor of 3. The lower marginal
+compute cost is due to 3 more years of compute cost improvements and the lower RAM requirement
+assumed for RADPS-ALMA, as well as compute efficiency improvements from RADPS-ALMA implicit in the
+calculation.
+We find the additional cost for MWS to be below 10% the compute cost for IWS.
+The full MWS cost –if MWS compute were to be purchased in its entirety, rather than adding to an earlier
+IWS purchase– would still be below 22% = 3.22 nodes * 34.6 kUSD/node / (10.57 nodes * 48 kUSD/node)
+of the compute cost for IWS although the MWS data-rate is a factor of 3.9 = (2.143 PB + 5.966 PB * 0.89 ) /
+(0.464 PB + 2.190 PB * 0.6546) larger than for IWS.
+This is due to the expected, further reductions in compute cost in the intervening years and the lower RAM
+requirements we assume for RADPS-ALMA vs current CASA, as well as expected compute efficiency
+improvements that RADPS-ALMA will deliver. Additionally we note that the increase in data volume
+expected from MWS to IWS is considerably smaller than the increase from Cycle 10 to IWS.
+If RADPS-ALMA were available for IWS, or a process similar to the one reported in [RD05] could be used,
+we would conservatively estimate that instead of 10.57 compute nodes for IWS imaging we can use the
+same estimation used above for MWS (192C/1.5TB quote from 2023), meaning:
+1.433 PB * 0.02165 PFLOPS/PB / (0.0108 PFLOPS/node) / 1.29**6 years * 3 = 1.87 nodes
+with a related cost of about 1.87 * 34.6 kUSD = 64.7 kUSD for the ARCs. The processing cost for IWS
+would be reduced then by a factor of 10.57 nodes * 48 kUSD/node / (1.87 nodes * 34.6 kUSD/node) = 7.8,
+corresponding to a cost of 21.6 kUSD per ARC.
+When buying hardware from Lenovo in Chile the value for a node would be 60 kUSD, meaning the cost of
+processing IWS data would b reduced by a factor of 7.5 = 10.57 nodes * 80 kUSD/node / (1.87 nodes * 60
+kUSD/node), for a cost of 1.87 * 60 kUSD = 112.2 kUSD in SCO.
+2.1.4. WSU processing IWS and MWS combined
+The total processing cost of IWS and MWS together is about (507 kUSD + 111.4 kUSD) / 3 ARCs = 206
+kUSD for each ARC, and about 845 kUSD + 193.2 kUSD = 1.04MUSD for SCO.
+This corresponds to 100 kUSD/yr for SCO and 20.6 kUSD/yr for each ARC.
+The bulk of the cost is driven by processing IWS mainly due to the inefficient use of resources by CASA.
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 14 of 26
+2.1.5 Re-processing and QA3
+[RD03] calls for periodic reprocessing of the science archive contents to provide the highest quality science
+products and maintain their full accessibility through the project lifecycle. Since the contents of the archive
+increase with time, the compute requirements will also increase linearly on the cadence of the time it takes
+to make one full pass through the archive. If we assume a continuous hardware upgrade lifecycle with a
+period of 5 years. Then every 5 years the compute power of the JAO cluster will increase by a factor of
+(1+0.29)**5 ~ 3.5 (for our assumed value of Moore’s law). This is more than sufficient to cover the linear
+increase in compute due to reprocessing.
+The average compute load from QA3 is ~10% of the total processing burden and as such it is small
+compared to other uncertainties inherent in this estimate. Nevertheless, it is implicitly included in the IWS
+estimate. For MWS the ‘safety factor of 3’ is expected to also cover for the added computing needs due to
+QA3.
+2.2. Hardware Replacement
+The current hardware replacement cycle at SCO for storage and compute nodes is to be replaced every
+seven years due to technological obsolescence. ARCs current handling of warranty can differ.
+For this cost exercise, we assume to have a 5 year warranty cycle. Processing infrastructure will be
+purchased initially for the IWS and would have to be augmented for MWS. Now, the decision could also be
+taken to keep "out-of-warranty" infrastructure working in Operations, with certain caveats, and replace every
+other 10 years.
+We provide the storage values including hardware replacement, but we have omitted the calculation for
+processing due to lack of time and the marginal cost this would represent when comparing to original costs
+for IWS.
+2.3. Storage
+Following [RD02], we assume that high-density JBOD systems will be used to store the incoming data in
+the WSU era. These systems consist of a 4U chassis holding up to 102 disks and are managed by a
+separate 1U head-node, accounting as 5U per storage node. We conservatively assume that one head-
+node is used per JBOD system. We also assume the selected system will fit in the existing racks. Should
+that not be the case for one site there are smaller solutions available at the expense of a little more vertical
+height.
+In [RD02] we have estimated the price evolution of HDDs to be improving by 1.15 per year. In 2023 such a
+system costs approximately 76 kUSD and has 2.4PB of raw disk space giving 1.7 PB of usable space with
+RAIDz3 on zfs.
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 15 of 26
+We use the updated estimations for the data-rates from [AD03] where we scale the values for products
+during IWS by (1.3092/2.0) = 0.6546 to account for the fact that the primary beam FITS (.pb.fits) files are
+stored gzip compressed (see note in [RD01]). We scale the values of product sizes during MWS by 0.89
+which accounts for the compression as above, but also scale for the creation of full products at the MOUS
+and GOUS levels (as explained in Sections 2.1.2 and 2.1.3) with a factor of 1.36.
+Considering a full copy of the WSU data with the updated estimations from [AD03] and a hardware replace
+cycle of 5 years (see section 2.3, ‘Hardware Replacement’) we summarize the results in Table 1, where:
+obs pbytes = the amount of PBytes observed that year,
+new pbytes = the amount of PBytes needed that year including hardware replacement,
+total pbytes = the cumulative amount of PBytes needed,
+new nodes = the number of new storage nodes to be bought that year,
+total racks = the total rack space needed taking into account the disposal of replaced storage nodes,
+new cost kUSD = the new cost for storage,
+total cost kUSD = the total cost for storage (single ARC).
+A full copy of WSU data therefore is estimated to be about 76 kUSD/yr. This value is applicable to storage
+at the ARCs.
+Avenues to reduce the cost further are listed in Section 3, ‘Avenues to save costs’. For example, storing
+(not processing!) the largest 10% of data-products with 3px spatial oversampling instead of 5px would
+reduce the cost to roughly 32 kUSD/yr.
+Compressing cubes where the ALMA pipeline finds no emission and no absorption and thus delivers dirty
+cubes to the archive (roughly 46% of all data-cubes, NA private communication) and extending also the
+hardware replacement cycle to 7 years the cost would reduce to 38 kUSD/yr.
+For storage of the WSU data, 0.9 racks will be needed. And, considering the cost reductions above, also
+the rack-space, and thus power and cooling requirements, could be reduced to e.g. 0.6 racks.
+We assume SCO will continue using DELL ISILON systems instead of off-the-shelf hardware assumed
+above for the ARCs because hardware support in Chile is not as readily available as at the ARCs.
+The ISILON solution raises the price per year for the same amount of storage space by a factor of 2.6 to
+200 kUSD/yr. The example cost reductions above, would then correspond to about 111 kUSD and 96
+kUSD, respectively.
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 16 of 26
+Table 1. Variation of the storage requirements for IWS and MWS.
+new
+total
+obs
+new
+total
+new
+total
+total
+cost
+cost
+Year
+pbytes
+pbytes
+pbytes
+nodes
+nodes
+racks
+kUSD
+kUSD
+2029 2 2 2 1 1 0.2 76 76
+2030 2 2 4 0 1 0.2 0 76
+2031 2 2 6 1 2 0.3 76 152
+2032 8 8 14 1 3 0.5 76 227
+2033 8 8 21 1 4 0.6 76 303
+2034 8 10 29 2 5 0.8 152 454
+2035 8 10 36 1 6 0.9 76 530
+2036 8 10 43 1 6 0.9 76 605
+2037 8 15 51 1 6 0.9 76 681
+2038 8 15 58 1 6 0.9 76 756
+2.4. Data Transfer SCO to ARCs
+The physical network connection from SCO is 1Gbps for each ARC. Each ARC has a contract with REUNA.
+Prices vary between the ARCs but are of the order of 40 kUSD/yr per ARC.
+The average data-rate in IWS is estimated to be (0.464 PB + 2.143 PB * 0.6546) * 1024*1024*8 /
+365/24/3600s = 0.5 Gbit/s, and in MWS (2.190 PB + 5.966 PB * 0.89 ) * 1024*1024*8 / 365/24/3600s = 2
+Gbit/s, which is substantially lower than the original values that were given as input to [RD02].
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 17 of 26
+Bandwidth prices drop very rapidly with about 1.50/yr (Nielson’s law5) but we very conservatively assume
+prices to evolve as 1.16/yr compared to 2023 ([RD02] 7.3). In 2029 for IWS each ARC can expect to have
+2.4 Gbit/s available for the same cost as in 2023. In 2032 for MWS each ARC can expect to have 3.8 Gbit/s
+available for the same cost as in 2023.
+We conclude that with the current budget for bandwidth, both the IWS and the MWS data-rates will be
+transferable with either large spare bandwidth (for re-transmissions) of factors of 1.9 to 4.8 or with the
+possibility to reduce cost compared to today.
+We note that [RD02, Section 7.3] and subsequently [AD04, Section 3.2.11] assume that the existing
+partner-site mechanism of the NGAS storage system is extended: the idea is to keep the same network
+layout and setting as today but if one ARC needs to obtain a file from Chile, it first asks the other two ARCs
+if they have already downloaded the file. If so, that ARC obtains the file from one of the other ARCs instead
+of from Chile.
+In essence, this means that each byte is taken out of Chile only once and that products are synchronized
+between ARCs over the northern hemisphere where bandwidth is cheaper by several factors. This
+procedure would reduce the bandwidth cost by essentially a factor of 3 only requiring a small change of the
+NGAS software. Assuming that a buffer of 50% on the bandwidth is enough, the total cost would reduce to
+40k USD / 3 (ARC) * 1.5 / 1.9 = 11 kUSD/yr per ARC.
+2.5. Shared scratch space for Processing (e.g. Lustre)
+We assume that any write operations during processing itself will be written to fast internal NVME disks6
+.
+This makes having a centralized HPC filesystem irrelevant for data processing, considering that each
+pipeline run is independent of others in its whole run lifetime. This also allows SCO and the ARCs to save
+on infrastructure for this item in particular. For example, the Lustre filesystem used for pipeline processing
+at SCO was recently replaced due to technological obsolescence, and this amounted to about 145 kUSD,
+using 16 units of a compute rack at SCO Datacenter for only 700 TB.
+On the other hand, the network used for Lustre filesystem uses Infiniband technology. The cost of
+upgrading this fabric is not included. The correct sizing of the Infiniband topology is needed so as to avoid
+bottlenecks in the use of the Lustre filesystem and compute nodes.
+In addition, Lustre filesystem allows to "stripe" a file in smaller parallel chunks, to be able to write to the
+filesystem faster, but this is not being used as current pipeline creates many small files instead of few big
+files, and only a "stripe" of 1 is used. This means that any one file (be it small or large) is only written to a
+certain Lustre Object Storage Target (OST). So, the only advantage of using Lustre is practically how fast
+we can write a file on one disk.
+5 https://www.nngroup.com/articles/law-of-bandwidth/
+6 This assumed architecture will need to be checked against the RADPS-ALMA system design when it is available.
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 18 of 26
+Even though the processing nodes have an exclusive local 30TB of disk space available for the execution
+of the pipeline run, we still need to have an additional centralized area holding the products of the pipeline
+processing until quality assurance has been done and the products have been ingested into the Archive, in
+order to clean the 30TB of local disk to continue processing. This centralized storage does not necessarily
+have to be Lustre in the future, but could be some other type of filesystem, for example, ZFS presented with
+a NFS frontend.
+For estimating the cost of the scratch space storage systems we use the same hardware specification as
+for the NGAS storage nodes and head-nodes above (section 2.3, ‘Storage’). For IWS we require 0.464 PB
+(visibilities) + 2.190 PB (products) * 0.6546 (gzip factor) = 1.898 PB. For MWS, 2.143 PB (visibilities) +
+5.966 PB (products) * 0.89 (gzip and GOUS factors) = 7.452 PB.
+For IWS the number of nodes needed is 1.898 PB / (1.7 PB (usable capacity) * 1.16**6 years) = 0.46
+storage-type node with head-node for Lustre. For MWS the number of nodes needed is 7.452 / (1.7
+PB (usable capacity) * 1.16**9 years) = 1.15 storage-type nodes with head-nodes for SCO.
+The ARCs are assumed to have 1/3 of the full processing capability of SCO. The MWS and IWS costs for
+scratch space (ignoring hardware replacement) are thus about (0.46 nodes * 76 kUSD + 1.15 nodes *
+76 kUSD) * 0.33 = 40 kUSD per ARC, or 4 kUSD/yr per ARC. A single storage node will be enough for
+each ARC replaced after 5 years with a cost of about 76 kUSD.
+We assume 90 kUSD for an equivalent JBOD and head-node system at SCO (Maxs Simmonds private
+communication). The MWS and IWS costs for scratch space (ignoring hardware replacement) are
+thus about (0.46*90 kUSD + 1.15 * 90 kUSD) = 234 kUSD or 23.4 kUSD/yr for SCO.
+2.6. Rack Space
+The SCO APO datacenter room has 9 racks, but not all of them are exclusive for Data Processing. It is
+estimated that 55% of rack space is used for other APO and Observatory activities and thus (1 - 0.55)*9 =
+4.05 racks can be made available for the WSU processing and storage hardware, replacing the currently
+used hardware.
+For the full-data-rate we find that storage of WSU data needs 0.9 racks (assuming 32U are available per
+rack and the remaining 8-14U are available for airflow, networking equipment, doors etc.), from Section 2.3,
+‘Storage’.
+Processing hardware (1U servers for the ARCs and 2U servers for SCO) will need 10.3U for the ARCs and
+20.6U for SCO, and Lustre adds 1.15 * 5U = 5.75U at SCO and 1.15 U * 5 / 3 = 1.9 U per ARC.
+The main Archive storage of currently 16U will be needed to hold the data from Cycles 0 to 15 at SCO until
+migrated to the new storage servers: the total expected size at the end of Cycle 15 is 2PB + 5 * 172.8 TB =
+2.864 PB. It will thus be possible that at the end of life of the current archive storage hardware those data
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 19 of 26
+are transferred to 2.864 PB / (1.7 PB usable capacity * 1.16**6) = 0.69 new standard storage nodes (see
+section 2.3, ‘Storage’) corresponding to 0.69 storage nodes * 5U = 3.44U. The same is true for the storage
+of Cycle 0 to Cycle 15 data at the ARCs which hold a full copy each.
+For SCO, we find that a total of 0.9(WSU storage) + [20.6 compute + 1.15 * 5 Lustre + 0.69 * 5 old-storage]
+/ 32U = 1.83 racks, with the addition of 2U per rack for network equipment, are needed. The hardware will
+therefore fit into the (1-0.55)* 9 = 4.05 racks that are available at SCO for current pipeline processing
+replacing the current processing nodes. 4.05/1.83 = 2.2x more rackspace would be available than is
+needed for the WSU at SCO once the data is migrated and modern hardware has been bought. No
+additional rack-space will need to be rented out from nearby commercial data-centers.
+Note that we very conservatively use 2U processing servers at SCO. This is due to the fact that currently
+the price-sweet-spot seems to be in those servers. However, we do believe that in the future like for the
+ARCs also 1U servers will be competitive in price. In that case, the total rack size needed would be even
+smaller.
+Rack space at the ARCs is about 9 racks at each site (see [RD02]) and there are only about (0.9 (storage)+
+0.69 * 5 (cycle0-to-15)/32 + (10.3 compute + 5.75 Lustre)*0.33 / 32) (1 + 2/32 network) = 1.25 racks, i.e. of
+the order of 14% of the available space at the ARCs is required.
+From those numbers we do not see a show-stopper for hosting the processing, network, and storage
+hardware in the current operational model, but it would mean replacing, at least at SCO, current compute
+nodes (8 or 16 core servers) with "dense" core servers.
+At SCO, we have the Dell ISILON/PowerScale solution for the storage of the main Archive. The ISILON
+A3000 node chassis has a depth of 107 [cm]. This is currently installed on one of our non-LCP Rittal racks.
+The Western Digital 102 JBOD has a depth of 104 [cm], so it would fit in the rack after moving the vertical
+frame.
+Please note that any additional equipment not indicated here would account for additional rack units to
+include. The details above include the minimum necessary equipment: processing nodes, centralized
+storage for the processing nodes, servers for NGAS with their respective dense storage (disk tray units for
+many disks attached to a front-end server) and basic networking put on the top of rack position. Also of note
+is that the current plan is that Infiniband would be decommissioned, and 100Gbps Ethernet would be used
+for all network interactions between the components.
+2.7. Power and Cooling
+Power and cooling considerations are important for any data-center operation. A JBOD system with 102
+disks and its corresponding compute node will require about 1300W + 500W power and cooling
+respectively. A processing node requires approximately 720W TDP (Thermal Design Power = the power
+consumption under the maximum theoretical load).
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 20 of 26
+With the following numbers, for power consumption:
+1. JBOD systems: 2 nodes for IWS, 6 nodes for MWS, 1 node for old data in both IWS and MWS,
+requiring 1800W at maximum and 1300W average,
+2. 3. compute nodes: 10.57 nodes for IWS (TDP: 720W); and 3.22 nodes for MWS (TDP: 720W),
+Lustre nodes: 1.15 node, 1800W at maximum and 1300W average
+So, the system will generate a TDP of (2 * 1300W + 10.35 * 720W + 1.15 * 1300W) = 11.7 KW for IWS and
+a TDP of (6 * 1300W + 10.57 * 720W + 0.73 * 720 + 1.15 * 1300W) = 17.4 KW for MWS in the period where
+IWS hardware is used and 0.73 nodes are bought as a complement for MWS. In later stages of the MWS,
+where the IWS compute nodes are replaced with more modern hardware, conservatively without adding
+Moore’s law (6 * 1300W + 3.22 * 720W + 0.73 * 720 + 1.15 * 1300W) = 12.1KW are needed.
+We note that the estimates are very conservative, as the theoretical TDP for processing nodes will not be
+reached in practice for ALMA processing. We know from [RD01] that even during gridding, only about 5% of
+the maximally available FLOPS are used which will reflect in the power consumption.
+SCO’s computer room has 160kW power and cooling distributed over 18 racks, i.e. 8.9 kW per rack
+(Cristobal Achermann, private communication). The 4.05 racks of space for the processing and storage at
+SCO therefore come with 36 kW of power and cooling. The actual needs are between 11.7KW / (8.9 kW *
+4.05) = 32% of the available power for IWS, and between 32% and 46%% of the available power for MWS.
+These numbers are measures for cooling and average power consumption. There is enough to cover
+power spikes at maximum power (approximately estimated to 1800/1300*46% = 63% should really all
+machines spike at the same moment in time).
+We have verified that power and cooling at the ARCs is also largely sufficient.
+We conclude that also for power and cooling the current operational model is viable, assuming that state-of-
+art hardware is purchased as suggested in this document.
+2.8. Cost Summary
+For a 10 year total cost of ownership (TCO) of the processing hardware under the assumptions laid out in
+Appendix 1, ‘Assumptions’, we find the following very rough ball-park numbers for hardware cost. Error bars
+are easily a factor of 2.
+Table 2. Hardware cost specifications and current cost
+Hardware quoted Description: ALL INFORMATION CONFIDENTIAL
+SCO Processing node IWS From CHILE LENOVO partner, INTEL CPU, Sept 2024:
+• 4xINTEL 32c CPU
+• 4TB RAM (32GB RAM per code)
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 21 of 26
+• Cores: 128
+• 3x15TB NVME disks (RAID 5)
+• Rackspace: 2U
+• Warranty: 5 years on-site
+• Price: 80 kUSD
+SCO Processing node
+MWS
+From CHILE LENOVO partner, Lenovo SR645, Sept 2024:
+• 2xAMD EPYC 9654 96c CPU
+• 1.5TB RAM
+• Cores: 192
+• 2x15TB NVME disks
+• Rackspace: 2U
+• Warranty: 5 years on-site
+• Price: 60 kUSD
+SCO Storage Dell Isilon/PowerScale chassis (4 nodes):
+• Disks: 1.6 PB (usable capacity)
+• Rackspace: 4U
+• Warranty: 5 years on-site
+• Price 200 kUSD (excl. VAT)
+ARC processing node IWS Sept 2024
+280W
+• Price: 48 kUSD
+• Core: 128
+• RAM: 4.1TB
+• Disks: 2x 1TB
+• Rackspace: 2U
+• Warranty: 3 years on-site
+• CPU: 2x AMD EPYC (Genoa) 9534 64C/128T 2.45Ghz 256mb 4800Mhz
+ARC processing node
+MWS
+Date of the quote: 2023-06
+• RAM: 1.536 TB
+• Cores: 192
+• Price: 33 kUSD (excl. VAT)
+• NVMe disks: 30 TB
+• TFLOPS: 10.752
+• Rackspace: 1U
+• Warranty: 3 years on-site
+ARC Storage Date of the quote: 2024-01
+JBOD
+• Disks: 2.244 PB (raw capacity)
+• Rackspace: 4U
+• Price: 59.3 kUSD (excl. VAT)
+Head-node
+• Cores: 32
+• Disks: 16TB
+• Rackspace: 1U
+• Price: 11.6 kUSD (excl. VAT)
+(The quote has 2U but the vendor confirmed that 1U is possible).
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 22 of 26
+As an example just for reference, if we assume that a [RD05]-type software was available (factor of 9.5 less
+processing cost), SCO would buy JBOD systems for data storage (90k instead of 200k per year) and ALMA
+would store (not process) the 10% largest cubes (containing 90% of the data-volume) at 3px instead of 5px
+oversampling where products are about 3/4 of the total volume (0.25 + 0.75 * (0.1 + 0.9 * 3**2 / 5**2)) =
+0.57, (Lustre scales with the products 0.1 + 0.9 * 3**2 / 5**2) then the cost would be substantially reduced.
+Table 3. Cost summary for SCO and ARCs
+SCO Average cost per year for 10-yr TCO Possible cost-saving example
+Processing 100 kUSD/yr 10.5 kUSD/yr
+Storage 200 kUSD/yr 51 kUSD/yr
+Lustre 23.4 kUSD/yr 13.8 kUSD/yr
+Total 323.4 kUSD/yr 76 kUSD/yr
+Each ARC Average cost per year for 10-yr TCO Possible cost-saving example
+Processing 20.6 kUSD/yr 2.0 kUSD/yr
+Storage 76 kUSD/yr 43 kUSD/yr
+Lustre 4 kUSD/yr 3.8 kUSD/yr
+Bandwidth 40 kUSD/yr 22.8 kUSD/yr
+Total 143.1 kUSD/yr 70.8 kUSD/yr
+2.8.1 Operating Cost
+Due to the level of uncertainties and assumptions required to estimate the cost of hardware needed for IWS
+and MWS, we didn’t have the time to study in detail the possible resources needed to operate the system.
+We can give a ball-park estimation that, within a factor of 2, the current FTE will be enough to operate IWS
+and MWS systems.
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 23 of 26
+3. Avenues to save costs
+We give here ball-park estimates of cost-saving possibilities for processing (P), network (N), and storage
+(S). Each factor is estimated compared to the full values above one at a time. Their combination would not
+necessarily lead to a product of all factors.
+1. 2. 3. 4. 5. 6. 7. 8. (P) Make RADPS-ALMA or alternatively a procedure like [RD05] available for IWS.
+(P+S) Limit the number of proposals requiring the maximum data-rates in a proposal Cycle. The
+10% largest projects account for 90% of the total data-rate. Principally, this should be understood to
+mean limiting the number of proposals making large cubes and/or large science products in
+aggregate.
+(S) Gzip-compress the data-cubes where no emission nor absorption has been detected and where
+ALMA stores the dirty cube.
+(S) After processing at full spatial resolution, store the largest cubes with 3px per beam over-
+sampling instead of 5px (AKA “image quality mitigation”).
+(P+S) Observe calibrators at 6s instead of at 3s.
+(N) Implement the intra-ARC data mirroring proposal described in [RD02, Section 7.3] and [AD04,
+Section 3.2.11] under which each byte could traverse the equator only once.
+(P+S) Extend the hardware replacement cycle from 5yr to e.g. 7yr saving about 20% of the
+hardware cost.
+(P+S) Do not make science products when the aggregate volume exceeds current (at the time)
+capacity thresholds (AKA “product mitigation”). This is scientifically undesirable but may be
+necessary before RADPS-ALMA— particularly the imaging component— is delivered.
+4. Risks
+Assuming that all the quotes and estimations can be directly considered a risk due to the uncertainty in
+foreseen the future, we add here some risk that could be overlooked.
+Risk 1: Assumptions on RADPS-ALMA do not hold true, this will have a direct
+impact on cost or rack space calculations done in this document
+Impact: Medium
+Likelihood: Medium
+Mitigation: Will have to revisit this document in another two years to check numbers
+Risk 2: Assumptions on scaling laws do not hold true, this will have a direct impact
+on cost or rack space calculations done in this document
+Impact: High (positive or negative)
+Likelihood: Medium
+Mitigation: Will have to revisit this document in another two years to check numbers
+Cost: additional cost per petabyte or per CPU core
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 24 of 26
+Risk 3: Migrating data from a JBOD storage node once hardware has to be
+replaced may take a very long time.
+Impact: medium
+Likelihood: medium
+Mitigation:
+- Investigate data-migration strategies early on to ensure that there are no unexpected impacts
+- Develop mitigation solutions, e.g. an efficient data-transfer software.
+- Check industry standards.
+Cost: time
+Risk 4: Filesystem corruption at JBOD head node
+Impact: high
+Likelihood: low
+Mitigation:
+- Filesystem robustness strategies RAID-6, ZFS pools, filesystem selection, EXT4 vs XFS. etc.
+- Data recovery strategies from other ARCS/remirroring from JAO
+Cost: in FTE time.
+Appendix 1: Assumptions
+• This TSI assumes data volumes and system performance values reported in [AD03] for RADPS-
+ALMA. Any change on those estimations will impact on the estimations made here.
+• This TSI is costing the infrastructure for data processing, not the FTEs needed to process the data,
+evaluate QA2, nor implement any of the improvements or developments assumed.
+• This TSI costs two stages IWS and MWS, following the definitions made by AMT in [AD02] (P1-S4
+and P3-S10 respectively).
+• The data properties used are those from [AD03] from Amanda Kepley et al.
+• All compute projections assume that we can more efficiently match compute resources to individual
+processing tasks, through RADPS-ALMA resource manager, and per-EB calibration.
+• This TSI estimates the processing of one cycle worth of data in a calendar year. We ignore whether
+or not the KPI of '90% MOUS to be delivered within 30 days' would be met or would have to be
+relaxed.
+• For IWS we estimate compute requirements by multiplying current compute by the ratio of expected
+IWS (no mitigation) to current (with mitigation) product sizes.
+• There is a way in IWS to image the SPWs that have cubes larger than what CASA can currently
+handle (~100 GB). This could be by workarounds in the OT or pipeline that split up SPWs;
+something like [RD05]; or something else.
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 25 of 26
+• For MWS imaging we assume conservatively (see Appendix 2, ‘Sanity check’) that 3x the amount of
+compute is needed that would be estimated from the [RD01] to account for effects like
+deconvolution and Input/Output.
+• Average prices are given assuming a 10-year total cost of ownership period for the WSU from 2029
+to 2038.
+• IWS start is October 2029; hardware cost assumes a purchase several months before that.
+• MWS start is October 2032; hardware cost assumes a purchase several months before that.
+• We assume ALMA to be observing 4000 hours per cycle/year (for MWS); the IWS estimate
+effectively assumes an amount of observing time equal to the average observing time over Cycles 7
+& 8.
+• Prices are in USD of 2023/2024, and 1 USD = 0.9 EUR, 150JPY
+• The hardware replace cycle is 5 years
+• IWS starts with new hardware and the current end-of-life hardware is replaced
+• 32 slots out of the 40 or 42 slots per rack can be used leaving 8-14 slots per rack for airflow,
+network equipment, doors etc.
+• Intermediate products during processing are written to fast SSDs local to the processing nodes, final
+products are placed on a shared scratch space (e.g. Lustre)
+• RADPS can make use of local storage (high speed disks per node). For CASA this assumption
+should be valid.
+Appendix 2: Sanity Check
+This document uses two approaches to estimate the compute size. For IWS where current CASA is used,
+the current computing power needed to process the data is scaled up to the IWS data-rate. For the MWS
+where RADPS-ALMA is used the computing power needed is estimated using the [RD01] reference where
+a factor of 3 is applied (see Appendex 1, ‘Assumptions’) to account for deconvolution, I/O and other
+inefficiencies on top of the needs for gridding alone.
+This section provides a sanity check between the two methods using the data-rate of Cycle 7/8 which is
+taken as “today”.
+A2.1 Top-down approach for today
+Following the [RD01]7, the conversion factor between PFLOPS and PB for 4000h observing time per year
+and the ‘fiducial’ compute node 10.8 TFLOPS with 192 cores is 0.02137 PFLOPS/GB when .pb.fits files are
+compressed as they are today.
+For 71.8 TB today, we would need 71.8 TB * 0.02137 PFLOPS/PB / (10.8 TFLOPS/192 cores) = 27.4
+cores. Adding a factor of 3x to account for IO and deconvolution results in an estimate of 83 cores to
+7 Note that the [RD01] specifies the FLOPS needed averaged over the observing time (around 4000h) and not
+averaged over the time where processing happens, i.e. the calendar year. The values therefore have to be scaled.
+TSI: WSU data processing initial
+cost/resource estimates
+Doc #: ALMA-05.15.00.00-3026-1-REP
+Date: 2024-09-18
+Page: 26 of 26
+process the current data-rate with the top-down estimate. The current number of cores available for
+imaging is about 46 nodes x 2/3 (used for imaging) x 8 ~ 245 cores.
+A2.2 Bottom-up approach for today
+Today we are using 46 nodes where 2/3 of the time they are used is spent in imaging. We know from
+[RD06] that CASA’s parallelization is very inefficient. The CASA team finds in [RD05] a speed-up of roughly
+~4 at 10 cores compared to the currently used 8 cores. If we would assume a bottom-up approach but with
+RADPS-ALMA instead of CASA we would expect that the number of cores is 46 x 2/3 x 8/4 x 10/8 = 76
+cores.
+In other words, if [RD05] is available (i.e. making a similar assumption about processing as RADPS does)
+we would need very roughly ~76 cores to process the current data-rate with the bottom-up approach.
+This already very conservatively assumes that all machines are working at 100% during the entire year. In
+practice, less cores would be needed in that approach. Assuming that effectively only 45% of the cores are
+used and that 70% were possible, the safety factor needed would be only 1.9. Yet, we decided to remain
+conservative We also assume conservatively that RADPS-ALMA will only be as efficient as [RD05].
+A2.1 Conclusion
+In conclusion we find that the top-down approach with a factor of 3x the value from [RD01] is a conservative
+estimate for the MWS computing needs. The factor of 3x over the value is large enough to cover calibration
+in MWS.
+

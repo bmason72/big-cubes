@@ -1,0 +1,85 @@
+\begin{center}
+\begin{talltblr}[caption={Enhanced and new user services to support WSU science.},label=tab:uid,]{
+  colspec={QX},
+  width=\textwidth,
+  hlines,
+  vlines,
+  cells={font=\linespread{0.5}\small},
+  row{1} = {bg=headercolor, font=\small\bfseries},
+  rowsep=4pt,
+  }
+   Service &
+   Benefit to the user community\\
+\SetCell[c=2]{c,bg=highlight2}{Enhancements to existing services/products}\\
+Science Archive &
+\begin{minipage}{10cm}
+\begin{itemize}[leftmargin=0.3cm,rightmargin=0.3cm,itemsep=0em]
+\item Enable parallel downloads of individual files.
+% \item Integration into re-calibration, science enabling infrastructure, and re-imaging services
+\item Augment ADMIT to handle larger data volumes efficiently.
+\item Periodic automated reprocessing of the ALMA holdings by DMG with the latest version of the
+   pipeline.
+\end{itemize}
+\end{minipage}\\
+Restoration of calibrated data & 
+\begin{minipage}{10cm}
+\begin{itemize}[leftmargin=0.3cm,rightmargin=0.3cm,itemsep=0em]
+\item Request calibrated measurement sets from Cycle 3 onwards.
+\item Request calibrated data for specific source or spectral window.
+\item See Sections 7.3 and 7.4 in \cite{uid} for a full set of requirements.
+\end{itemize}
+\end{minipage}\\
+Data Processing and Analysis Software & 
+\begin{minipage}{10cm}
+\begin{itemize}[leftmargin=0.3cm,rightmargin=0.3cm,itemsep=0em]
+\item Provide software that can calibrate, image and combine ALMA data from Cycle 3 onward on user's hardware.
+\item Identify spatio-spectral regions of interest.
+\item Provide data-analysis functionality (potentially in a separate package).		
+\end{itemize}
+\end{minipage}\\
+CARTA & 
+\begin{minipage}{10cm}
+\begin{itemize}[leftmargin=0.3cm,rightmargin=0.3cm,itemsep=0em]
+\item Maintain current functionality of CARTA, scaled to the data sizes of the WSU.
+\end{itemize}
+\end{minipage}\\
+%
+Science Portal & 
+\begin{minipage}{10cm}
+\begin{itemize}[leftmargin=0.3cm,rightmargin=0.3cm,itemsep=0em]
+\item Develop modern interface, complying with state-of-the-art requirements on user-friendliness/usability, accessible from all browsers and devices.
+\end{itemize}
+\end{minipage}\\
+%
+%
+\SetCell[c=2]{c,bg=highlight2}{New services}\\
+Science enabling infrastructure   &
+\begin{minipage}{10cm}
+\begin{itemize}[leftmargin=0.3cm,rightmargin=0.3cm,itemsep=0em]
+\item Offer an interactive and batch analysis collaborative platform that is accessible remotely.
+%\item Allow users to re-calibrate and re-image ALMA data, plus perform data combination, image analysis, and visibility analysis
+\item Allow users to perform image and visibility analysis.
+\item  See Sections 8.3 and 8.4 in \cite{uid} for a full set of requirements.
+\end{itemize}
+\end{minipage}\\
+%
+Reimaging service         & 
+\begin{minipage}{10cm}
+\begin{itemize}[leftmargin=0.3cm, rightmargin=0.3cm,itemsep=0em]
+\item Provide interface to users for re-imaging ALMA data.
+\item Allow imaging of line+continuum, continuum subtracted, and continuum only.
+\item Allow user to select MOUS\index{Member Observing Unit Set}, spectral windows, weighting schemes, and other imaging parameters.
+\item See Sections 9.3 and 9.5 in \cite{uid} for a full list of requirements.
+\end{itemize}
+\end{minipage}\\
+%
+Advanced data products     & 
+\begin{minipage}{10cm}
+\begin{itemize}[leftmargin=0.3cm,rightmargin=0.3cm,itemsep=0em]
+\item Generate advanced data products to facilitate scientific research.
+\item Include source lists detected in 2D images, detected lines in cubes, extracted spectra, moment maps of identified lines, and flux measurements of identified sources and lines.
+\item See Section 10.3 in \cite{uid} for a full list of requirements.
+\end{itemize}
+\end{minipage}\\
+\end{talltblr}
+\end{center}

@@ -1,0 +1,111 @@
+%
+% TO DO - CHECK/UPDATE BLC NUMBERS
+%   - MOVE TO CORRECT PLACE IN APPENDIX, RESTRUCTURE TEXT
+%   - DO THE SAME STEPS FOR THE VIS + PROD VOL TABLE.
+%   - ADD SYSTEM PERFORMANCE TABLE TO APPENDIX AND DISCUSSION OF SoC
+%
+
+\begin{table}[hbt!]
+\centering
+\begin{talltblr}[%
+  caption={Estimated MOUS-level interferometric data rate and required compute system performance.},
+  label={tab:computeSizeTable1},
+  remark{Note}={\small From \cite{dpSizeOfCompute} and \cite{drru_mean}, with WSU updated to conform with Milestone 5. Note that there is a typo in the units given in the middle 3 rows of Table 2 of \cite{dpSizeOfCompute}, which should be MVis/hr. FLOP/s estimates assume 4000 hr/year of science observing and include the $3\times$ overhead/contingency factor,  as discussed in \cite{computeCostTsi}.}
+]{
+  colspec={Q[l,m]Q[l,m]*{4}{X[c,m]}},
+  width=\textwidth,
+  hlines,
+  vlines,
+  vline{1-2} = {1-2}{0pt},
+  hline{1}            = {1-2}{0pt},
+  hline{4,5,7,8,10,11} = {2-6}{0pt},
+  cells = {font=\small},
+  cell{1-2}{3-4} = {my2x, font=\small\bfseries},
+  cell{1-2}{5-6} = {my4x, font=\small\bfseries},
+}
+\SetCell[c=2,r=2]{c}      & & \SetCell[c=2]{c}{WSU at Milestone 5} & & \SetCell[c=2]{c}{pre‑WSU} & \\
+                         & & 12 m      & 7 m      & 12 m      & 7 m      \\
+\SetCell[r=3]{bg=lightgray}{Data Rate}
+  & {Median (GB/s)}                   & $0.136$   & $0.002$   & $5.6\times10^{-3}$   & $2.4\times 10^{-4}$   \\
+  & {Time Weighted\\Average (GB/s)}   & $0.477$   & $0.010$   & $9.0 \times 10^{-3}$   & $3.1\times10^{-4}$   \\
+  & Maximum (GB/s)                    & $3.48$    & $0.05$    & $4.5\times 10^{-2}$   & $8.7\times 10^{-4}$   \\
+\SetCell[r=3]{bg=lightgray}{Visibility Rate}
+  & {Median (Gvis/hr)}                & $230$     & $3.2$       & $9.6$   & $0.4$     \\
+  & {Time Weighted\\Average (Gvis/hr)}& $822$     & $15$      & $16$   & $0.4$     \\
+  & Maximum (Gvis/hr)                 & $6005$    & $77$      & $77$  & $1.3$    \\
+\SetCell[r=3]{bg=lightgray}{System\\Performance}
+  & {Median (PFLOP/s)}                & $0.07$   & $1.4 \times 10^{-3}$   & $3.0 \times 10^{-3}$   & $1.5\times 10^{-4}$   \\
+  & {Time Weighted\\Average (PFLOP/s)}& $0.50$   & $0.021$   & $7.6\times 10^{-3}$   & $5.1\times 10^{-4}$   \\
+  & Maximum (PFLOP/s)                 & $10.3$   & $0.13 $   & $9.9 \times 10^{-2}$   & $2.2\times 10^{-3}$   \\
+\end{talltblr}
+\end{table}
+
+
+
+% BELOW IS ALL COMMENTED OUT
+
+
+
+
+\iffalse
+\begin{center}
+\begin{talltblr}[%
+  caption={Overview of system performance-related quantities for WSU.},
+  label={tab:computeSizeTable1},
+  remark{Note}={Copied from Table 2 of~\cite{dpSizeOfCompute}, which assumed 47 as a realistic number of operating 12-m antennas. For 50$\times$12-m antennas, the maximum data rate is 1.98 GB/s for the Early WSU (see Table~2 of~\cite{drru_peak} for Band 1).}%
+]{
+  colspec={Q[l,m]Q[l,m] *{6}{X[c,m]}},
+  width=\textwidth,
+  hlines,
+  vlines,
+  vline{1-2} = {1-2}{0pt},
+  hline{1}   = {1-2}{0pt},
+  hline{4,5,7,8,10,11} = {2-8}{0pt},
+  cells = {font=\small},
+  cell{1-2}{3-5} = {my2x, font=\small\bfseries},
+  cell{1-2}{6-8} = {my4x, font=\small\bfseries},
+}
+\SetCell[c=2,r=2]{c} & & \SetCell[c=3]{c}{WSU at Milestone 5} & & & \SetCell[c=3]{c}{pre-WSU} & &  \\
+& & 12 m & 7 m & both & 12 m & 7 m & both \\
+\SetCell[r=3]{bg=lightgray}{Data Rate}
+  & {Median (GB/s)}                   & $0.136$   & $0.002$   & $0.138$   & $0.060$   & $0.001$   & $0.015$   \\
+  & {Time Weighted\\Average (GB/s)}  & $0.477$   & $0.010$   & $0.487$   & $0.220$   & $0.005$   & $0.225$   \\
+  & Maximum (GB/s)                    & $3.48$   & $0.05$   & $3.48$   & $1.741$   & $0.026$   & $1.741$   \\
+\SetCell[r=3]{bg=lightgray}{Visibility Rate}
+  & {Median (Gvis/hr)}                & $230$   & $3$     & $233$    & $103.6$   & $1.6$     & $25.3$    \\
+  & {Time Weighted\\Average (Gvis/hr)}& $822$   & $15$    & $837$   & $380.2$   & $7.4$     & $219.0$   \\
+  & Maximum (Gvis/hr)                 & $6005$  & $77$    & $6005$  & $3002.8$  & $38.5$    & $3002.8$  \\
+\SetCell[r=3]{bg=lightgray}{System\\Performance}
+  & {Median (P\ac{FLOP}/s)}                & $0.051$   & $0.001$   & $0.052$   & $0.025$   & $0.001$   & $0.007$   \\
+  & {Time Weighted\\Average (P\ac{FLOP}/s)}& $0.364$   & $0.015$   & $0.379$   & $0.183$   & $0.007$   & $0.19$   \\
+  & Maximum (P\ac{FLOP}/s)                 & $7.480$   & $0.096$   & $7.480$   & $3.740$   & $0.048$   & $3.740$   \\
+\end{talltblr}
+\end{center}
+\fi 
+
+%\begin{center}
+%\begin{talltblr}[caption={Overview of system performance-related quantities for WSU.}, label={tab:computeSizeTable1}, remark{Note}={Copied from Table 2 of~\cite{dpSizeOfCompute}, which assumed 47 as a realistic number of operating 12-m antennas. For 50$\times$12-m antennas, the maximum data rate is 1.98~GB/s for the Early WSU (see Table~2 of~\cite{drru_peak} for Band~1).}]{
+%  colspec={Q[l,m]Q[l,m] *{6}{X[c,m]}},
+%  width=\textwidth,
+%  hlines,
+%  vlines,
+%  vline{1-2} = {1-2}{0pt},
+%  hline{1} = {1-2}{0pt},
+%  hline{4,5,7,8,10,11} = {2-8}{0pt},
+%  cells = {font=\small},
+%  cell{1-2}{3-5} = {my2x, font=\small\bfseries},
+%  cell{1-2}{6-8} = {my4x, font=\small\bfseries},
+%  }
+%\SetCell[c=2,r=2]{c} & & \SetCell[c=3]{c} Early WSU  & & & \SetCell[c=3]{c} Later WSU & &  \\
+%& & 12 m & 7 m & both & 12 m & 7 m & both \\
+%\SetCell[r=3]{bg=lightgray}{Data Rate} & {Median (GB/s)}& $  0.060$& $  0.001$& $  0.015$& $  0.136$& $  0.002$& $  0.035$\\ 
+% & {Time Weighted\\ Average (GB/s)} & $  0.220$& $  0.005$& $  0.127$& $  0.513$& $  0.011$& $  0.296$\\ 
+% & Maximum (GB/s)& $ 1.741$& $  0.026$& $ 1.741$& $3.481$& $  0.052$& $3.481$\\ 
+%\SetCell[r=3]{bg=lightgray}{Visibility Rate} & {Median (Gvis/hr)}&   103.6&   1.6 &  25.3 & 235.3 & 3.3 & 53.4\\ 
+% & { Time Weighted\\ Average (Gvis/hr)} & $  380.2$& $  7.4$& $  219.0$& $ 885.4$& $  15.9$& $  509.4$\\ 
+% & Maximum (Gvis/hr)& $3002.8$& $  38.5$& $3002.8$& $6005.5$& $  76.9$& $6005.5$\\ 
+%\SetCell[r=3]{bg=lightgray}{System\\Performance} & {Median (P\ac{FLOP}/s)}&   0.025&   0.001 &  0.007 & 0.051 & 0.001 & 0.017\\ 
+% & { Time Weighted\\ Average (P\ac{FLOP}/s)} & $  0.183$& $  0.007$& $  0.107$& $ 0.399$& $  0.015$& $  0.233$\\ 
+% & Maximum (P\ac{FLOP}/s)& $3.740$& $  0.048$& $3.740$& $7.480$& $  0.096$& $7.480$\\ 
+%\end{talltblr}  
+%\end{center}

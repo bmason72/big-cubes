@@ -1,0 +1,29 @@
+\begin{table}[hbt!]
+\centering
+\begin{talltblr}
+  [caption={Summary of key WSU data properties compared to current values.},
+   label={tab:data_summary},
+   remark{Notes}={\small Except as indicated all quantities are from \cite{drru_mean} with ``Later WSU'' adjusted  for conformance to Milestone 5, and with other corrections as described in the text above. {\it Exceptions}: \textsuperscript{a}  Pre-WSU raw data volume and aggregate mitigated product volumes were measured in the archive \cite{computeCostTsi}; \textsuperscript{b} From \cite{dpSizeOfCompute} with WSU updated to Milestone 5, assuming 4000 hrs/year of science observing, with $3\times$ contingency factor \cite{computeCostTsi}.}]
+   {
+    colspec={Q[l,m,4.5cm] X[c,m] X[c,m] X[c,m]},
+    width=\textwidth,
+    cells = {font=\small},
+    hlines,
+    vlines,
+    cell{1}{2} = {my2x, font=\small\bfseries},
+    cell{1}{3} = {my4x, font=\small\bfseries},
+    cell{1}{1} = {lightgray, font=\small\bfseries},
+    cell{1}{4} = {lightgray, font=\small\bfseries}
+  }
+%\SetCell[r=2]{c}{Quantity} & \SetCell[c=2]{c}{WSU at Milestone 5} & \SetCell[c=1]{c}{Current Value} & Units \\
+Quantity & WSU at Milestone 5 & Pre-WSU Value & Units \\ 
+{Raw data volume (7m+12m+TP)\textsuperscript{a}} & $5.0$ &  $9.9\times 10^{-2}$ & PB/cycle  \\
+{Time-averaged data rate (7m+12m+TP)\textsuperscript{b}} & $0.54$ & $1.0 \times 10^{-2}$  & GB/s  \\
+{Product volume (7m+12m+TP)} & $12.1$ &  $0.61$ & PB/cycle  \\
+{Product volume (compressed)} & $7.9$ & $0.40$ & PB/cycle   \\
+{Mitigated product volume\textsuperscript{a}} & --- & $7.0 \times 10^{-2}$  & PB/cycle  \\
+{Prod. volume with GOUS} & $10.7$ & --- & PB/cycle \\
+{Total data volume} & $15.7$ & $0.17$ & PB/cycle \\
+{Estimated Processing System Performance\textsuperscript{b}} & $0.78$ & $9.0\times10^{-3}$ & PFLOP/s \\
+\end{talltblr}
+\end{table}

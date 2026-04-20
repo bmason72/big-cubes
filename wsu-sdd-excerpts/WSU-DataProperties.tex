@@ -1,0 +1,183 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Expected WSU Data Characteristics \& Required Compute Performance} % (fold)
+\label{sub:wsu_data_rates}
+
+%\label{sec:expected_wsu_capabilities}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{WSU Data Rates} % (fold)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The increased bandwidth and expanded correlator capabilities provided by the WSU will lead to substantially higher data rates compared to the existing system. This will significantly impact:
+%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+    \item The post-correlation data ingestion at the Operations Support Facility (OSF);
+    \item The data transport from the OSF to Santiago;
+    \item Storage of the data in the archives at SCO and the ALMA Regional Centers (ARCs);
+    \item The data transfer from SCO to the ARCs; and
+    \item The downstream data processing.
+\end{itemize} 
+%%%%%%%%%%%%%%%%%%
+
+The maximum data rate that the WSU correlator will be able to generate is significantly larger than that which can currently be envisioned as feasible for the downstream subsystems. Therefore, a combination of the ambitious science goals of the WSU~\cite{memo621} and the realities of technological feasibility/cost must together drive the ultimate WSU data rate observing limit. The peak data rate and expected data properties over a full cycle have been estimated at WSU Milestone 5 using the methodologies described in \cite{drru_peak} and \cite{drru_mean}, respectively, updated to align with the Milestone 5 system state.  For purposes of the data properties projections presented in this Appendix, ``Milestone 5'' is understood to indicate completion of the WSU program.  In particular, the projected compute and science product characteristics  assume completion of some Milestone 4 deliverables, specifically: the RADPS-ALMA resource manager and MOUS and GOUS imaging workflows, with their supporting ALMA software functions.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Peak Data Rates}
+\label{subsec:datarates_peak}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The  peak data rate for interferometric mode\footnote{For TP mode, $R_{\rm TP} = 4N_{\rm ant} \times N_{\rm channels} \times N_{\rm pols} / T_{\rm integration}$.} ($R_{\rm IM}$) can be calculated as \cite{drru_peak}: 
+\begin{equation}
+\label{eq:peakDataRate}
+    R_{\rm IM} = \frac{(2N_{\rm byte} \times N_{\rm apc} \times N_{\rm ant}(N_{\rm ant}-1)/2 +4N_{\rm ant}) \times N_{\rm channels} \times N_{\rm pols}}{T_{\rm integration}} \,\,{\rm Bytes\ s^{-1}}.
+\end{equation}
+This should be interpreted as the peak data rate streaming from the Correlator to the  Archive, where the parameters have the following meanings:
+%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+        \item $N_{\rm byte}$ = integer size in bytes used to represent the real and imaginary parts of the data (yields a total size of 2\,$N_{\rm byte}$ for cross-correlation data);
+    \item $N_{\rm apc}$ = number of data stream copies that are preserved: $N_{\rm apc}=2$ when saving both the online WVR-corrected and uncorrected data, and =1 otherwise;
+    \item $N_{\rm ant}$ = number of antennas;
+    \item $N_{\rm channels}$ = the total number of channels preserved in the output data ingested by the archive;
+    \item $N_{\rm pols}$ = number of polarization products stored: $N_{\rm pols}=2$ for dual polarization or 4 for full polarization;
+    \item $T_{\rm integration}$ = visibility integration time.
+    \end{itemize}
+%%%%%%%%%%%%%%%%%%%
+
+The number of channels is set by the requirement to achieve $\sim$0.1\kms\ velocity resolution over the full bandwidth for efficient spectral scans. The recommended value of $T_{\rm integration}$ is 3\,sec \cite{drru_peak} in contrast to the current standard usage of 6\,sec for \ac{FDM} data.
+Table~\ref{tab:peak_adopted} summarizes the adopted peak data rate for the 12-m, 7-m, and TP Arrays, including
+the  adopted values of the other parameters in Equation~\ref{eq:peakDataRate}, which are discussed in-depth in~\cite{drru_peak}. 
+The peak data rate is set by the lower end of Band 2, which will require the most number of channels to achieve the required spectral resolution across the full bandwidth.\footnote{Band 1 nominally requires more channels to cover the same bandwidth for a fixed velocity resolution. %However, Band 1 cannot have more than 16~GHz total bandwidth per polarization in a single sideband configuration due to constraints from the atmospheric transmission and antenna optics, while Band 2 is already capable of 32~GHz per polarization.
+However, Band 1 cannot have more than 16~GHz total bandwidth per polarization in a single sideband configuration due to constraints from the current FE system.} The peak data rate on the 12-m Array is 56$\times$ higher for the WSU at Milestone 5 compared to the current allowed peak data rate of 70~\MBs.
+
+\input{tables/table_data_rate_peak}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Estimated Data Properties \& Size of Compute}
+\label{subsec:datarates_prop}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Since ALMA is a PI-driven instrument, the WSU will produce data with a wide range of properties and most projects will not require the peak data rate. The distribution of these properties determine the requirements for data transfer, storage, and processing that will be needed for the WSU. \cite{drru_mean} used the properties of the data obtained in ALMA Cycles 7 and 8 to estimate the data properties over two future WSU cycles. Estimates for Bands 1 and 2, which were not available during these cycles, were extrapolated from the existing Band 3 projects and assuming each band has 5\% of the total time on the 12-m Array and 3\% of the total time on the 7-m Array, which is consistent with historic band usage trends from Cycles 4 through 10.
+The PI-requested WSU velocity resolution was estimated by dividing the data into five bins based on the finest spectral resolution requested per project: $> 10\kms$,  $2-10 \kms$, $0.5-2 \kms$,  $0.1-0.5 \kms$ , and $<0.1 \kms$. For WSU observations, all projects in a bin were assumed to use the smallest velocity resolution in an individual bin or the current resolution for those in the $<0.1\,\kms$ bin. The total available WSU bandwidth divided by the assumed channel width was used to determine the total number of channels per project. All 12-m observations for Milestone 5 are also assumed to use 3\,sec integration times, consistent with current recommendations for ALMA long baseline observations.
+A complete description of the assumptions and methods is provided in~\cite{drru_mean}, which presents data properties forecasts for different scenarios, ``Early WSU'' and ``Later WSU''. The instrument configuration of ``Later WSU'' is close to that of Milestone 5 but includes fully upgraded receivers for Bands 4, 5, and 9-10, whereas Milestone 5 has fully ($4\times$ BW) upgraded receivers for Bands 2, 3 (2 upper), 6, 7 and 8.  Based on the historical usage patterns assumed in our projections, these additional upgrades have only a minor effect on the overall data properties. The data properties forecast presented here has been updated to correctly  conform to the capabilities present at Milestone 5.
+
+Table~\ref{tab:dataprop} and
+Figures~\ref{fig:vissize} and~\ref{fig:products} 
+summarize interferometric data volume projections for WSU at Milestone 5 over a single cycle,\footnote{The single cycle average  is computed by averaging over  two cycles in order to include long baseline configurations.} compared to the equivalent methodology applied to existing pre-WSU datasets.
+The visibility data sizes include both the science targets and calibrator observations, while the data product sizes\footnote{The current Pipeline\index{Pipeline} limits the aggregate data product size for a given MOUS\index{Member Observing Unit Set} to a maximum of 500~GB; it also will skip creating any cube which would be larger than 100~GB (after all applicable image quality mitigations; see \cite{ALMApipelineHeuristics} for details). In Fig.~\ref{fig:products}, the ``mitigated'' pre-WSU sizes refer to the products delivered by the ALMA Pipeline that have had these mitigations applied. The ``unmitigated'' sizes refer to full set of products that would be produced if no mitigation was in place.} include the science targets only. There will naturally be a range of product sizes: observations requiring coarse spectral resolution will produce visibility and data products that are substantially smaller than projects that require the high spectral resolution of the full bandwidth. As with the data rates, the size of visibilities and data products are dominated by the top 10\% of projects. The values in this long tail dominate the requirements for transfer, storage, and processing of the data. This long tail is also present for the current system, although its magnitude is smaller because the maximum number of channels that can be produced by the current correlators is much less than can be produced in the WSU era ($3840\times4=15360$ vs. $14880\times 160=2.4$ million). 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[hbt!]
+  \centering
+  \includegraphics[width=\columnwidth]{Figures/datavol_distribution_milestone5.png}
+  \caption{Complementary cumulative distribution of the estimated MOUS\index{Member Observing Unit Set} visibility data volume for the pre-WSU ALMA and the for ALMA with the WSU at Milestone 5. It shows the fraction of times that the visibility data volume will be larger than the value shown on the x-axis. The solid blue line indicates the WSU estimates without Band 1 and Band 2,  with the shaded region indicating the upper and lower bounds of the projections including these bands. Dotted horizontal lines indicate thresholds for 10\%, 5\%, and 1\% of the MOUSs. For WSU, $\sim 30\%$\% of MOUSs are expected have visibility data volumes greater than that of  the largest pre-WSU project today (slightly over 1~TB).} 
+  \label{fig:vissize}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[hbt!]
+  \centering
+  \includegraphics[width=\columnwidth]{Figures/productsize_distribution_milestone5.png}
+  \caption{Complementary cumulative distribution of estimated aggregate science product sizes per MOUS, for: the pre-WSU ALMA (mitigated-- dashed green line, and unmititigated-- solid green line); and ALMA with the WSU at Milestone 5 (blue).  
+  The solid blue line indicates the WSU estimates without Band 1 and Band 2,  with the shaded region indicating the upper and lower bounds of the projections including these bands.  The current default maximum product size (500~GB) is indicated as a dotted vertical line. The thresholds for 1\%, 5\%, and 10\% of the products are shown as dotted gray horizontal lines. For the  WSU, almost $30\%$ of the MOUS will produce products larger than the current product size limit (500~GB). 
+  } 
+  \label{fig:products}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{tables/table_data_prop}
+
+Table~\ref{tab:computeSizeTable1} summarizes  
+the expected data rates for WSU science operations, including the median, time-weighted average,\footnote{The time-weighted average of these values is calculated by weighting each MOUS\index{Member Observing Unit Set}\seeonlyindex{MOUS}{Member Observing Unit Set} in the sample by the total observing time required for that MOUS. The observing time is the sum over all scans in a MOUS of the scan time for the science targets and the bandpass, phase, flux (if a separate flux calibrator is used), check source (if necessary) and polarization calibrators (if necessary). It does not include time spent on pointing, on system temperature or WVR measurements or on any overhead associated with setting up the observation.} and maximum data rates. The underlying distributions (per MOUS) are shown in
+Fig.~\ref{fig:datarate_cumulative_dist} for WSU at Milestone 5 compared to pre-WSU observations.
+The WSU moves the entire distribution to the right, i.e., more observing time is spent at higher data rates. The distribution of data rates at Milestone 5 also has a substantial tail: more than  30\% of the observing time will have rates higher than the current 70~\MBs\/ limit and 6-10\% of the observing time will be at rates greater than 500~\MBs.
+
+ Table~\ref{tab:computeSizeTable1} also presents computing system performance estimates for WSU at Milestone 5 and for the existing (pre-WSU) systems. These calculations use the same imputed WSU Milestone 5 data properties described above \cite{drru_mean}, and the compute estimation methodology described in \cite{dpSizeOfCompute}. By this methodology
+ the required system performance $P_s$ (in FLOP/s) is related to the time average visibility rate $r_v$ (in visibilities/second) as
+ \begin{equation}
+  P_s = \frac{k r_v F_v}{\eta_c \eta_p} \times \frac{T_{obs}}{\rm 8760 \, hrs}    
+ \end{equation}
+ where $k \sim 60$ is the average number of times each visibility is gridded\footnote{Note that \cite{dpSizeOfCompute} used $k=20$ for ALMA data processing, but \cite{computeCostTsi} included a factor of $3$ additional contingency in the compute estimate. Those two values are combined, here, into a single, effective $k=60$.}; $\eta_c \sim 0.05$ is the observed average core utilization efficiency; $\eta_p \sim 0.8$ is the parallelization efficiency; and $F_v$ is the number of floating point operations per visibility in a single gridding cycle ($\sim 1280$ for single pointings and $\sim 7500$ for mosaics). 
+ The final factor arises because \cite{dpSizeOfCompute} assumes year-round 24/7 science observing, whereas typically the total science observing time in a year ($T_{obs}$) will be less. ALMA typically observes for $T_{obs} \sim 4000 \, {\rm hrs}$ per year, resulting in a correction factor of $\sim 0.46$.
+ 
+ Using the projected $r_v$ for 12-m data at Milestone 5 in Table~\ref{tab:computeSizeTable1} ($822 \, {\rm GVis/hr} \sim 0.23 \, {\rm GVis/sec}$), an intermediate value $F_v \sim 3100$ (corresponding to 30\% mosaic observations), and other values as stated above can be seen to approximately reproduce the estimated required system performance for 12m data processing at Milestone 5 ($\sim 0.5$ PFLOP/s). The performance estimate presented uses the actual observation type (mosaic or single field) on a per observation basis in the dataset which forms the basis of the projection.
+
+
+This system  performance estimate is based entirely on the computational cost of {\it imaging}, which is the dominant compute cost in processing ALMA data, and assumes that full (un-mitigated) science products are created.  An estimate of the size of processing cluster that will be needed is given in Appendix~\ref{sec:clusterSize}.
+
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[hbt!]
+\includegraphics[width=\textwidth]{Figures/datarate_distribution_milestone5.png}
+\caption{Complementary cumulative distribution  of data rates weighted based on observing time for pre-WSU ALMA, and ALMA with the WSU at Milestone 5. It shows the fraction of observing time that the data rate will exceed the given value on the x-axis.  The solid blue line indicates the WSU estimates without Band 1 and Band 2, and with the shaded region indicating the upper and lower bounds of the projections including these bands. Dotted horizontal lines indicate the thresholds for 10\%, 5\%, and 1\% of the observing time. The current 70~\MBs\/ data rate limit and WSU Milestone 5 peak data rate limits (4.43~\GBs) are shown.  More than 30\% of
+WSU observations are expected to exceed the current maximum 70 MB/s data rate.
+\label{fig:datarate_cumulative_dist}} 
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\input{tables/table_data_rates_prop}
+\input{tables/table_system_performance_wsu}
+
+
+The preceding data properties estimates consider MOUS-level interferometric data only. The following additional considerations
+are included in data characteristics and compute estimates:
+\begin{itemize}[itemsep=-0.5em]
+    \item {\bf Total Power:} Raw data from the total power array are seen  to increase the total raw data volumes by $\sim 10\%$ \cite[ Appendix]{drru_mean}. The contribution of TP  to raw data is included, and the compute is also correspondingly increased by 10\% to account for total power processing. Total power spectral cubes currently in the ALMA Science Archive constitute $<0.2\%$ of the aggregate science product volume (dominated by spectral cubes from the 12m-array). Since product size mitigations will have been eliminated, TP spectral cubes will contribute even less to the aggregate product volumes so are safely neglected.
+    \item {\bf GOUS processing:} GOUS level products will be provided where the PI-defined science goal requires them. Analysis of the same sample of Cycle 7 and 8 datasets used by \cite{drru_mean} indicates that providing these products will increase the aggregate science product volume, averaged over cycles, by a factor of $\sim 1.36$ \cite{computeCostTsi}. This factor has been included in science product volumes and compute estimates.
+    \item {\bf Compression:}  a subset of products stored in the ALMA Science Archive -- specifically, the primary beam spectral cubes and clean masks -- are compressed. Accounting for this reduces the aggregate volume of products by a factor of $0.65$ \cite{computeCostTsi}; this factor is included in  storage estimations.
+\end{itemize}
+A summary of expected WSU data characteristics at the end of the WSU program,  including all relevant considerations as described above, is presented in Table~\ref{tab:data_summary}.
+
+Should it be necessary to reduce storage, bandwidth, and/or compute requirements, there are a variety of options:
+\begin{itemize}[itemsep=-0.5em]
+    \item Reducing spectral resolution on calibrators.
+    \item Using coarser spectral resolution for portions of the spectral setup.
+    \item Using 3-sec integration times only for long baseline or high frequency 12-m observations.
+    \item Compressing more science products.
+    \item Limiting the data rates and/or spectral configurations that can be proposed in a given cycle.
+    \item Image quality mitigations: imaging at lower spectral resolution; with larger pixels ({\it i.e.}, less oversampling); or imaging only the most relevant portions of the field of view and/or spectrum.
+    \item Product mitigation: not making products that, individually or in aggregate, exceed a given size threshold. This is an option of last resort since it directly trades against WSU science.
+\end{itemize}
+Some of these options are considered in more detail in 
+\cite{drru_mean}. Together, they provide a flexible set of
+alternatives for balancing cost and performance as external
+constraints and technological price-performance trends come
+into sharper focus during the upcoming design,
+implementation, and rollout phases of the project.
+
+
+
+\input{tables/data_prop_summ}
+
+\subsection{Processing  Cluster Size Estimate}
+\label{sec:clusterSize}
+
+In order to understand the scale of compute infrastructure that will be required to process WSU data, we use the methodology of \cite{computeCostTsi} and the compute performance estimates described in \cite{dpSizeOfCompute} and the preceding section. The estimated compute performance\footnote{This figure reflects both the expected amount of science observing per year, as well as the factor of 3 contingency that was previously applied separately \cite{computeCostTsi}.} that will be needed is $\sim 0.78 \, {\rm PFLOP/s}$.
+
+Following \cite{computeCostTsi} we assume that compute 
+throughput (in FLOP/s) per core will remain approximately flat; but that the number  of cores available in a 1U rack-mount server, at a given price point in the market and with a given power and cooling requirement, will
+continue to increase by $\sim 1.29$~x/year as it has for the past $\sim 20$~years. Both of these are in line with technological trends in recent decades.
+A representative 192-core 1U
+system with 8 GB RAM per core was considered based on vendor quotes (CY2023) which had a performance of $10.7$~TFLOP/s, or 57 GFLOP/s per core. As a point of comparison, the current JAO processing cluster comprises 46 nodes of 8 cores each, with a measured performance of 360 GFLOP/s per node (45 GFLOP/s per core).
+Using the \cite{computeCostTsi} reference node as a benchmark, we then expect to need $\sim 14$~k cores to make full science products for WSU at the completion of the WSU Program, including GOUS products:
+\[
+\frac{0.78~\mathrm{PFLOP/s}}{57.3~\mathrm{GFLOP/s/core}}  \sim 14,200 \, \mathrm{cores}
+\]
+This estimate includes the safety factor and observing time corrections described above, as recommended by  \cite{computeCostTsi}.
+
+This would require $\sim 70$ of the CY2023, 192-core  
+reference nodes. At the expected time that the WSU program concludes 
+(2036) it can be reasonably expected that each 1U node at this price point and with comparable power consumption will provide $\sim 5250$ cores ($=192 \times 1.29^{13}$),
+which would imply instead $\sim 3$ nodes, other factors equal. In practice other considerations will also be important in determining the detailed compute cluster architecture, including file I/O considerations and RAM
+per core; these will be chosen based on load testing of prototypesin consultation with RADPS\,-\,ALMA once guidance is available. 
+
+% Fri 16may - 12 UT: i identified and resolved the discrepancy that was originally worrying me and added this back
+To validate the methodology, \cite{computeCostTsi} estimated that 
+producing the current (pre-WSU, mitigated) ALMA science products should require $\sim 5\, {\rm TFLOP/s}$. The  JAO processing cluster delivers $46 \times 360 \, {\rm GFLOP/s}$ $ \sim 16 \, {\rm TFLOP/s}$, of which $\sim 2/3$ -- or 11 TFLOP/s -- goes to imaging \cite{computeCostTsi}.  The installed capacity provisions for file I/O,  other overheads,  and  surge capacity  to maintain  timely deliveries during peak data-rate months. Primary goals of RADPS-ALMA include  reducing these overheads, increasing cluster load efficiency (currently $\sim 35\%$ \cite{dpda}), and enabling the creation of much larger spectral cubes (Section~\ref{sec:radps-alma}).

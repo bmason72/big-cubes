@@ -1,0 +1,25 @@
+\begin{center}
+\begin{talltblr}[caption={Overview of system performance related quantities for BLC/ACAC.}, label={tab:computeSizeTable2}, remark{Note}={Copied from Table~2 of~\cite{dpSizeOfCompute}. Note the factor of 1000 difference in units compared to Table~\ref{tab:computeSizeTable1}.}]{
+  colspec={Q[l,m]Q[l,m] *{3}{X[c,m]}},
+  % width=\textwidth,
+  hlines,
+  vlines,
+  vline{1-2} = {1-2}{0pt},
+  hline{1} = {1-2}{0pt},
+  hline{4,5,7,8,10,11} = {2-5}{0pt},
+  cells = {font=\small},
+  cell{1-2}{3-5} = {headercolor, font=\small\bfseries},
+  }
+\SetCell[c=2,r=2]{c} & & \SetCell[c=3]{c} BLC/ACAC & &  \\
+& & 12 m & 7 m & both\\
+\SetCell[r=3]{bg=lightgray}{Data Rate} & {Median (MB/s)}& $  5.73$& $  0.25$& $  2.29$\\ 
+ & {Time Weighted\\Average (MB/s)} & $  9.22$& $  0.32$& $  5.37$\\ 
+ & Maximum (MB/s)& $ 45.84$& $  0.89$& $ 45.84$\\ 
+\SetCell[r=3]{bg=lightgray}{Visibility Rate} & {Median (Tvis/hr)}& $  9883.0$& $  370.0$& $  3953.0$\\ 
+ & {Time Weighted\\Average (Tvis/hr)} & $  15901.0$& $  470.0$& $  9228.0$\\ 
+ & Maximum (Tvis/hr)& $ 79067.0$& $  1303.0$& $ 79067.0$\\ 
+ \SetCell[r=3]{bg=lightgray}{System\\ Performance} & {Median (T\ac{FLOP}/s)}& $  2.25$& $  0.11$& $  0.84$\\ 
+ & {Time Weighted\\Average (T\ac{FLOP}/s)} & $  5.68$& $  0.38$& $  3.39$\\ 
+ & Maximum (T\ac{FLOP}/s)& $ 73.86$& $  1.62$& $ 73.86$\\ 
+\end{talltblr}  
+\end{center}

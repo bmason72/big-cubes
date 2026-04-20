@@ -1,0 +1,103 @@
+\phantomsection
+\section*{Executive Summary}
+\addcontentsline{toc}{section}{\protect\numberline{}Executive Summary}
+
+
+The \ac{WSU} aims to dramatically enhance ALMA’s spectral coverage and observational efficiency by increasing the receiver \ac{IF} bandwidth by a factor of four and improving the system sensitivity. As the top priority initiative of the ALMA 2030 Development Roadmap~\cite{road_map}, the upgrade, when completed, will provide at least six times faster continuum imaging speeds, two times improvement in spectral line imaging speed, and $1-2$ orders of magnitude increase in the correlated bandwidth at high spectral resolution (0.1~km/s) with the new receivers \cite{memo621}. This upgrade will benefit all ALMA observations by improving the efficiency and flexibility of observations.
+
+Meeting the ambitious performance goals of the WSU requires major upgrades across ALMA’s signal chain, computing systems, and data processing infrastructure. Key technical advancements include:
+%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+   \item Wideband receivers (Bands 2, 6, 7, and 8) with up to 32~GHz of total bandwidth per polarization and improved noise performance within $4-5\times$ the quantum limit. 
+   \item A new correlator and spectrometer to process 32~GHz per polarization at 13.5~kHz native resolution (nearly 2.4 million channels); tunable frequency slices that can be configured individually or seamlessly combined for continuous spectral coverage; optional channel smoothing to manage data rates; zoom modes offering up to 8$\times$ finer resolution (1.7~kHz) over narrower bandwidths; and support for concurrent interferometric and \ac{VLBI}/Phased Array (beamforming) observations in correlator subarrays.
+   \item Higher digital efficiency using higher bit depths across the full digital signal chain, including the digitizers and the correlator. This results in a gain in sensitivity by a factor of 1.23 \cite{orig_dig_ef_budget} for all observations, in addition to any gains from lower noise in the new receivers. 
+\end{itemize}
+%%%%%%%%%%%%%%%%%
+
+
+In parallel,  enhancements to networking, buffering, processing, and storage systems will be implemented to accommodate the increased data flow from the WSU. Total daily data volumes, including both raw and processed science data, are projected to rise by approximately two orders of magnitude from the current $\sim 0.5$~TB/day to more than 40~TB/day. WSU capabilities will be offered to the community in a staged approach, beginning with initial scientific operations using a subset of observing modes on the 12-m Array %(Milestone 1) 
+and culminating with the realization of the full scientific potential of the upgrade with the completion of the WSU Program as defined in
+% Milestones $1-5$ as defined in 
+the WSU Implementation Plan~\cite{imp_plan_b}.
+
+The WSU System Design builds on the existing ALMA system architecture, preserving core elements while introducing major enhancements across the signal chain and computing infrastructure. This document describes the architecture anticipated at the time of completion of the WSU program, when all hardware and software components are fully deployed. This \acl{SDD} has been guided by several key sources:
+%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+\item Version C of the \ac{CoSDD}~\cite{cosdd_c}.
+\item Feedback and issues from internal and external reviews of the \ac{CoSDD} conducted in March and July 2024, respectively.
+\item Recommendations from the \acl{ICT} and \acl{ISOpT}, distilled from numerous \acl{WG} reports and \acp{TSI}, and endorsed by the \acl{AMT} in February 2025.
+\item Additional technical content from \acl{WG} and \ac{TSI} reports.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%
+
+To provide a clear description of the design, the \acl{SDD} is organized into three main themes: (1) the operational processes during the WSU era, (2) the upgraded digital signal chain, and (3) the computing and software infrastructure to support the WSU.
+
+\noindent \textbf{Processes}
+
+The ALMA operations chain, from proposal submission to data delivery and archive access, is mature after over a decade of use. While most processes will be updated for the WSU, the core operational model will be retained. The main changes involve data processing and quality assurance workflows, which must evolve to achieve the processing efficiency required for the WSU, including:
+
+%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+    \item Launching the pipeline calibration on a per-\acl{EB} basis to enable faster feedback on data quality and distribute the processing load more evenly over time. % (see Section~\ref{sec:qa2eb}).
+    \item Generating science data products % at the \ac{GOUS} level 
+    for observations that combine data from multiple configurations or arrays.
+    \item Fully automating the reduction, quality assurance, and delivery of most ALMA data products (images, spectral cubes); % based on pre-defined metrics; 
+    data that meet the quality assurance criteria will be automatically ingested into the \acl{ASA} and delivered to \aclp{PI}.
+\end{itemize}
+%%%%%%%%%%%%%%%
+
+
+\clearpage
+\noindent\textbf{Signal Chain}
+
+Upgrading ALMA’s signal chain is central to realizing the capabilities of the WSU.
+% requiring coordinated enhancements across the entire \acl{FE} and \acl{BE} system. 
+These upgrades will enable major improvements in bandwidth, sensitivity, and spectral capabilities, forming a high-throughput digital path from sky to the correlator and spectrometer. Key innovations include:
+
+\begin{itemize}[itemsep=-0.5em]
+\item Band 2, now being deployed, is the first ALMA receiver to provide 32~GHz of bandwidth per polarization. Its exceptionally wide \ac{RF} coverage from 67 to 116~GHz fully encompasses Band 3, enabling wideband observations in one of ALMA’s most requested bands.
+%
+\item Bands 6, 7, and 8 will be upgraded for up to $4\times$ greater \ac{IF} bandwidth and with improved noise performance. These upgrades extend WSU capabilities to ALMA’s two most requested bands (Bands 6 and 7) and enhance high-frequency science in Band 8.
+%
+\item When fully upgraded, the \ac{ATAC}\index{Advanced Technology ALMA Correlator}\seeonlyindex{ATAC}{Advanced Technology ALMA Correlator} will   offer up to 155$\times$ more channels, $72\times$ finer resolution when processing the full bandwidth, and ultra-high spectral resolution (1.7~kHz) via zoom modes. These advances virtually eliminate the long-standing trade-off between spectral resolution and correlated bandwidth, unlocking the full potential of the WSU.
+%
+%\item The upgraded ALMA system will support up to eight independent Arrays, enabling unprecedented flexibility, including simultaneous interferometric and \ac{VLBI}/Phased Array observations.
+%
+\item The \ac{TPGS}\index{Total Power GPU Spectrometer}\seeonlyindex{TPGS}{Total Power GPU Spectrometer} that will match the spectral capabilities of \ac{ATAC} to provide total-power observations of extended sources.
+\item The \ac{OCRO} will be constructed at the \ac{OSF} to house \ac{ATAC} and \ac{TPGS}. Relocating the correlator and  spectrometer from the \ac{AOS} to the \ac{OSF} will reduce high-altitude infrastructure complexity and improve maintainability, reliability, and efficiency.
+%
+\item The \ac{WIFP} will condition analog \ac{IF} signals from the \acl{FE} cartridges, then digitize, timestamp, format, and transmit the data to the \ac{DTS}. Its \acl{IFSC} module filters \ac{IF} signals into two output paths, enabling observations with either the current system or the WSU. This ensures continued operations as antennas are retrofitted with WSU hardware.
+%
+\item A high-bandwidth \ac{DTS} will boost capacity from 120~Gb/s to 1.6~Tb/s and span distances up to 80~km to enable future implementation of longer baselines, identified in the Development Roadmap as a midterm opportunity.
+%
+\item A high-count \ac{FOS} will be installed between the AOS and OSF to support the higher data rates, along with associated patch panels at each location.
+\end{itemize}
+
+
+
+\noindent\textbf{Computing and Software Infrastructure}
+
+
+The WSU will require coordinated upgrades to ALMA’s computing and software infrastructure spanning all phases of the operational workflow. These enhancements will support new hardware components, higher data throughput, increased processing loads, and the larger volume of science data products generated by WSU observations. Key upgrades include:
+
+
+\begin{itemize}[itemsep=-0.5em]
+    \item While the basic computing infrastructure for data acquisition and data transmission from the \ac{OSF} to the \aclp{ARC} can be accommodated by the existing framework, significant upgrades are needed to storage, bandwidth, and compute capacity to meet WSU demands.
+
+    \item Control software will be adapted to coordinate the upgraded hardware subsystems, including \ac{ATAC} and \ac{TPGS}, ensuring smooth execution of observations.
+
+    \item The \ac{OT} will require substantial updates to offer streamlined user interfaces for configuring complex spectral setups under the new bandwidth capabilities.
+
+    \item \ac{TelCal} will be updated to accommodate new calibration strategies and data volumes, ensuring reliable telescope performance.
+
+    \item New data processing software will be developed under the \ac{RADPS} program -- \ac{RADPS-ALMA} -- to replace the current \ac{CASA}, ALMA Pipeline, and portions of the surrounding data processing infrastructure, which cannot handle the largest datasets produced by the WSU.
+
+    \item \ac{RADPS-ALMA} will provide more efficient parallelized data processing, optimized compute resource allocation, and improved fault tolerance to enable timely production of science-quality data products. It will integrate with several adapted ALMA software components, together providing the functionality to process and image WSU data.
+
+    \item A phased transition plan will guide the observatory’s migration from the current software infrastructure to the \ac{RADPS-ALMA}-based infrastructure, ensuring data processing continuity and operational readiness throughout the rollout of the WSU Program. 
+\end{itemize}
+
+
+% Extra space to seaparate from the computing infrastructure section 
+\vspace*{0.5cm} 
+The \ac{WSU} is a critical investment in the future of millimeter and submillimeter astronomy. Through a coordinated global effort, the WSU will ensure that ALMA remains at the forefront of discovery in the coming decade. The upgrade’s impact will span the vast array of research areas that embody ALMA’s motto: \textit{In Search of our Cosmic Origins}.

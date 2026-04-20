@@ -1,0 +1,13 @@
+,,,,,,,,
+big-cubes name,CoSDD / DRRUP,2024 TSI+WG,PDR Milestone,BW,Tint(12m) [sec],Nrx(full BW),Min Vres [km/sec],Antennas fully upgraded
+early?,(none),Initial WSU (IWS),1,2x,6,2,0.5 km/s,>=36 12m
+ms4,(none),(none),4,2x,3,2,0.1,all
+,Early WSU,Minimum WSU (MWS),(none),2x,3,4,0.1,all
+later_4x,(none),Goal WSU (GWS),5,4x,3,5,0.1,all
+,Later WSU,Full WSU (FWS),(none),4x,3,10,0.1,all
+,,,,,,,,
+,Notes,,,,,,,
+,*Milestone 5 (= GWS) and FWS data characteristics are very similar,,,,,,,
+,*Milestone 4 and MWS data characteristics are very similar ,,,,,,,
+,*rows are sequenced in order of increasing data volume,,,,,,,
+,*for full details see AAK's excel file on NRAO sharepoint and original memos,,,,,,,

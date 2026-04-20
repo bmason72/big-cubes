@@ -1,0 +1,48 @@
+%\begin{spacing}{0.1}
+\begin{center}
+\begin{talltblr}[caption={WSU Additional electrical power consumption estimation},label={tab:powerBudget}]
+{
+colspec={Q[7cm]Q[c]Q[c]Q[c]Q[6cm]},
+cells={font=\scriptsize},
+row{1,2}={headercolor, font=\scriptsize\bfseries},
+row{3,12}={highlight2},
+row{10,11,20,22}={light_green, font=\scriptsize\bfseries},
+hlines,
+vlines,
+width=\textwidth,
+stretch=0.75pt,
+}
+\SetCell[r=2]{c} Component & \SetCell[c=2]{c} {Average\\demand} & &  \SetCell[r=2]{c}{UPS\\needed?} & \SetCell[r=2]{c} Assumptions\\
+& kW & kVA & \\
+\SetCell[c=5]{c} {\bf AOS}\\
+Front-End additional instruments per antenna & 0.1 & 0.1 & No & Only the new Band 2 Rx will yield additional power consumption\\
+WSU Back-End instruments per antenna & 0.28 & 0.28 & No & \\
+WSU IF switch per antenna & 0.02 & 0.02 & No & Current IF switch will be replaced by upgraded version\\
+Extra cooling for additional WSU Back-End per antenna & 0.0 & 0.0 & No & No need for additional cooling in antenna Rx cabin\\
+DTS\index{Data Transmission System} per-antenna component & 0.2 & 0.2 & No \\
+DTS\index{Data Transmission System}-AOS component & 0.6 & 0.7 & No  & \\
+Total additional power per antenna & 1.2 & 1.3 & & \\
+Total additional power at AOS for 66 antennas & 79.2 & 85.8 & & Worst case scenario 66 antennas, considers each antenna prepared for parallel deployment \\
+\SetCell[c=5]{c} {\bf OSF}\\
+ATAC\index{Advanced Technology ALMA Correlator} with 4x BW ingest and initial channelization and 2x BW Correlation/Beamforming.  & 228 & 253 & \makecell{Yes\\ (short \\ duration)} & Includes all equipment in ATAC racks for signal processing, Monitor \& Control, Correlator Data Processor compute, PDUs, in rack UPS for Monitor and Control, also includes in-rack liquid cooling power and the ATAC.HLSE. This value includes a 30\% margin.\\
+HVAC for OSF Correlator Room  & 433 & 529 & No & To be refined after the HVAC study\\
+%Additional HVAC for new correlator: option 3 & 210 & 263 & No & To be refined after the HVAC study\\
+%HVAC Optional: liquid cooling for option 1 & 180 & 225 & No & To be refined after the HVAC study\\
+%HVAC Optional: liquid cooling for option 3 & 210 & 263 & No & To be refined after the HVAC study\\
+DTS\index{Data Transmission System}-OSF component & 10 & 11 & No & \\
+TPGS\index{Total Power GPU Spectrometer} (Total Power GPU Spectrometer) & 40 & 48 & Yes & Power consumption estimated at the end of the upgrade: 40 kW\\
+Software Servers Infrastructure & 22 & 25 & Yes & 5$\times$ Blade Chassis\\
+Additional Archive capacity & 19.8 & 23.8 & Yes & 2 racks, worst case scenario \\
+%Bulk-Data Server (Container de Archive) GAS 03 & 8 & 9 & Yes & 5$\times$ RS-840\\
+IT equipment & 8 & 9 & Yes & 2 racks, worst case scenario \\
+%Server APE (Software Group) & 8 & 9 & Yes & 3$\times$ Blade Chassis\\
+Total additional power at OSF (ATAC\index{Advanced Technology ALMA Correlator} 2$\times$ bandwidth) & 760.8 & 898.8 & & Worst case for correlator \\
+%Total additional power at OSF (option 3: 4$\times$ bandwidth respect to existing correlator - HVAC include) & 736  & 817 & & Worst case for correlator, with only air cooling\\
+%\SetCell[c=5]{c} Total OSF plus AOS Correlator\\
+%2$\times$ bandwidth & 599 & 666\\
+%4$\times$ bandwidth & 806 & 896\\
+Additional power consumption for the upgrade of the ATAC\index{Advanced Technology ALMA Correlator} to 4x BW Correlation/Beamforming. & 104 & 116 & TBC & The increase (after future upgrade) is for additional 2nd stage (AFSP) hardware only. This value includes a 30\% margin\\
+Total additional power at OSF (ATAC\index{Advanced Technology ALMA Correlator} 4$\times$ bandwidth) & 864.8 & 1014.8 &   & \\
+\end{talltblr}
+\end{center}
+%\end{spacing}

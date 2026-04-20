@@ -1,0 +1,49 @@
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot
+
+%\newcolumntype{x}[1]{>{\centering\hspace{0pt}}p{#1}}
+\newcolumntype{x}[1]{>{\hspace{0pt}}p{#1}}
+
+%\newcommand{\T}{\rule{0pt}{2.6ex}}
+%\newcommand{\B}{\rule[-1.2ex]{0pt}{0pt}}
+%\newcommand{\T}{\rule{0pt}{0ex}}
+%\newcommand{\B}{\rule[0ex]{0pt}{0pt}}
+\newcommand{\minitab}[2][l]{\begin{tabular}{#1}#2\end{tabular}}
+
+\newcommand{\almaheader}[3]{%
+\renewcommand{\baselinestretch}{0.85}%
+\normalsize
+\setlength{\tabcolsep}{0pt}
+\adjustboxset{height=1.7cm, valign=c, margin=0pt 0pt 0pt 0pt}
+\begin{tabularx}{\textwidth}{| x{1.224cm} | x{0.4\textwidth} | X |}
+\hline
+\adjustimage{}{Figures/ALMA_logo.png} &
+%\minitab[c]{\includegraphics[height=1.7cm]{Figures/ALMA_logo.png} } &
+\hspace*{4pt}\minitab[l]{#1} &
+\minitab[l l l]{
+\hspace*{4pt}Doc. & : \, & #2 \\ 
+\hspace*{4pt}Date & : \, & #3 \\
+\hspace*{4pt}Page & : \, & \thepage\ of \pageref*{LastPage}} \\
+\hline
+\end{tabularx}
+}
+
+
+
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot{}
+\lhead{}
+\chead{\almaheader{Wideband Sensitivity Upgrade:\\ System Design Description (SDD)}{\aedm}{\today}}
+\rhead{}
+
+
+%This command creates an empty header, which is what you need for the cover page
+\fancypagestyle{noheader}{
+  \fancyhf{} % Clear header and footer
+}
+
+
+\fancyfoot[C]{\small Printed versions of this document are \textbf{for reference only}. The latest released electronic version is located in the ALMA Electronic Document
+Management (AEDM) system: \href{https://aedm.alma.cl}{https://aedm.alma.cl} \normalsize}
+

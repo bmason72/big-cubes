@@ -1,0 +1,629 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{WSU Computing Infrastructure - Software}
+\label{sec:wsu_compu_sw}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This section describes how the various SW components will evolve and how new ones will need to be developed to cope with the data obtained with the WSU.  A description of the current ALMA SW infrastructure is provided in Section~6 of~\cite{CSA-IA} while the impact assessment for the WSU can be found in Section 10.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Data Models}\label{subsec:ASDM-APDM}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%
+\subsubsection{APDM}
+The information of any Observing Project is stored in the ALMA Archive following the ALMA Project Data Model (APDM). More information about the APDM\index{ALMA Project Data Model} can be found in the Glossary section of the present document and in Section 2.6 of~\cite{CSA-IA}. Over the years, the APDM has evolved while adhering to a fundamental principle: no elements are renamed or removed to prevent disruptions in the distributed software system. However, this approach has resulted in some elements becoming obsolete, others having misleading names, and certain elements potentially being misleading if retained for the WSU.
+
+The initial draft design of the APDM for the WSU was intentionally not backward compatible to achieve a more streamlined design. Unfortunately, such a significant redesign would adversely affect all existing software components reliant on the APDM.
+
+It is unavoidable that all software interacting directly with the correlator configurations will need to be modified for compatibility with the WSU. However, care must be taken to avoid unintended consequences on other ALMA software and database components that do not utilize correlator configurations through the introduction of an incompatible APDM. The primary concern lies in the shared set of generated APDM binding classes used by most ALMA software. This unified set of classes must accommodate both current and future correlator configurations.
+
+To maintain APDM backward compatibility while allowing new correlator configurations to adopt a clean design, the new configurations will be integrated into the APDM independently, remaining separate from existing correlator configurations, and without altering or removing any components of the original APDM. This design decision is described in Section~3.1 of~\cite{apdm}.
+
+%%%%%%%%%%%%%%%%
+\subsubsection{ASDM}
+\label{ASDMchanges}
+%%%%%%%%%%%%%%%%
+The \ac{ASDM}\index{ALMA Science Data Model (ASDM)} defines the collection of information recorded during an observation that is needed for scientific analysis. Each ASDM contains both \ac{BDF} files\index{Binary Data Format (BDF)} and metadata\index{Metadata} tables.
+
+The current ASDM is described in detail at Section 6.1.2 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 10.1.2 of the same document.
+
+% Have there been any discussions regarding the APDM (or a subset) being stored in the ASDM, or whether it will be made available similarly to asdmExport? Is this still necessary?
+
+The ASDM will receive minor changes, following the same principles used until now, i.e., no elements may be renamed, or removed~\cite{tsiReport}. This will ensure a clean way of adding new enumeration values and table columns while maintaining backward compatibility with older ASDMs. The following changes are to support both ATAC\index{Advanced Technology ALMA Correlator} and TPGS\index{Total Power GPU Spectrometer}:
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+    \item Minor changes in enumerations.
+    \item Minor changes in the Spectral Window and the Correlator Mode tables.
+    % Need more information on whether parts of the APDM / SB will be part of the ASDM
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%
+
+While the ASDM format is flexible enough to require minimal intervention for the WSU, the way the data is going to be generated will affect the design and implementation of several subsystems, and come at the cost of software interacting with the new ASDM products needing to be adapted. The ASDM binary data will be split by spw for both FullResolution and ChannelAverage raw data, allowing a higher natural parallelization during \ac{BDF} file creation, transfer, storage, retrieval, and processing. From that, we can derive the following information per subarray:
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+    \item FullResolution \ac{BDF} files per spws: $\leq 160$ per subscan.
+    \item ChannelAverage \ac{BDF} files per spws: $\leq 160$ per subscan.
+    \item WVR \ac{BDF} files per subscan: 1.
+    \item TotalPowerProcessor BDFs per bandwidth: $\leq 10$ per subscan. Custom sub-division (2 wide + $6-8$ 2\,GHz bandwidth sets).
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+In the context of data acquisition, that is a maximum of 331 per Array, leading to a theoretical maximum of 2648 \ac{BDF} files being generated simultaneously. This may lead to inefficiencies or a requirement to increase the online infrastructure capacities.
+
+For system calibration scans (pointing, focus, delay, antenna positions, and antenna surface calibrations), an additional customization has been defined to ensure efficient preparation of online calibrations:
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+    \item FullResolution \ac{BDF} files per side-band: $\leq 2$ per scan.
+    \item ChannelAverage \ac{BDF} files per side-band: $\leq 2$ per scan.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%
+\subsubsection{Measurement Set}
+\label{MSchanges}
+%%%%%%%%%%%%%%%%
+The Measurement Set (MS)\index{Measurement Set} is the data format used by the data processing software. The scope of ALMA subsystems to which the MS is directly relevant is considerably narrower than that of the APDM and ASDM:
+%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+\item The MS is exclusively used within the Pipeline/CASA subsystem for offline data processing. This remains true for WSU-ALMA, where only Pipeline/CASA or RADPS-ALMA use the MS.
+\item The MS model does not influence the rollout of ATAC, receivers, or the online calibration (via TelCal) and archiving of WSU data.
+\end{itemize}
+%%%%%%%%%%%%
+
+While the current implementation (MSv2) data schema is generally adequate, its storage format and implementation present significant constraints on the scalability of the current system for handling WSU data volumes (see Section~10.1.3 of \cite{CSA-IA}). At the time of writing, MSv4\index{Measurement Set v4}\footnote{MSv3 was an exploratory effort in collaboration with SKA to enhance aspects of MSv2. It did not have the same focus on scalability as MSv4, and was never widely adopted.} is being defined within the RADPS program through a collaboration between NRAO and SKAO. The MSv4 re-defines the data schema, API, and storage format, along with its  underlying implementation(s):
+%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+\item The MSv4 aims to scale to WSU-ALMA (and ngVLA) data volumes by leveraging off-the-shelf technologies such as Xarray and Dask for I/O and parallelization, replacing the custom Casacore Table Data System used in the MSv2.
+\item The MSv4 supports all known science use cases currently supported in the Pipeline/CASA.
+\item The MSv4 data schema is an update that builds on the MSv2. The MSv4 ensures backward compatibility with data from past ALMA cycles and also supports re-processing with data combined from multiple cycles. It is possible to convert between MSv2 and MSv4, and to read from ASDM to MSv4.
+\end{itemize}
+
+%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Proposals Submission and Project Preparation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{The Observing Tool (OT)}\label{subsec:OT}
+
+PIs submit observing proposals using the ALMA Observing Tool (OT)\index{Observing Tool} as part of the annual Call for Proposals (Phase 1) or throughout the year to request \ac{DDT}. With the WSU, the OT will support creating valid spectral setups for \ac{ATAC} and \ac{TPGS}, including the increased number of spectral windows, as well as the calculation of the on-source and total integration times. It will provide a new Phase 1 user interface to make spectral selection, visualization, and overplot of spectral lines more accessible.
+
+Building on the new web-based OT that will be delivered through the new generation Observing Tool (ngOT)  project and the advantages of modular user interfaces it will offer, Phase 2 of the OT will be redesigned following the established operational procedures of the ALMA observatory. Separate web-based user interfaces will be created for ALMA staff and PIs for different activities during Phase 2. A set of specialized software tools for ALMA staff will support SB generation, taking into account the new observing strategies, including \acp{spw}, local oscillator definition, correlator modes and correlator efficiency, calibration strategies, and \ac{APDM} variables (see Section 6.1.1 of~\cite{CSA-IA} for details). The facility for PIs to optionally review their Phase 2 configurations and give feedback will be offered as separate user interfaces or be integrated into existing tools.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Proposal Review Tools (Ph1M) }\label{subsec:ph1m}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The three types of ALMA proposal review, namely Panel Review, \ac{DDT} Review, and \ac{DPR}, are carried out using a suite of web tools called \ac{Ph1M}. The \ac{PHT} uses a single administrative tool to manage the three types of review. For Panel Review participants, there is a set of three tools, AssessorTool, ArpMeetingTool, and AprcMeetingTool, while the \ac{DDT} review only uses a modified version of the AssessorTool. The \ac{DPR} process has a specialized Reviewer Tool (dapr), which is more suited to the large number of participants compared to panel reviews. No changes to ph1m software are required for WSU.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Project Tracker (ProTrack)}
+\label{sec:pro_track}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The status of any Project, and the associated \acp{OUS} and \acp{SB}, can be tracked and changed in \ac{ProTrack}\index{ProTrack}. ProTrack must support both legacy and WSU projects and show both legacy and WSU spectral setup information.
+
+\ac{ProTrack} and the Project Life Cycles (Section~\ref{sec:state-system}) will be adapted for potential changes in the WSU workflow, e.g., per-EB calibration and \ac{GOUS} imaging, including support for automated work in Phase~2 generation, such as the ability to change the status of multiple \acp{SB} at once.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{State System and Life Cycle}
+\label{sec:state-system}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The State System is a common software component which includes the Life Cycle, the StateArchive, and the StateEngine (see section 6.2.4 of~\cite{CSA-IA}). These components will be updated for the WSU  to accommodate changes in observatory processes, principally the per-EB and GOUS processing and QA workflows (Section~\ref{sec:dataProcessing}). The extent of these changes will be evaluated during detailed design and feedback from the AIVC process, and will be determined by requirements for new states or transitions in Life Cycle. For instance, if the existing \ac{OUS} lifecycle is found to be inadequate for \ac{GOUS} processing, then the State System component modifications may be significant.  Similarly, if per-EB calibration is implemented as a new EB Life Cycle then it will require important modifications on the State System. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Data Acquisition}
+\label{sec:data-acquisition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The data acquisition software includes software to support multiple subsystems. As a high-level overview, the software organizes the SBs in a prioritized list, from which they are selected to be observed. During the observations, the antennas are pointed and their devices are configured and calibrated, while the correlators and/or spectrometers are configured and prepared for the observation. The software orchestrates all the interactions to execute calibration intents for the SB, receives the data, and feeds a calibration loop, until the array is ready to observe the science target; the science scan intent is executed, intertwining calibration intents when necessary. The observed data are stored in the ASDM: the metadata are split across an Oracle database and the binary data storage, while the raw data are directly stored in the binary data storage.
+
+At all times, different supporting features that are not directly seen are used to produce logging, monitoring data, and alarms, and enable a myriad of low-level functionality for all the required capabilities. Furthermore, multiple pieces of software are used to prepare the array and maintain and debug the software, the hardware, and all the devices of the data acquisition system.
+
+The upcoming sections include a small description of each of the subsystems or software that has been identified as requiring changes for the WSU, they will be referencing the equivalent sections in the ~\cite{CSA-IA} document, where more details can be found regarding the current system architecture (Section 6.3) and the impact assessment for the WSU (Section 10.3).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{ALMA Common Software}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ACS is a distributed computing middleware framework offering a container/component architecture, which is used for ALMA's data acquisition software. It is based on the CORBA standard and allows developers to build software that transparently coordinates observations and controls devices and instruments.
+
+The current state of ACS is described in Section 6.3.1 of ~\cite{CSA-IA}, while the WSU impact assessment is described in Section 10.3.1 of the same document.
+
+\ac{ACS} will continue to serve as the middleware framework for data acquisition software, providing a container-component architecture and infrastructure software to standardize and simplify the functionality implementation and deployment of different subsystems.
+
+Most of the framework will continue to be suitable for WSU requirements, needing only improvements in data transfer performance between subsystems, servers, and networks. The BulkDataNT software, based on Real-Time Innovations (RTI)\footnote{Company Name} \ac{DDS} technology, is enabled with \ac{RDMA} support through a plugin initially developed by the RTI DDS community and now adapted and maintained by Common Infrastructure. This improvement, in parallel with the expected \ac{BDF} subdivision by \ac{spw}, shall guarantee that the required data transfer requirements are met with exceeding capacity.
+
+The Common Infrastructure team will continue providing regular releases, with special emphasis on obsolescence management and security, envisioning to operate WSU's first years using the \ac{RHEL} 9 operating system. Interpreters, compilers, and other technologies are expected to be used within their lifetime and be under support at all times, with limited exceptions. This means that during the development and operations of the observatory in the WSU context, we expect some of the technologies and software used by the observatory to be upgraded as their lifecycle and support approaches the end of life.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Archive Online Chain}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The Archive online chain consists of all SW components involved in ingesting the observation-related ALMA data in the Archive.
+
+The current state of the Archive online chain is described in detail at Section 6.3.2 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 10.3.2 of the same document.
+
+During WSU, the architecture of the Archive online chain will remain the same. Improvements are expected to make the data transfer process more efficient. For instance, additional Archive BulkReceivers will be needed to handle multiple spw \ac{BDF} files simultaneously. The load-balancing capacity and fail-over mechanism for transferring data to NGAS servers will be improved to guarantee stability and efficiency.
+
+The GAS03 server disk(s) used for queuing binary data will be upgraded in technology (\ac{NVME} or equivalent), speed, and capacity to ensure efficient handling of the new data rates within requirements. The OSF NGAS frontend, which will receive data from maybe multiple GAS03 queues, should also be upgraded with (\ac{NVME} or equivalent), so as not to create a bottleneck on APE GAS03 servers.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Online Monitoring}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Monitoring is a shared responsibility among different software deliverables. It refers to the system's capabilities to collect, organize, and distribute monitoring data, such as the state of device properties, to external systems.
+
+The current state of online monitoring is described in detail at Section 6.3.3 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 10.3.3 of the same document.
+
+The number of blobber components used for organizing and distributing monitoring data should be reassessed as part of detailed design, considering the new devices and properties being monitored. Additional components should be deployed if needed, and some could be distributed to additional GAS machines.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Telescope and Monitoring Configuration Data Base} \label{sec:TMCDB}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The TMCDB is an Oracle-based database providing the means to adjust the software components and observatory configurations.
+
+The current description of the TMCDB is described in Section 6.3.4 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 10.3.4 of the same document.
+
+The TMCDB contains configuration schemes for the hardware devices, for which the new SW device drivers will require new entries. For example, the first LO’s warm multiplier harmonic value will be changed from 6 to 3 in the upgraded Band 6 WCA~\cite{band6v2_pp} (and possibly in other receiver bands).
+
+The TMCDB needs to be modified initially so that progressive changes to the system, including managing for new WSU devices, active or inactive, in parallel with the existing ones can be supported.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Scheduling}\label{sec:scheduling_software}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Scheduling is orchestrated by the \ac{DSA}, consisting of a service that gathers current conditions of weather and available arrays, and a GUI through which the AoD accesses the prioritized list of SBs and sends them for execution.
+
+The current design of Scheduling is described in Section 6.3.5 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 10.3.5 of the same document.
+
+With the WSU, resource tracking is a new functionality needed for the DSA to manage efficiently new capabilities provided by ATAC\index{Advanced Technology ALMA Correlator} processing resources and allowed peak or mean data rates. The existence of any Manual Mode Array and the correlator resources they use must also be known to the resource tracker.
+
+Section~\ref{sec:scheduling} highlights the need for enhancements to the dynamic scheduling system as part of the transition to WSU operations, to ensure adaptability to evolving operational conditions.
+
+The AROMA\footnote{AROMA was formerly known as "Scheduling Online". The Scheduling subsystem offered the online component that was originally planned to prepare the prioritized list of SBs on its own, besides its current responsibilities. However, ALMA ended up delegating this functionality to the DSA service, which led to a subdivision of the Scheduling subsystem software into the "Scheduling Online" and the "Scheduling Services". The "Scheduling Online" software has been renamed for the WSU to avoid confusion and mistakes, as the originally envisioned responsibilities of the component were greatly reduced a long time ago.} component must accommodate new array types for ATAC and TPGS, and possibly other minor changes.
+
+The \textbf{Scheduling DSA GUI} will have to consider adding new options that will be passed along in the queries to the \textbf{DSA Service}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Control}
+\label{sec:control}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The Control software orchestrates the different hardware devices, including the correlators and spectrometers, enabling the observation executions.
+
+The current design of Control is described in Section 6.3.6 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 10.3.6 of the same document.
+
+The Control subsystem is in charge of:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}[itemsep=-0.5em]
+    \item Executing the observations by coordinating the hardware devices and the correlators/spectrometers, and preparing the observation metadata for storage.
+    \item Collecting monitor data for most hardware devices, and providing access for maintenance and problem diagnosis.
+\end{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Other software subsystems handle some hardware devices. These include:
+%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+    \item ATAC and TPGS. Both are sufficiently complex that the separate software described below takes higher-level commands from the Control system and decomposes them into the commands sent to the hardware. The ATAC and TPGS software do monitoring and provide means to access the hardware for problem diagnosis.
+    \item The \ac{DTS} equipment. This is a change from current practice. The DTS project will provide the software for maintenance and problem diagnosis and collecting monitor data. This separation is possible because DTS does not need to be manipulated during an observation.
+    \item All equipment that is not needed for observing. This includes fire alarms \& building \ac{HVAC} systems.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%
+
+The Control subsystem will require several changes for the WSU. The biggest impact derives from the new Back-End \ac{WIFP}, the elimination of the second down-conversion stage, and the desire to centralize the fringe and delay tracking
+
+%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+    \item Wider bandwidth Front-Ends for Bands 2, 6, 7, and 8.
+    \item The new \ac{WIFP} will directly sample the IF signals from the first downconversion and send the digitized data to the correlator subsystem via the DTS.
+    \item New M\&C bus; Ethernet. The WSU is an opportunity to replace the obsolete CAN bus with faster and better-supported communications. This triggered a simplification in the time-synchronization strategy.
+    \item Updates in the interfaces for both new correlator and spectrometer are needed\footnote{The Control software flexibility for controlling multiple correlators and spectrometers has been tested extensively with the original correlators: BL and ACA (Correlation and TP mode sub-arrays). Later, the same architecture/design supported the inclusion of sub-arrays for the BL correlator and the newer ACA Spectrometer. There's high confidence that the architecture/design will have the flexibility to support the ATAC and TPGS in their diverse operation modes, by only considering the planned interface updates.}.
+    \item Updates in the data formats that describe an observation and how the resulting observation is stored in the Archive.
+\end{itemize}
+%%%%%%%%%%%%%%%
+
+All parts of the Control subsystem will be examined and, when necessary, updated to work with the WSU. The \ac{CCL} is one notable area that will be updated to provide low-level access to all new hardware (and remove access for obsolete hardware).
+
+Many new ALMA systems for the WSU will no longer be using the existing \ac{CAN}-based low-level protocols. New \ac{ICT} guide\-lines~\cite{ict_mc_guidelines} are being created to specify how Ethernet-based and HTTP-based controlled components should be added to the telescope.
+
+Quicklook, a GUI used to display calibration results visually, is expected not to need major updates. However, this GUI urgently needs a technology refresh, and the WSU provides an opportunity to introduce this update. This would start with a review examining the roles of Quicklook and AQUA in providing observer feedback.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{TelCal}
+\label{sec:TelCal}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TelCal employs data from the interferometric and \ac{TP} data stream, \ac{WVR}, and weather stations to provide online calibration data processing in the observation sequence. The current design of TelCal is described in Section 6.3.7 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 10.3.7 of the same document.
+
+The impact of WSU on the TelCal software is quite extensive due to the changes in data format (split of sub-scans per \ac{spw}), increased data volume, and significantly more complex spectral setups with millions of channels in total \cite{sys_reqs}. Given the criticality of TelCal, and the many subsystems depending on its output, the strategy considered is to limit the changes in the data format so that we can re-use more of the code that has been proven to be stable and reliable over more of a decade of ALMA operations.
+
+The calibration products produced by TelCal can be classified by their criticality for data acquisition. On one hand, the so-called system calibrations used to calibrate the telescope, and without which, no observations are possible; therefore, the  strategy is to limit the impact on them. These include interferometric pointing and focus, single-dish pointing and focus, delay, WVR and antenna positions. In addition, support for different modes of holography is needed to analyze the antenna surface. On the other hand, the TelCal products used by QA0 (bandpass, amplitude and phase) and the calibration pipeline (System Temperature, \Tsys, which is derived from the sideband ratio and atmospheric calibrations) are less critical since they are not necessary to operate the array and can therefore absorb more changes. The system calibration scans do not have to follow the same spectral configuration as the science scans and can, therefore, be adapted to the observatory's needs. Therefore, the following approach will be implemented:
+
+%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+    \item For the system calibration scans (interferometric/single-dish pointing and focus, delay, antenna positions, and antenna surface calibrations), the bulk data senders will support one single full resolution and one corresponding channel average spw per sideband, containing the maximum possible bandwidth. This totals 2 full spectral flows and 2 channel average flows and has the advantage of preserving the ATAC's spw independence concept and the TPGS’s design concept that processes the two sideband signals (USB and LSB) independently. This spectral configuration will allow TelCal to reduce system calibrations online, guaranteeing the maximum possible efficiency in operating the array.
+    \item The WVR binary/bulk data flow format will not change because there is only one physical WVR spw, and the rest are ``phantom'' \acp{spw} present only in the metadata containing the specific frequencies of each radiometer. This means that TelCal can still produce WVR calibrations to enable online WVR correction for VLBI observations.
+    \item Everything which is not a system calibration scan will follow the standard science spectral configuration, including bandpass and atmosphere unconstrained from TelCal. However, it has been considered that if data volume is a limitation for high spectral resolution science observations, a coarser resolution for the bandpass calibrator compared to the science target could be used \cite{bandpassMemo}, as long as it remains of the order of $1-2$~MHz. In any case, TelCal will generate the products requiring science spectral configuration in the offline environment since they are not essential for the telescope calibration, and it is cumbersome for the bulk data senders to merge up to 80/160 \acp{spw} into a single one, even for the channel average data. This option guarantees stability while maintaining the scope of all functionality and not delaying the availability of QA0 results since the timing requirement for the QA0 system to produce results after a PI science observation is 15~mins, much longer than the current 2~mins used to process scans online.
+
+\end{itemize}
+%%%%%%%%%%%%%%
+
+Still, the TelCal code will have to be extensively changed to produce results for scans with science spectral configurations even if this happens in the offline environment:
+
+%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+    \item The data format will change due to the split per \ac{spw}, which requires rewrites of large parts of the code since reading and processing are interleaved in TelCal to avoid inner data format reconversions for performance reasons.
+    \item The number of channels will greatly increase: With up to 1.2-2.4 million channels per polarization (for dual polarization) in total when using the maximum of 80/160 spws, with 14880 channels each, which will require massive parallelization per spw instead of per antenna as currently done in the atmospheric calibration.
+    \item The memory footprint will greatly increase: the peak data rate produced by the 12-m Array will increase to $\approx$\,4 GB/s by the completion of the WSU Program (Table 7 in Appendix~\ref{subsec:datarates_peak}), which implies TBs for long scans such as bandpass. Still, it will be possible to generate a bandpass solution in all cases for QA0 purposes to help the commissioning team to diagnose the new system up to Milestone 3, since the peak data rates will be limited to 0.25 GB/s. Beyond that point, a mixed strategy, resorting to higher RAM and partial loading and reduction of the data, will be implemented.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%
+
+\textbf{TelCal Spy} should not be affected by WSU as the metadata structure is not changing, but it may receive minor tweaks and improvements.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Advanced Technology ALMA Correlator (ATAC)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ac{ATAC} processes digitized time series from any/all of the 66 antennas available to ALMA via the \ac{DTS}. From a software computing infrastructure perspective, ATAC exposes an interface from ATAC.M\&C.Manager via its \ac{ACS} component. This interface is used to monitor and control ATAC, which is very similar to how the BLC's CCC is used. Commands to ATAC are typically received from Control, and Control Command Language (CCL) interaction is available when manual investigations are warranted.
+
+Data products in the WSU \ac{ASDM}'s \ac{BDF} are transmitted from the ATAC.Formatter software components to TelCal and Archive BulkReceivers via ACS's BulkData library. Physically, the hosts of TelCal and Archive BulkReceivers are connected to ATAC via the ATAC CDP 200\,GbE network switch, providing ample data transfer capability.
+
+ATAC provides the ATAC Configuration Library, which facilitates the creation of conformant Correlator Configurations within the WSU APDM's Spectral Spec. This library is used by the \ac{OT}, \ac{SSR}, etc.
+
+An interface between ATAC.M\&C.Manager and Scheduling's DSA allows DSA greater visibility into the active correlator subarrays (of which we support at least six concurrently), allowing DSA to avoid scheduling EBs that would oversubscribe internal ATAC processing resources.
+
+ATAC.HILSE is the ATAC contribution to the Hardware in the Loop Simulation Environment (HILSE). This correlator operates functionally identically to ATAC, with fewer inputs and fewer processing resources.
+
+ATAC provides an Operator GUI (replacing the BLC's CorrGUI) and an Engineering GUI. These can be used locally at the OSF or remotely from the remote control room.
+
+Log output from ATAC enters the ACS logging system from ATAC.M\&C.Manager's ACS software component and contains log messages from all of ATAC's internal software components.
+
+Monitor points destined for the Monitoring Database are exposed by ATAC.M\&C.Manager's ACS software component.
+
+More details can be found in Section 5.4 of~\cite{atac_sdd_dd-1} and in Section~\ref{sec:ATAC.M&C} of the present document. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Total Power GPU Spectrometer}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Total Power GPU Spectrometer (TPGS) processes digitized data streams from the four antennas in the Total Power Array. It produces the auto-correlation of science targets and the cross-correlation of system calibration targets. An ACS component called TPGS Control Unit (TPGS-CU) is a part of the data acquisition software. It is responsible for controlling the TPGS subsystem in response to the requests from Control and sending auto/cross-correlation data to Archive and TelCal in BDF format using the BulkDataNT library. More details can be found in the TPGS Subsystem Conceptual Design Description~\cite{TPGS_cosdd}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Science Software Requirements}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The SSR\footnote{The SSR subsystem's name is a consequence of an ad-hoc solution to the scientific requirements on ALMA software that other subsystems did not cover. At the time, these requirements were driven by the discussions and documents on Science Software Requirements, which naturally evolved into the SSR subsystem. Discussions outside this document's scope will define a better name for the subsystem.} interacts with several online subsystems, ultimately sending high-level commands to Control and TelCal to perform ALMA observations and the necessary online processing.
+
+The current design of SSR is described in Section 6.3.5 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 10.3.5 of the same document.
+
+Several changes in SSR are expected because (1) Control and TelCal will have multiple modifications, and (2) the device updates by WSU will invoke updates in calibration heuristics, which should be established through \ac{CSV} activities and eventually coded in SSR.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Array Runtime Manager}
+\label{sec:arm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The \ac{ARM} will be the main GUI for operators and AoDs to interact with the data acquisition software. It offers means to start ACS, its services, and the ALMA SW subsystems, including the monitoring and control of underlying devices.
+
+The current design of \ac{ARM} is described in Section 6.3.6 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 10.3.6 of the same document.
+The \ac{ARM} will replace the OMC.\footnote{The OMC is the only tool from the Executive Subsystem (EXEC). It will be deprecated for WSU and superseded by the \ac{ARM} project.}
+Since \ac{ARM} is a project under development, it is expected to be compatible with WSU requirements from the design phase.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Integrated Alarm System}
+\label{sec:ias}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The \ac{IAS}\index{IAS} is based on a generic alarm system architecture, agnostic of the system, and is designed to be efficient and scalable. It is an ambitious solution that is being used by multiple projects beyond ALMA.
+
+The current design of IAS is described in Section 6.3.7 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 10.3.7 of the same document.
+
+Additional alarms will impact CPU and physical memory usage, but the IAS architecture allows for horizontal scalability. Plugins, configuration changes, and additional resources will be needed to integrate the new alarms.
+
+% Specialized views could be developed for ATAC, TPGS, and other scopes, which would help users quickly become aware of problems and act accordingly.
+Specialized views for ATAC, TPGS, and other subsystems will be considered during detailed design to help users become aware of problems quickly and to act accordingly.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{OBOPS Online Software}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The OBOPS Online Software is comprised of tools that bind data acquisition's online nature to the offline nature of other subsystems' software.
+
+The current design of the OBOPS Online Software is described in detail at Section 6.3.8 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 10.3.8 of the same document.
+
+\textbf{Shiftlog Tool (SLT)} will continue to support logging all observing activities and problems on the 12-m and 7-m Arrays with ATAC\index{Advanced Technology ALMA Correlator} and the TP Array with TPGS\index{Total Power GPU Spectrometer}. Minor changes may be needed to accommodate the new array types.
+
+The \textbf{Obops Online Server (OOS)} does not expect changes from WSU, beyond the internal changes that may be caused by the events sent by the data acquisition system.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Operations Support Software}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+As part of the regular activities, operational and maintenance software is required for day-to-day tasks in the observatory. There are tools to assist in creating arrays and other tools to monitor, control, diagnose, and recover hardware devices. Some scripts help execute repetitive tasks on multiple devices at the same time. Several scripts enable the engineering team to perform their maintenance activities and aid in debugging and correcting any problems found. Some services enable log analysis or efficient monitoring analysis capabilities.
+
+The current design of the Operations Support Software is described in Section 6.3.9 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 10.3.9 of the same document.
+
+Several services, scripts, and tools must be updated to be compatible with WSU requirements.
+
+There are expected code adaptations and scalability modifications for \textbf{Phase-tracker}, \textbf{Plot\_pwv}, \textbf{Plot\_tp}, \textbf{AOSMonitor}, and other science software, with a varying impact. In most cases, the impact is related to the changes in ASDM structure and volume, but we should also consider possible changes to the interfaces.
+
+The \textbf{Log Analysis} stack sizing and setup need to be re-evaluated to accommodate the new set of logs generated by recent software changes, new applications, and the development of enhanced visualization and error detection tools. A fully functional Log Analysis platform will be crucial for effectively debugging the new WSU software.
+
+The \textbf{Hosts and Services Monitoring} stack may require additional Telegraf plugins to support new services. InfluxDB resources should be re-evaluated to ensure scalability based on the number of added hosts and services. Additionally, new alarms and dashboards must be created to provide comprehensive monitoring.
+
+The \textbf{Online Monitoring} stack and MDS will need to cope with additional monitoring points from ATAC and TPGS. The new monitor data makes an impact in terms of collection, transfer, ingestion, and storage requirements. This will require scaling the available resources, reducing parameters such as the retention policy, or both.
+
+Specific software like the M\&C components of ATAC and TPGS can send data to the \ac{MDS} through an API. For instance, the API can be used if they do not use ACS or have decided not to use its monitoring capabilities for technical reasons.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Calibration Services}
+\label{sec:cal-services}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The telescope calibration services are described in \cite{acsos}. These services are of two types:
+%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+    \item Those performed by observatory staff to measure, update, and maintain all of the  databases necessary for successful science observations and to provide access to those values needed for offline processing, such as the antenna positions and gain efficiency (Jy/K) databases, and
+    \item Those performed by SW subsystems during and after observations to ensure proper functioning of the telescope, such as pointing, focus and delay.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%
+
+The following subsections describe how ALMA will conduct its calibrations during WSU. 
+
+
+%%%%%%%
+\subsubsection{Antenna Calibration}  
+%%%%%%%
+The WSU system will require all of the same routine measurements
+described in Section~\ref{sec:ant_calib}.  The scripts or SW packages that are currently used to process them will 
+need to be adapted to the WSU data format and shape.  The antenna position database will be accessed via the antenna position service that is currently in development.
+
+
+%%%%%%%
+\subsubsection{Calibration Databases} \label{subsec:caldatabase}
+%%%%%%%
+Additional calibration databases, including the antenna gain efficiency\index{Calibration!Antenna gain efficiency (Jy/K)} (Jy/K) database, the TP OFF position database, and the Source Catalogue, will continue to be used in the WSU as now (Section~3.3.2 of \cite{CSA-IA}).
+
+The Source Catalogue is a database that includes coordinates, flux, and structure properties at different frequencies of calibrators used by ALMA (flux calibrators, phase calibrators, and check sources), as well as TP OFF positions used during TP observations. In the WSU era it will be expanded with additional tools to enable the inclusion of polarization information.
+
+The wider bandwidths of the WSU may require populating a new catalog of LO spurious signals and utilize it for data calibration, particularly for TP Array data that does not benefit from the suppression provided by LO offsetting and 180~degree Walsh switching.
+
+
+%%%%%%%
+\subsubsection{Online Calibration}  % relies on receiver
+\label{sec:WSUonlineCalibration}
+%%%%%%%
+
+Here we distinguish between the data calibrations applied by \ac{ATAC} on the fly, and the calibration products produced by TelCal which are either applied by Control or used to update the \ac{TMCDB}.
+
+\begin{itemize}[itemsep=-0.5em]
+    \item Data calibration applied by ATAC on the fly: Normalization of cross-correlation visibilities will be performed as currently described in Section~3.3.4 of \cite{CSA-IA}. The quantization correction\index{Calibration!Quantization Correction} for the digitizer will differ in the WSU, as the number of digital bits increases from 3 to 6 (Section~\ref{sec:wsu_signal_chain}). But the corrections will still be performed in the correlator and total power spectrometer subsystems, using the techniques described in \cite{QC}, including corrections for the various requantization stages in ATAC\index{Advanced Technology ALMA Correlator}. The WVR correction will be applied online only for VLBI/Phased Array (a.k.a., Beamforming) mode using the WVR calibration products from TelCal. ATAC\index{Advanced Technology ALMA Correlator} will determine and apply the phasing solutions rather than the ALMA Phasing System.
+    \item Calibration products produced by TelCal: These are described in detail in Section \ref{sec:TelCal}.
+\end{itemize}
+
+
+%%%%%%%
+\subsubsection{Standard Interferometry Visibility Calibration}  
+%%%%%%%
+Conceptually, all of the same post-observation calibrations currently performed in the interferometric Pipeline\index{Pipeline!Interferometry} \cite{ALMApipelineHeuristics}, as described in Section~3.3.4 of \cite{CSA-IA}, will continue to be performed by RADPS-ALMA\index{Radio Astronomy Data Processing System for ALMA} (Section~\ref{sec:radps-alma}).  The main difference is that, as described in Section~\ref{sec:dataProcessing}, most data will be calibrated on a per-EB basis\footnote{Full-polarization and total power will continue to be calibrated at the MOUS level.} instead of per-MOUS as currently done. This enables the proposed new QA0 process for interferometric data (Section~\ref{sec:aqua}). Other differences in heuristics are highlighted by calibration topic in Section~\ref{sec:calibrations}.
+
+
+%%%%%%%
+\subsubsection{Total Power Data Calibration}
+%%%%%%%
+Conceptually, all of the same post-observation calibrations currently performed in the single dish Pipeline\index{Pipeline!Single-Dish} described in Section~3.3.4 of \cite{CSA-IA} will continue to be performed by the RADPS-ALMA\index{Radio Astronomy Data Processing System for ALMA}.  In contrast to the interferometric pipeline\index{Pipeline!Interferometry}, the single dish calibration+imaging Pipeline\index{Pipeline!Calibration}\index{Pipeline!Imaging}\index{Pipeline!Single-Dish} will likely continue to operate on a per-MOUS\index{Member Observing Unit Set} basis as it is already has many stages parallelized by EB \cite{dp}.  Further parallelization by spw will be enabled by the proposed changes to the ASDM\index{ALMA Science Data Model} organization (Section~\ref{ASDMchanges}).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Data Processing, Data Management, and Data Flow System}
+\label{sec:dataProcessing}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%
+\subsubsection{ALMA-D3}
+\label{sec:alma-d3}
+%%%%%%%
+
+The significant increase in the number of channels (and corresponding increased data rates, visibility data volumes, and product sizes) brought by the WSU means that the current ALMA software infrastructure for data processing will not be able to handle a significant fraction of the data produced by ALMA in the WSU era \cite{dpda}, \cite{da}. For the WSU, a new data processing, data management, and data flow system -- formed from a combination of existing ALMA data-flow subsystems and a new data processing software infrastructure -- is needed \cite{dp}, \cite{cosdd_c}. This is known as ``ALMA-D3''. Requirements for ALMA-D3 were presented in \cite{dp}. 
+
+\begin{figure}[hbt!]
+  \centering
+    \includegraphics[width=13.2cm, trim={1cm 2.75cm 1cm 0.83cm},clip]{Figures/dpmws_ad3_May15version.pdf}
+  \caption{Overview of ALMA-D3 and surrounding software infrastructure. Existing components within the current system are indicated as light orange shaded boxes with arrows indicating the relationships between them. This includes the main components described in Section~\ref{sec:dataProcessing} and closely related functionality that is documented elsewhere, e.g., Section~\ref{sec:cal-services}. The current software infrastructure for data processing is shown by the blue shaded box. Overlaid, we highlight the RADPS-ALMA scope as an orange box. Main existing components that will be impacted by the RADPS-ALMA architecture are shown as boxes with blue borders; see Section~\ref{sec:dp-support-infra} for details. Other components will need to make changes to respond to changes to the operational model and \ac{QA} workflows (Section~\ref{sec:dpqa}).}
+  \label{fig:ALMA-D3}
+\end{figure}
+
+The new data processing software infrastructure part of ALMA-D3, known as RADPS-ALMA, will be provided as part of the Radio Astronomy Data Processing System (RADPS) program and is described in Section~\ref{sec:radps-alma}. Within ALMA-D3, the existing ALMA subsystems and RADPS-ALMA will work together to provide the functionality required to process and manage WSU data \cite{dp_tp}. A schematic overview of ALMA-D3 is shown in Fig.~\ref{fig:ALMA-D3}.
+
+RADPS-ALMA functionality will include the data processing capabilities currently provided by CASA and the ALMA Pipeline software infrastructure (see Section 6.5.3 of ~\cite{CSA-IA} for details of the current CASA and Pipeline). 
+
+In addition, the RADPS-ALMA scope expands beyond that of the current CASA and Pipeline to include workflow management (i.e., management of processing jobs) and resource management (current resource managers are Torque/Slurm). This change, in addition to the change to MSv4 (see Section ~\ref{MSchanges}) for the data processing format, allows the data processing software to process smaller chunks of data (e.g., individual scans/spws) in discrete steps (e.g., a single pipeline stage) using the appropriate compute resources for the job rather than requiring all the data within a MOUS to be processed in a monolithic set of steps using a single hardware configuration. It will enable the performance and efficient use of computing resources necessary to process ALMA WSU data. It will require changes to the parts of the existing ALMA data management and data flow subsystems, most notably \ac{CLAI}, PLDriver (see Section~\ref{sec:dp-support-infra}) and PipelineMakeRequest (see Appendix~\ref{sec:glossary} for a description). 
+
+The RADPS-ALMA scope is shown by the orange box in Fig.~\ref{fig:ALMA-D3}, while existing main ALMA software components that will be impacted by the RADPS-ALMA architecture are shown as
+boxes with blue borders. There will not be an exact equivalence between the current system (hereafter “legacy system”) and ALMA-D3. Details of the RADPS-ALMA conceptual design are described in Section~\ref{sec:radps-con-arch} and the RADPS-ALMA interfaces are described in Section~\ref{sec:RADPS-ALMA-interfaces}.
+
+
+Other changes to ALMA data-flow subsystems (e.g., AQUA, Section~\ref{sec:aqua}) will be needed as a result of the changes to the data processing operational model and \ac{QA} workflows described in Section~\ref{sec:dpqa}, which are needed to enable the necessary processing efficiency for the WSU.
+
+A data processing transition plan to gradually evolve from the legacy ALMA data processing system to the new ALMA-D3 that can process the full range of ALMA WSU data is described in \cite{dp_tp}. The phased data processing transition will incrementally replace or modify individual components of the current system (see Fig.~3 from \cite{dp_tp}). The transition plan is divided into three phases:
+\begin{enumerate}
+    \item Preparations for the WSU including changes to the QA0 and QA2 workflows (Section~\ref{sec:dpqa}) and switching to the RADPS-ALMA workflow and resource managers at Milestone 1, the first WSU cycle (Legacy Pipeline/CASA will be used for WSU at Milestone 1);
+    \item Replacement of the Legacy Imaging Pipeline with the RADPS-ALMA Imaging Workflow and Preparations to Replace the Legacy Calibration Pipeline;
+    \item Replacement of the Legacy Calibration Pipeline with the RADPS-ALMA Calibration Workflow and updates to accommodate GOUS Imaging.
+\end{enumerate}
+By the end of Phase 3 (by the start of WSU Milestone 4), the legacy data processing system and surrounding infrastructure will be completely transitioned to ALMA-D3, which will be capable of processing all ALMA WSU data.
+
+
+%%%%%%%
+\subsubsection{AOSCheck}
+\label{sec:aoscheck}
+%%%%%%%
+Quality assurance level zero (QA0) is a quality evaluation performed following the completion of each EB, which is the dataset produced by a single execution of an SB. It allows for quickly assessing some problems in an observation that may require observing an SB again.
+
+The current design of AOSCheck is described in Section 6.5.1 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 10.5.1 of the same document.
+
+As part of WSU QA0, AOSCheck will examine TelCal products composing ASDM (system noise temperature, receiver noise temperature, antenna aperture efficiency, visibility phase stability, bandpass spectral shape, etc.) to quickly assess the data quality. AOSCheck products will help Astronomers on Duty (AoDs) and Array Operators (AOs) identify technical issues with operating arrays and provide a first approach to diagnosing and troubleshooting the arrays in order to recover the system as quickly as possible.
+
+AOSCheck will be updated to accommodate the new ASDM division by spw, as well as the number of channels and other requirements.
+
+%%%%%%%
+\subsubsection{AQUA}
+\label{sec:aqua}
+%%%%%%%
+The quality assurance process is carried out using the ALMA QUality Assurance (AQUA)\index{ALMA Quality Assurance}\seeonlyindex{AQUA}{ALMA Quality Assurance} tools. AQUA has two separate user interfaces, one for QA0 and another for QA2. Details on this tool can be found in Section 3.3.5 in \cite{CSA-IA}. AQUA Batch Helper is an AQUA support tool that does not have a user interface and is responsible for background tasks related to QA0 and QA2.
+
+AQUA\index{ALMA Quality Assurance} QA2 is the tool used to perform quality assurance on ALMA data (both pipeline-able and manually processed). The operational aspects of AQUA QA2 are described in Section~7.1 of~\cite{dpda}. An addition to AQUA QA2 is a new AQUA EB Calibration tool, which is responsible for the per-EB calibration analysis.
+
+Major changes will be needed in AQUA QA2 to support the calibration per EB and the mixed processing of MOUS\index{Member Observing Unit Set} and GOUS data, and are described in Section~3.5.5 of \cite{dp}.
+
+The impacts of the WSU on AQUA QA2 include any associated major changes implemented in the processing workflow, GOUS imaging, or \ac{QA} criteria. AQUA QA2 will also be indirectly impacted by the increase of the data size during WSU due to its dependence on specific parts of the processing infrastructure and services (i.e. ProMo) that will be affected. These impacts are described in~\cite{dp}.
+
+Specifically, the new WSU high level data processing model will have a significant impact on AQUA due to the following:
+%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+    \item Per-EB calibration for standard modes (per-MOUS for full-pol, TP and manual)
+    %%%%%%%%%%%%%%
+    \begin{itemize}[itemsep=-0.5em]
+        \item The per-EB calibration AQUA tool needs to be developed further to automate the process.
+        \item The QA2 workflow and interface would need some changes to adapt to per-EB calibration, but these should be relatively straightforward.
+    \end{itemize}
+    %%%%%%%%%%%%%%%%
+    \item Some form of processing QA2 assessment at MOUS\index{Member Observing Unit Set} level with subsequent GOUS imaging and final QA2
+    %%%%%%%%%%%%%%%
+    \begin{itemize}[itemsep=-0.5em]
+        \item The current data processing workflow will have to be augmented to support GOUS processing. This change will have a major impact on AQUA\index{ALMA Quality Assurance} QA2, that currently does not deal with groups of MOUS\index{Member Observing Unit Set}s at all.
+        \item Since the technology and design of the current QA2 interface are already quite old anyway it would make sense to design a new AQUA-QA2 interface (AQUA EB Calibration tool can be used as a prototype because it already has the elements to work with pipeline report data).
+    \end{itemize}
+    %%%%%%%%%%%%%%%
+    \item Support automated data processing, quality assurance, and ingestion of observatory calibrations.
+    \item Adapt ProMo and the staging area to handle and serve significantly larger data products and weblogs.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%
+\subsubsection{RADPS-ALMA}
+\label{sec:radps-alma}
+%%%%%%%
+The Radio Astronomy Data Processing System (RADPS) is an NRAO-led program to develop a system for processing radio astronomy data that supports the increased data rates from planned upgrades to existing and future radio telescopes. The primary objective of this program is to develop a data processing system that supports production of high-level data products for the ALMA WSU and the Next  Generation Very Large Array (ngVLA). The secondary objective is to support the continued evolution of radio astronomy data processing through a widely accessible package enabling specialization and innovation at facilities and universities.  
+
+Within the RADPS program, the RADPS-ALMA project will be a collaboration between NRAO, ESO, and NAOJ to support the development of a data processing system for ALMA WSU. Requirements have been gathered from key stakeholders (for ALMA, see \cite{dp_tp}) and have been baselined as part of the RADPS program \ac{SRR}. The RADPS program is currently in the conceptual design phase with a \ac{CoDR} targeted for Q3 CY2025.  
+
+As described in Section~\ref{sec:alma-d3}, RADPS-ALMA functionality will include the data processing capabilities currently provided by CASA and the ALMA Pipeline software infrastructure (see Section 6.5.3 of ~\cite{CSA-IA} for details of the current CASA and Pipeline). In addition, the RADPS-ALMA scope expands beyond that of the current CASA and Pipeline to include workflow management (i.e., management of processing jobs) and resource management (current resource managers are Torque/Slurm). See Fig.~\ref{fig:ALMA-D3} for a graphic representation of the RADPS-ALMA scope (orange box). In the figure, the main existing ALMA software components that will be impacted by the RADPS-ALMA architecture are shown by boxes with blue solid borders. There will not be an exact equivalence between the legacy system and ALMA-D3 that includes RADPS-ALMA.
+
+\subsubsubsection{RADPS Conceptual Architecture}
+\label{sec:radps-con-arch}
+The RADPS conceptual architecture was derived jointly from the ALMA WSU and ngVLA requirements using an Attribute-Driven Design (ADD) process. In this process, the Architecturally Significant Requirements (ASRs) were identified and organized into five quality attributes: 
+%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+   \item Performance.
+   \item Reliability.
+   \item Reusability.
+   \item Maintenability, and
+   \item Multitenancy.\footnote{Multitenancy refers to the ability for many types of users to run jobs on the same computing infrastructure without interfering with each other.}
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[hbt!]
+  \centering
+    \includegraphics[width=11cm, angle=90]{Figures/RADPS-ALMA_Figure.pdf}
+  \caption{RADPS conceptual architecture.}
+  \label{fig:Figures_RADPS-ALMA}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%
+
+A literature review was then conducted to identify industry-standard concepts and \ac{COTS} or open-source technologies associated with each quality attribute. Based on the literature review results, concepts were selected to generate a feasible conceptual architecture, explain how data processing will be achieved, provide initial definitions and vocabulary to promote clear communication between stakeholders, and enumerate activities for the next phase of the project. 
+
+The design concepts used to address the quality attributes resulted in decomposing the RADPS into the Workflow Management subsystem, the Resource Management subsystem, and radio astronomy domain applications. Radio astronomy domain algorithms are used to create applications that utilize horizontal and vertical scalability to achieve performance requirements. Fig.~\ref{fig:Figures_RADPS-ALMA} shows the RADPS conceptual architecture. Although an RADPS \ac{UI} is included in the conceptual architecture documented below for completeness, we anticipate that existing ALMA user interfaces (e.g., \ac{CLAI}) will be re-used for RADPS-ALMA. RADPS-ALMA will provide the radio astronomy domain applications necessary to process WSU data.
+
+The Workflow Management subsystem provides an interface to available workflows, automatically or interactively executes workflows, and orchestrates execution of multiple workflows; it is the RADPS executor. Workflows consist of tasks that may interact with other services (e.g., access a datastore, establish hooks to a quality assurance interface, or trigger actions by other related systems) or delegate to the Resource Management subsystem the execution of compute-intensive applications implementing one or more algorithms. A task delegated to the Resource Management subsystem is called a workload. The Resource Management subsystem abstracts access to high performance or high throughput compute resources and executes compute-intensive applications via on-premises or off-premises technical infrastructure in accordance with any established performance and reliability service-level agreements.  
+
+The design details and technologies needed to integrate the various systems will be determined in the next phase of the project. Similarly, any relevant cybersecurity requirements will also be addressed in the next phase.
+
+\subsubsubsection{RADPS-ALMA Interfaces}
+\label{sec:RADPS-ALMA-interfaces}
+The concepts within the RADPS architecture that relate to the interfaces between RADPS-ALMA and ALMA-D3 are: 
+
+\begin{itemize}[itemsep=-0.5em]
+    \item System Integration -- RADPS-ALMA and the larger ALMA-D3 system will need to use signals, messages, and/or events to coordinate activities, such as starting and stopping data processing and notifying users. This functionality is generically referred to as system integration. The RADPS program plans to write a conceptual-level document outlining system integration concepts, relevant design patterns, and trade-off considerations that will be shared with ALMA ICT. 
+    \item Workflow Concept -- Tasks can be used to access other ALMA services, e.g., the Source Catalogue, Jy/K database, and antenna position corrections, retrieving data from the ALMA Archive, databases etc., from within the workflows. 
+    \item User Interfaces -- RADPS plans to use a \ac{COTS} product to enable users to monitor automatic and interactive workflow execution. The solutions under consideration offer default dashboards as well as APIs that could be used to develop additional custom UIs as desired by ALMA ICT. 
+\end{itemize} 
+
+%%%%%%%
+\subsubsection{Supporting Infrastructure (ProMo, PL Driver, CLAI)}
+\label{sec:dp-support-infra}
+%%%%%%%
+
+Several components of the current data management and data flow systems will need to be modified to support WSU data processing and the RADPS-ALMA design. 
+\begin{itemize}[itemsep=-0.5em]
+\item ProMo will be updated to support the storage and retrieval of per-EB calibration products, as well as the ingestion of MOUS and GOUS products  (see Section~\ref{sec:dpqa}).
+\item PipelineMakeRequest (Appendix~\ref{sec:glossary}), a current component of PLDriver, will be updated to support GOUS imaging. 
+\item \ac{CLAI}, as the application responsible for launching processing requests, will add support for running per-EB calibration and GOUS imaging.  
+\end{itemize}
+
+Specific functionality of the components that interface with current data processing software -- in particular, PLDriver, \ac{CLAI}, and PipelineMakeRequest -- will be addressed as part of detailed design in the context of RADPS-ALMA. Portions of this functionality may need to be re-allocated, changed, or removed. For details of the RADPS-ALMA interfaces, see Section~\ref{sec:RADPS-ALMA-interfaces}. PLDriver will also be affected by the larger scope of RADPS-ALMA compared to the current CASA and Pipeline (see Fig.~\ref{fig:ALMA-D3}).
+
+
+%%%%%%%
+\subsubsection{Data Reduction Reports}\label{subsec:data_red_report}
+%%%%%%%
+
+The information for the Data Reduction Reports will be provided by RADPS-ALMA in a machine-readable format. Individual subsystems can use this information to build custom reports that are suited to their individual use cases (including any needed internally for the development of RADPS-ALMA). More detailed design work will be done by ALMA ICT, in conjunction with the RADPS-ALMA project and other stakeholders, to determine how to allocate the functionality necessary to generate the reports. Both pre-generated archivable reports and web-accessible interactive plots will be supported, depending on which is most suited to the needs of a subsystem. 
+
+%%%%%%%
+\subsubsection{CARTA}
+\label{sec:carta}
+%%%%%%%
+The Cube Analysis and Rendering Tool for Astronomy (CARTA; see Appendix~\ref{sec:glossary} for details) is an interactive tool that allows users to efficiently visualize, examine, and perform basic analysis on images including TB-sized files, either remotely or as a standalone application. Tests with FITS cubes that are three times larger than the maximum size expected for the WSU have been carried out successfully on today’s hardware. Although no enhancements of the software are required for the WSU, the capabilities and performance of CARTA can be expected to increase substantially over the coming years.
+
+CARTA is already installed on dedicated hardware at each ARC and is fully integrated into the ALMA Science Archive (ASA) interfaces. The same functionality will continue to be offered in the WSU era.
+
+
+In addition, CARTA will be the primary tool used for the visualization of WSU images and image cubes for both internal Observatory and science users. Independent of the WSU, the existing CASA Viewer is already being phased out in favor of CARTA and is no longer in active development. The capability to use CARTA for remote inspection of data accessible between multiple users across different ALMA sites -- for \ac{QA}, problem investigations, Pipeline validation etc. -- will be explored. RADPS-ALMA will use CARTA for image and cube visualization, but will provide tools for the visualization of visibilities and calibration tables.
+
+%%%%%%%%%%%%%%%
+\subsubsection{Manual Data Reduction}
+\label{sec:mdr}
+%%%%%%%%%%%%%%%
+
+The incidence of datasets that require fully manual (non-pipeline) processing will be limited to specific observing modes which are too complex to be accommodated by pipeline heuristics, namely Solar (Section~\ref{sub:solar}) and VLBI/Phased Array (a.k.a., Beamforming; Section~\ref{sub:vlbi}) data plus a small number of edge cases for other modes. The manual data reduction scripts will operate in the context of other processing infrastructure within ALMA-D3 (Section~\ref{sec:alma-d3}). They will comply with documented interfaces such as manifests and reports, and any renaming, repackaging, or moving of products that is needed will be performed by ALMA-D3 software.
+
+Additionally, manual data reduction will be used by Commissioning Scientists for Commissioning/\ac{EOC}, and to prototype the implementation of new observing modes into Pipeline/RADPS-ALMA.
+
+
+
+%%%%%%%%%%%%%%%
+\subsubsection{Product Ingestor and Supporting Infrastructure}
+%%%%%%%%%%%%%%%
+
+The SW that ingests data-products at SCO, which then get replicated to the ARCs, is called ProductIngestor. This SW already can support GOUS-level product ingestions, but will need an update. Due to the large product size, larger parallelism in the ingestion process will need to be implemented to increase the efficiency.  Product Ingestor will ingest calibration and imaging products together once a QA2 decision is set for a MOUS. It will also be capable of ingesting reprocessed data keeping the calibration tables, flagging tables and scripts of the previous ingestion.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{User Interfaces}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+This section describes some of the tools comprising the different interfaces between ALMA and its science users. The tools that are used for proposal submission and review, namely \ac{OT} (Section~\ref{subsec:OT}) and the Reviewer tool (Section~\ref{subsec:ph1m}), are described in Section 5.2.
+
+\subsubsection{Science Portal}
+
+The ALMA Science Portal is the main gateway to ALMA for science users. It gives access to documentation, resources, and tools for all phases of the lifecycle of observing projects. The Science Portal also serves as the main communication channel from the ALMA observatory to its science users. The functionality of the Science Portal is expected to remain similar for the WSU, although changes to the content structure of the portal will be needed to accommodate the larger amounts of documentation and WSU-related communications. 
+
+\subsubsection{Snooping Project Interface}
+
+The \ac{SnooPI} is used by PIs, co-PIs, co-Is, and data delegees to monitor the status of their observing projects, from proposal submission to data delivery. It will allow to visualize the status of projects at the MOUS and GOUS level. It is still being explored whether the functionality to visualize the Phase 2 SBs will be included in SnooPI or in a separate tool.
+
+\subsubsection{ADMIT}\label{sec:ADMIT}
+\acf{ADMIT} (see Section 6.6.5 of \cite{CSA-IA} and Appendix~\ref{sec:glossary}) is expected to be the software package that provides scientists with quick access to traditional science data products such as moment maps (e.g., via the \ac{ASA}, Section~\ref{subsec:ASA}), as well as with new innovative tools for exploring data cubes and their many derived products, until future user interface enhancements are available (these will be discussed through the ALMA2030 Archive Vision~\cite{2030_archive_vision} and ALMA2030 User Support~\cite{2030_user_support} efforts).  
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{ALMA Science Archive}\label{subsec:ASA}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Software for the \acf{ASA} will be enhanced in several ways. The Harvester will be modified to work with the new \ac{ASDM} and \ac{APDM} tables. The Harvester will produce collapsed row values at the GOUS level, and DataTracker will set proprietary times at both the MOUS and GOUS level. The Archive Query (AQ) will show the collapsed GOUS rows. \ac{ADMIT} products will be harvested and made searchable. The download portal will allow for multi-stream downloads of single files. \ac{ADMIT} and the preview software will be able to deal with the large WSU cubes. The \ac{ASA} will support the tracking of name file changes to facilitate QA3 investigations when needed. 
+A user-initiated remote service for the restoration of calibrated data  will be implemented and accessible through the ASA User Interface (see also Section~\ref{subsec:data_delivery}). 
+Additional enhancements will be discussed through the ALMA2030 Archive Vision effort \cite{2030_archive_vision}.
+
+
+\newpage

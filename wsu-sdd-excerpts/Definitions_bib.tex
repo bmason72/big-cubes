@@ -1,0 +1,55 @@
+\newcolumntype{L}[1]{%
+  >{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+\newcolumntype{Z}[1]{%
+  >{\centering\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+
+\definecolor{lightgray}{gray}{0.9}
+
+\DeclareSourcemap{
+  \maps[datatype=bibtex]{
+    \map{
+      \step[fieldsource=keywords, match={AD}, final] % Filter for AD
+      \step[fieldsource=identifier, fieldtarget=userb]
+    }
+    \map{
+      \step[fieldsource=keywords, match={RD}, final] % Filter for RD
+      \step[fieldsource=identifier, fieldtarget=userb]
+    }
+    \map{
+      \step[fieldsource=revision, fieldtarget=userc]
+    }
+  }
+}
+
+
+\defbibtabular{bibtabular}
+  {\setlength{\LTpre}{0pt}%
+   \setlength{\LTpost}{0pt}%
+%   \renewcommand*{\arraystretch}{2}%
+   \begin{longtable}{
+     | Z{\dimexpr0.1\textwidth\relax}
+     | L{\dimexpr0.6\textwidth-8\tabcolsep-5\arrayrulewidth\relax}
+     | L{\dimexpr0.32\textwidth\relax} |}
+%     | L{\dimexpr0.15\textwidth\relax} |}
+     \hline
+     \rowcolor{lightgray} % Apply the custom row color to the first row
+     \textbf{No.} & \textbf{Title} & \textbf{Identifier}\\% & \textbf{Revision}\\
+     \hline
+     \endfirsthead
+     \hline
+     \endhead
+     \hline
+     \endfoot
+     \hline
+     \endlastfoot}
+  {\end{longtable}}
+  {\anchorlang{%
+     \printtext[labelnumberwidth]{%
+       \printfield{labelprefix}%
+       \printfield{labelnumber}}}
+   & \plainlang{\usebibmacro{title}}
+   & \plainlang{\printfield{userb}}  \\ \hline
+%   & \plainlang{\printfield{userc}} \\
+}
+
+\addbibresource{References.bib}

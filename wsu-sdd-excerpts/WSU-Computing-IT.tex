@@ -1,0 +1,248 @@
+\section{WSU Computing Infrastructure - IT}
+\label{sec:wsu_compu_it}
+
+This section presents descriptions of the offline (Section~\ref{sec:offline}) and online (Section~\ref{sec:online}) infrastructure needed to enable observatory processes for WSU at the end of the WSU Program.
+The online concept is related to the data acquisition process, while the offline concept is related to the remaining processes. It also presents a description of the HW infrastructure that supports the Observatory operations (Section~\ref{sec:opsInfrastructure}), the OSF data buffer (Section~\ref{osf_data_buffer}), the infrastructure related to data transmission and buffering from the OSF to the \ac{SCO} (Section~\ref{ssub:osf_to_sco_data_transmission_and_buffering}), the data transmission from SCO to the ALMA Regional Centers (Section~\ref{ssub:data_transmission_from_sco_to_arcs}), the storage infrastructure at JAO and the ARCs (Section~\ref{dp_hw_storage}), the Oracle Data Base (Section~\ref{sec:oracle_data_base}) and the HW infrastructure for data processing during WSU (Section~\ref{par:processing_cluster}). 
+
+
+A description of the current ALMA IT infrastructure can be found in Section~5 of~\cite{CSA-IA}. The associated WSU impact assessment can be found in Section~9 of the same document. 
+
+
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{Offline Infrastructure}
+\label{sec:offline}
+%%%%%%%%%%%%%%%%%%%
+The ALMA offline infrastructure consists of a cluster of Linux OS servers with multiple instances of this cluster operating independently at different locations, including the OSF and SCO in Chile and the ARCs across the world. Several ALMA SW offline applications run on this infrastructure as Docker services managed by the Swarm orchestrator.\footnote{Docker Swarm is an orchestration tool for Docker containers that enables the deployment, management, and scaling of containerized services across a cluster of machines. In the ALMA WSU context, Docker Swarm ensures high availability, efficient resource utilization, and streamlined maintenance of offline infrastructure services by coordinating multiple servers to act as a unified system.} These services require read (and write) access to the ALMA Oracle Database, and some require remote internet access. A graphical representation of the offline HW infrastructure for WSU is presented in Fig.~\ref{fig:offline_hw_wsu}.
+
+The current offline infrastructure is described in detail in Section 5.1 of~\cite{CSA-IA}, while the WSU impact assessment is defined in Section 9.1 of the same document.
+
+Although changes are not expected for the architecture and design, the implementation will change due to obsolescence and cybersecurity concerns, and may be impacted by new performance requirements. For instance, additional storage capacity and read/write speed will be needed to handle new calibration and observation data volumes. Increasing network and CPU performance capacity may also be necessary to meet operational timing expectations. Horizontal scaling may be required for specific applications to comply with the performance constraints, leading to scaling up the number of applications.
+
+%%%%%%%%%%%%%%%%%%%
+\begin{figure}[hbt!]
+  \centering
+    \includegraphics[width=\textwidth]{Figures/SDD-OfflineInfrastructure.png}
+  \caption{The offline infrastructure depicts multiple clusters, in the figure, \ac{SCO} and \ac{OSF}, but a similar infrastructure can be found at each \ac{ARC}. The nodes of each cluster are managed by Docker Swarm, allowing services to be deployed through Ansible commands. All the nodes in a cluster share a centralized network storage and have access to NGAS, Oracle database, and other general services. Each cluster is configured behind a proxy, which defines the level of visibility for each service: A combination of local, internal (SCO-OSF), the ARCs, or the internet can be customized depending on each service's requirements.}
+  \label{fig:offline_hw_wsu}
+\end{figure}
+%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{Online Infrastructure} % (fold)
+\label{sec:online}
+%%%%%%%%%%%%%%%%%%%
+The ALMA online infrastructure comprises networking and server infrastructure, with the main element being the \ac{APE}, a contained environment for data acquisition. It encapsulates the consoles, servers, and other hardware resources (\acp{ABM}, \acp{E2C}, Correlator M\&C servers, etc.) that the ALMA SW subsystems need to reach.
+
+The current online infrastructure is described in detail in Section 5.2 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 9.2 of the same document.
+
+The network needs a special overhaul, specifically in the communication from the ATAC correlator to the GAS03 (Bulk archive) and GAS06 (TelCal) machines. This is not a direct connection but needs to go through an intermediate switch used for the \ac{VLAN} configuration and proper isolation of the different \ac{APE} environments. For WSU, the network requirement increases considerably, needing at least a link of 40\,Gbps for the peak data rate. The \acp{APE} will be enabled with a 100\,Gbps port connected to the JAO Core switches (to allow the remote virtual configurations explained before). JAO core switches will be connected to the  ATAC \ac{CDP}'s 200\,Gbps network switch through 2 $\times$ 100\,Gbps links to enable end-to-end connectivity. Fig.~\ref{fig:atac-ape-net} depicts the high-level network architecture for the WSU in the online infrastructure. 
+
+
+%%%%%%%%%%%%%%%%%%%
+\begin{figure}[hbt!]
+  \centering
+    \includegraphics[width=\textwidth]{Figures/Computing-IT-ATAC-APE-Network.png}
+  \caption{JAO has four pairs of core switches: APE, OSF, AOS and SCO. The APE core switches are connected to the ATAC \ac{CDP}'s 200\,Gbps network switch through 2 $\times$ 100\,Gbps links, which enables redundancy and aggregated throughput. The APE core switches are also connected to two Dell switches (enabling the APEs, including GNS and the GAS machines), the NGAS frontend and backend clusters, and the Oracle database. They are also connected to the OSF core switches, which are then connected to the AOS core switches. The connection between the AOS and SCO core switches is done through 4 $\times$ 10\,Gbps links, which enable redundancy and bandwidth aggregation.}
+  \label{fig:atac-ape-net}
+\end{figure}
+%%%%%%%%%%%%%%%%%
+
+The same mechanism of AE Partitioning with Dynamic VLAN developed for HILSE\index{Hardware in the Loop Simulation Environment} will provide an important platform, termed the 
+``WSU Test System''\index{WSU Test System} to support the WSU \ac{AIVC} 
+activities in parallel with the legacy science 
+operation. The WSU-ready array elements will be
+logically associated to a separate environment hosted
+by an APE (referred to as WSU-APE) along with all the
+other components needed to operate and execute
+observing modes (Subarray Switches, \acp{LLC}, Photonic References, etc.).  This approach 
+allows array elements and other
+operational components assigned to the AIVC
+activities, even on daily basis, to be returned to the
+legacy environment for PI observations.
+
+
+The Archive subsystem architecture remains the same; however, the increased peak data rates (see Appendix~\ref{subsec:datarates_peak}) require upgrading the technology and storage capacity used for the GAS03 buffer. To continue observing with peak data rates without data loss during the longest expected windows, and to withstand transient \ac{NGAS} issues, 4th-generation \ac{NVME} disks and 16 TB of storage will be used.
+
+The WSU significantly impacts the TelCal subsystem. A description of the WSU impact assessment on TelCal can be found in Section 10.3.7 of \cite{CSA-IA}. However, it is possible to relax the HW requirements by moving the non-essential calibrations that require more HW resources (atmosphere and bandpass) to the offline environment, together with the QA0 infrastructure, as explained in Section~\ref{sec:TelCal}. This lowers the requirements for the TelCal server to 120 cores with a base clock frequency of >3~GHz.On the other hand, the RAM requirement could be lower, by reducing bandpass \acp{spw} sequentially in the offline environment, but this can hinder the performance of parallel reduction; therefore, an increase on the RAM requirement to 1~TB is proposed, to allow simultaneous processing of multiple \acp{spw} involved in the bandpass scan.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{Operations Support Infrastructure}
+\label{sec:opsInfrastructure}
+%%%%%%%%%%%%%%%%%%%
+ALMA operations require additional infrastructure to support regular operations, which includes resources to enable logging, monitoring, alarms, weather tracking, and several other capabilities.
+
+The current operations support infrastructure is described in detail at Section 5.3 of~\cite{CSA-IA}, while the WSU impact assessment is described in Section 9.3 of the same document.
+
+As depicted in the impact assessment section, the discussion of some of these topics is premature, as we do not have concrete numbers for topics such as logs per minute, the number of monitor points and their monitoring rates, the number of alarms, etc.
+
+The final solution for all the services will keep the same architecture and design, while the implementation may have minor changes to accommodate further resources. Even in cases where we expect an input data increase of over 20\%, such as the monitor data for ATAC and TPGS, the current solutions are designed with scalability in mind and would be feasible to satisfy the new requirements by adding resources with horizontal scalability alone.
+
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{OSF Data Buffer} % (fold)
+\label{osf_data_buffer}
+%%%%%%%%%%%%%%%%%%%
+The data from correlators and spectrometers was originally sent from the AOS Technical Facility. For the WSU era, the ATAC and TPGS will be located at the OSF Control Room (OCRO) instead and will receive digitized samples from each antenna. The bulk data transfer takes the data from the correlators, spectrometers, and the total power processor\footnote{The Total Power Processor accumulates data from IF Processors on each antenna to be sent to bulk data receivers.} to the data acquisition computer cluster at the OSF. The data sets are then processed by the Archive BulkReceiver and sent to the OSF data buffer.
+
+The OSF data buffer begins when the Archive BulkReceiver places the binary files in a file system used as a queue on the GAS03 server. From here, an orchestrator process coordinates and sends the data to the NGAS frontend cluster, which is later propagated to the NGAS backend cluster. According to the retention policies, the data sets are available for services and scripts while they are present in the OSF data buffer.
+
+The OSF NGAS backend cluster has the "partner site" feature enabled, so any files requested at OSF that are not present at OSF, due to the retention policy, will be fetched from the SCO NGAS cluster. Files fetched from the SCO NGAS cluster will not be ingested into the OSF NGAS backend cluster.
+
+The OSF NGAS cluster, be it frontend or backend, also needs an Oracle database available for NGAS metadata. The NGAS metadata stores information about NGAS server/port combinations, NGAS volumes, and NGAS files present on each NGAS cluster.
+
+The current OSF data buffer is described in detail at Section 5.1 of~\cite{dtas} and Section 5.4 of~\cite{CSA-IA}. The WSU impact assessment is presented in Section 9.4 of the latter document. Fig.~\ref{fig:WSU-OSF-Storage-Hierarchy} shows the OSF data storage and access hierarchy, valid for WSU operations.
+
+%%%%%%%%%%%%%%%%%%%
+\begin{figure}[hbt!]
+  \centering
+    \includegraphics[width=\textwidth]{Figures/WSU-OSF-Storage-Hierarchy.pdf}
+  \caption{The ``OSF data buffer'' (the temporary Archive at the OSF used for data acquisition and other operations related to auxiliary processes) will be as follows: The data flow of files is generated by the \ac{APE} and stored in the OSF Archive. The latter comprises (1) a relational database schema that stores the metadata of the generated files and (2) the actual Archive software, called \ac{NGAS}. Files are first written to twelve NGAS software nodes (corresponding to six physical servers when combining NGAS hosts and service ports) that work as ``data buffer'' nodes (commonly referenced as NGAS frontend nodes). These twelve software nodes do not have centralized storage, but write to local disks allocated to each service port. The files are then pulled by another set of six software nodes (two physical servers), which are written to a centralized storage at the OSF and shared between them (the NGAS backend nodes). Clients or users that want to retrieve data from the OSF Archive reference the six NGAS backend nodes, which are exclusively used to write data received from the APE.}
+  \label{fig:WSU-OSF-Storage-Hierarchy}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%
+
+
+\clearpage
+
+\ac{NVME} disks\footnote{The current infrastructure does not support \ac{NVME} within the servers, although \ac{NVME} external Disk shelves are supported.} will be required for the various system components, where data are primarily stored at the OSF data buffer. This would include the GAS03 component in the APE, NGAS frontend servers, and NGAS backend servers. This would allow to manage both writing and reading at peak data rates. Additionally, all networking between APE and NGAS should be increased to 100\,Gbps from the current 10\,Gbps network used. The type of storage to build (in-house) or procure (turnkey solution by a third-party provider) could be hardware or software-based. Due to the need to scale storage vertically and horizontally, a software-defined storage solution may have to be developed.
+
+
+At another level, past server utilization of NGAS nodes at the OSF has shown low memory and port usage. In light of this, it is recommended writing to fast storage devices such as NVMe drives from GAS03, and improving the utilization of NGAS service ports —particularly at the NGAS frontend servers. Writing to NVMe drives is preferred over RAM, as RAM is non-persistent and poses a risk of data loss. The NGAS frontend servers act as ``buffer servers'' between GAS03 (APE) and the NGAS backend servers. The goal of this approach is to enable parallel writes per file to NGAS service ports (e.g., file1 to port 7777, file2 to port 7778, etc.).
+
+Lastly, it is recommended that a load balancer be added for NGAS frontend ports to allow a more transparent configuration of NGAS server/port combinations.
+
+As indicated before, we propose starting with an OSF data buffer of 0.5 PB in size on a scalable solution. As indicated above, a scalable solution would also allow for greater aggregated throughput in GB/s. Based on the numbers provided in~\cite{drru_mean, drru_peak}, it is estimated that this initial storage space would allow 30 days of local storage at the OSF for initial WSU Science operations. The solution should use industry-standard storage protocols, be they network or block-based.
+
+For GAS03, with a data buffer size of 16 TB used for binary data, the storage server is not feasible because this kind of data has poor deduplication and/or compression ratios. An enterprise disk designed for mixed use is required to select the best type of \ac{NVME} disk locally connected to the GAS03 server because data will be written and deleted several times during the day. The number of times the disk is written will help estimate its lifetime and prevent failures.
+
+The actual number of writes per day according to the average data rates (slightly less than 4) needs to be computed against the disk parameter Drive Writes Per Day (DWPD) to determine the life of the disk. The DWPD for the disks supported on the server bought for APE is 3, so if we consider the times a day it would need to be written, the useful life for these disks will be around 4 years, which is shortened when compared with the current lifecycle standard used by JAO operations (5 years). This may result in increased replacement costs. It has to be noted that GAS03 is critical equipment and a possible single point of failure. The current operation model has two APEs, and each APE has an independent GAS03 server. Therefore, a possible mitigation is to maintain the 2 APE operational model, with two separated GAS03 servers, one being used as a spare for the other in case of failure. Another option is to consider a spare GAS03 server.
+
+% subsubsection osf_data_buffer (end)
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{OSF to SCO Data Transmission and Buffering} % (fold)
+\label{ssub:osf_to_sco_data_transmission_and_buffering}
+%%%%%%%%%%%%%%%%%%%
+The data transmission from OSF to SCO already has a high-speed, dedicated data link provided by REUNA. However, a feasible backup link does not exist.
+
+The current OSF to SCO data transmission is described in detail at Section 6.1 of~\cite{dtas} and Section 5.5 of~\cite{CSA-IA}. The WSU impact assessment is presented in Section 9.4 of the latter document.
+
+On a high level, this is made up of 4$\times$10\,Gbps links on \ac{DWDM} technology. This replaced the 2$\times$1\,Gbps network links used till late 2024. Note that as a backup link, there is only a 500\,Mbps Multiprotocol Label Switching (MPLS) network link\footnote{In case of usage of the MPLS link due to DWDM network outage, a maximum available bandwidth of 200Mbps will be configured for Archive data transfer (NGAS file transfer and Oracle Database replication via Oracle GoldenGate).} between OSF and SCO. This backup network link is unsuitable for transmitting WSU average data, although it can maintain monitor \& control data from the SCO control room, and the Internet. Due to this, careful sizing of the OSF data buffer must be taken into account so as not to interfere with data acquisition at the OSF due to a disconnect from SCO, and the OSF is unable to empty its local data buffer due to not being able to send data to SCO. In case of an outage, both the meta-data and the current Archive data would still be retained at the OSF.\footnote{The meta-data would affect the Oracle Database at the OSF and the Oracle Golden Gate replication from the OSF} 
+
+The ability to transfer 4$\times$10\,Gbps between OSF and SCO implies having all in-path equipment in the data flow at OSF and SCO at 100\,Gbps at least. This would include, but is not limited to, network switches, firewalls, and server Ethernet ports. In any case, the transport between OSF and SCO should be able to support WSU average data rates.
+
+% subsubsection osf_to_sco_data_transmission_and_buffering (end)
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{Data Transmission from SCO to ARCs} % (fold)
+\label{ssub:data_transmission_from_sco_to_arcs}
+%%%%%%%%%%%%%%%%%%%
+The \ac{NGAS} used for data storage is also used for sending data from the SCO to the ARCs through a physical network connection with an aggregated bandwidth that can get to roughly 3\,Gbps.
+
+The current SCO to ARCs data transmission hardware is described in Sections 7.1 of~\cite{dtas} and Section 5.6 of~\cite{CSA-IA}. The current operational model also holds for WSU.
+
+The \ac{NGAS} will be upgraded to include parallel data transfer for individual files. Additionally, \ac{NGAS} will use northern-hemisphere data synchronization between the ARCs through the ‘partner-site’ mechanism. In other words, if one ARC needs to obtain a file from Chile, it will first try to obtain it from the other two ARCs instead of Chile. This implies that each byte is taken out of Chile only once and that products are synchronized between ARCs over the northern hemisphere, where bandwidth is cheaper by several factors.
+
+With these software changes, only a relatively modest increase in the overall bandwidth to the ARCs from currently 3\,Gbps to 4\,Gbps will be needed. With the price drop of international bandwidth in the order of 16\% per year, estimated from the price drop for the Santiago-Garching connection between 2011 and 2023, the data transfer cost is expected to be substantially lower than today.
+
+% subsubsection data_transmission_from_sco_to_arcs_and_storage_at_all_sites (end)
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{Data Storage at All Sites} \label{dp_hw_storage}
+%%%%%%%%%%%%%%%%%%%
+
+The current storage hardware at SCO and the ARCs is described in Section~8.1 of \cite{dtas} and Section 5.7.1 of \cite{CSA-IA}. The current operational model for data ingestion and storage at SCO holds for the WSU. The hardware will move towards \ac{JBOD} hardware systems for the \ac{NGAS} storage (\cite{dtas}, Section~8.3), which can currently store up to 1.7 PB of data in a 4U unit. Hard disk sizes are expected to grow at 15\%/yr. Procedures for efficient replacement of failed hard drives and the corresponding data-rebuild will be developed, together with which filesystem will be optimal for this as a “Software Defined Storage”. 
+
+Based on the current best estimates, and using the method of \cite{computeCostTsi}, the rack-space needed for the first 10 years of WSU operations for data-storage, data-processing (see Section~\ref{par:processing_cluster}) and temporary storage (e.g., Lustre; see Section~\ref{par:processing_cluster}) for processing at SCO is roughly 1.2 compute racks. 
+This requirement amounts to only about one-third of the available space, even under conservative assumptions.
+% This is about 3 times less space than what is available even under conservative assumptions.
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{Oracle Data Base} % (fold)
+\label{sec:oracle_data_base}
+%%%%%%%%%%%%%%%%%%%
+
+The Oracle databases contain metadata information for each observation and act as a ledger to group relevant data and metadata into larger observing units. Details can be found in Section 5.7.2 of~\cite{CSA-IA}. It is important to note that the current operational model mandates four Archives at ALMA: the main Archive at SCO, and one for each ARC. Each ARC receives copies of the Archive data from SCO and serves as a local Archive for ARC native processes.
+
+Based on the relative size between data and metadata in the WSU era, the Oracle-based metadata are not expected to increase more than tenfold (Section~8.3 of~\cite{dtas}), and metadata are not likely to be a data transfer bottleneck. However, larger, faster storage will be required for the database nodes.
+
+The above tenfold increase in data volume could affect specific database schemas in the Oracle database. This is specifically true for the NGAS database schema. This database schema is used to store the metadata of the Archive system at both OSF and SCO. The OSF impact should be negligible due to the regular cleanup policy that is in place currently and is assumed to continue into the WSU era. SCO could be impacted, as ALMA has a policy not to delete any objects from the Archive. This means we cannot delete metadata or actual files from the Archive. Even though the NGAS database schema is relatively simple, one database table stores every single file or version of files present in the Archive. We have about 82 million file objects in the SCO Oracle database today. A tenfold increase in file numbers in the archive could significantly impact how the database schema objects are stored. This could have performance impacts on certain Structured Query Language (SQL) statements. This schema is also replicated in the ARCs and, hence, would also impact them.
+
+Several issues will be addressed as part of the detailed design of the database:  
+\begin{itemize}[itemsep=-0.5em]
+    \item \textbf{ALMA database schema:} The impact of the increasing number of file objects, particularly Science Products, on the main relational database will be analyzed. Currently, two tables together contain approximately 30 million database records. These objects are replicated in full to the \acp{ARC}.  The total size of the database is currently about 5~TB.
+
+    \item \textbf{Optimization:} The detailed design will evaluate options for optimizing database objects, tables with storage partitioning, Oracle database In-Memory architecture, or Oracle database Advanced Compression. Many of these features imply having Oracle Enterprise Edition licensing. Due to the critical nature of the operations, both at OSF and SCO, ALMA has Oracle Real Application Cluster (RAC) licensing for both the OSF and SCO database clusters: Data Acquisition at OSF and Pipeline Processing at SCO (currently, SCO does 90\% of ALMA pipeline processing).
+
+    \item \textbf{Required Cores:} The design will also assess the availability of CPU cores and memory resources at each site. For example, implementing data compression to reduce storage requirements increases CPU usage due to real-time compression and decompression. Similarly, using Oracle database in memory would increase the server RAM available for the database. At present, each Oracle database node at the \ac{OSF} and \ac{SCO} is configured with 128~GB of RAM, resulting in approximately 256~GB of RAM per database cluster (two nodes per site).
+\end{itemize}
+
+
+%Another schema that could be impacted is the ALMA database schema. This is the main relational database schema, and could be impacted only due to the increase in the number of file objects, particularly Science Products. Currently, there are two database tables that, between them, have 30 million database records. These objects are replicated as such to the ARCs. The current database is about 5~TB in size. 
+
+%Due to the above, it could be necessary to analyze or consider the addition of optimizing database objects, tables with storage partitioning, Oracle database In-Memory architecture, or Oracle database Advanced Compression. Many of these features imply having Oracle Enterprise Edition licensing. Due to the critical nature of the operations, both at OSF and SCO, ALMA has Oracle Real Application Cluster (RAC) licensing for both the OSF and SCO database clusters. Data Acquisition at OSF and Pipeline Processing at SCO (currently, SCO does 90\% of ALMA pipeline processing).
+
+%Any of the above licensing could also impact the database's number of cores available at each site. For example, saving database storage space implies utilizing the processor for every operation (due to compressing/decompressing) data on the fly. Also, using the Oracle database in memory would increase the server RAM available for the database. Today, the current use of OSF and SCO is 128\,GB RAM per Oracle database node (two at each site), so there is a total of about 256\,GB RAM for each database cluster.
+
+Oracle Golden Gate (previously Oracle Streams) has been used for many years in ALMA to replicate database schemas between OSF-SCO and the ARCs. The main impact on this software is the increased use of RAM for the Oracle Golden Gate process. The amount of memory that is required for Oracle Golden Gate depends on the amount of data being processed, the number of Oracle Golden Gate processes running, the amount of RAM available to Oracle Golden Gate, and the amount of disk space that is available to Oracle Golden Gate for storing pages of RAM temporarily on disk when the operating system needs to free up RAM (typically when a low watermark is reached), so a careful tuning of parameters could be required. Apart from the RAM used for the Oracle Golden Gate server, the processes consume session memory in the Oracle Database cluster.
+
+% paragraph oracle_data_base (end)
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{Data Processing Hardware Infrastructure} % (fold)
+%\label{ssub:data_processing_hardware_infrastructure}
+\label{par:processing_cluster}
+%%%%%%%%%%%%%%%%%%%
+
+The current data processing hardware infrastructure is described in Section~3.3.2 of~\cite{dp} and in Section~6.1 of~\cite{dpda}. At the time of writing the SDD, it is assumed that the current operational model will also be valid for the WSU regarding the HW infrastructure to be used for processing the WSU data. More specifically:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+    \item Compute will be distributed among the four regions (JAO, EA, EU, NA), concentrated at JAO.
+    \item 90\% of pipeline processing will be done at the JAO, with the remainder of processing handled at the ARCs. 
+    \item Staff effort supporting \ac{QA} of science products (Section~\ref{sec:dpqa}) will also be distributed among the four regions, again with the majority  at JAO.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsubsection{Processing Cluster} % (fold)
+%\label{par:processing_cluster}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The WSU will increase average data rates by a factor of $\sim 50$ over current data rates, and  science product volumes by a factor 
+$\sim 100$ \cite{drru_mean}. To estimate the characteristics of the data processing cluster that will be needed to handle these data, we use the basic method of~\cite{dpSizeOfCompute}, updated and applied to the WSU after completion of the program as described in detail Appendix~\ref{subsec:datarates_prop}.\footnote{
+%%%
+\cite{dpSizeOfCompute} presented estimates for two scenarios, ``Early WSU'' and ``Later WSU''. The instrument configuration of ``Later WSU'' is very similar to that of WSU at Milestone 5, but Milestone 5 will not yet have a full complement of $4\times$ bandwidth receivers. Note also that the ``both'' columns of several tables in \cite{dpSizeOfCompute} averaged 7-m and 12-m data properties (notably data rates and size of compute). This would be appropriate for time-multiplexed observations with the two arrays, but since the data will generally be collected in parallel, the average data rates and compute required must be added.
+}
+%%%
+Using this method, we find that creating complete or un-mitigated\footnote{
+%%%
+In current ALMA data processing operations, full science products are not always created. This is done primarily due to horizontal scaling limitations of \ac{CASA}, which cannot reliably make cubes larger than $\sim 100 \, {\rm GB}$ on the currently used hardware. Practices associated with limiting the set of science products generated are called ``product mitigation'' and ``cube size mitigation'' or often simply ``mitigation''. For more detail on current mitigation practices see \cite{ALMApipelineHeuristics}.} 
+MOUS level science products for WSU will require on average $\sim 0.50$~Peta Floating-Point Operations per second (PFLOP/s) for 12-m and $0.02$~PFLOP/s  for 7-m. This gives a required compute performance, averaged over a one-year cycle, of $0.52$ PFLOP/s. GOUS processing will increase this by 36\%  \cite{computeCostTsi}. We estimate from raw data sizes that  making TP cubes will increase it by another 10\%. 
+{\bf Together these give a required compute of} $\mathbf{\sim 0.78} \, {\rm \mathbf{PFLOP/s}}$ {\bf to process WSU data, without any mitigations and including GOUS products}.  
+Conservative projections (Appendix~\ref{sec:clusterSize} and \cite{computeCostTsi}) indicate that this can be satisfied by a cluster with $\sim 14,200$ cores.
+At the time the WSU program concludes, this performance should be easily provisionable within the envelope of existing rack space, power and cooling infrastructure. Capacity for reprocessing can be provided by periodic end-of-life node replacements, supplemented by compute resources at the ARCs \cite{computeCostTsi}.
+
+The processing cluster performance will depend on a number of factors other than total number of cores, including RAM per core and file system interfaces. Compute architectures will be chosen with information from load testing of prototypes and in consultation with RADPS-ALMA (see Section~\ref{sec:radps-alma}).  Given the expected ongoing decline in \$/FLOP, compute purchases will  need to be spread over time in order to maximize performance on a fixed budget. The resulting mix of compute architectures will be supported by the RADPS-ALMA resource manager and relevant software testing processes.
+
+
+The cluster will also require local ``scratch'' disk space for processing.
+Following \cite{computeCostTsi}, we estimate that this storage should be
+able to store one year of raw data and products ($\sim 16 \, {\rm PB}$).
+As a point of comparison, the largest individual WSU dataset 
+is projected to be about $1.3 \, {\rm PB}$, and current CASA typically 
+requires several times more space than the raw data and product size.
+The precise amount and nature this storage (e.g., shared HPC file
+system {\it vs.}  \ac{NVME} storage on each node) will be based on 
+future recommendations from RADPS-ALMA.
+
+Given the  uncertainty involved in forecasting compute requirements on a decade timescale, it will be important to update and track the computing 
+system detailed requirements as the HPC market evolves, and RADPS-ALMA system architecture recommendations  and performance are described.  If compute cost does unexpectedly turn out to be  a limiting factor in WSU operations, numerous methods will be available  to reduce the storage and compute requirements; some of these are discussed at the end of Appendix~\ref{subsec:datarates_prop}.
+
+
+\newpage

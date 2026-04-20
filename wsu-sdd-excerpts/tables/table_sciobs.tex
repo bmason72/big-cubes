@@ -1,0 +1,35 @@
+\newcommand\mysize{\footnotesize} % \scriptsize
+\begin{center}
+\begin{talltblr}[caption={Science observation time offered during the Parallel Deployment period.}, 
+  remark{Note}={$N_{\rm ant}$ is the minimum (blocker) number of antennas available. $T_{\rm obs}$ is the time available for science observations. The proposed $T_{\rm obs}$ values are subject to AMT approval.},
+  label={tab:PD_Offered_science_time}]{
+  colspec={Q[l,m] *{12}{Q[c,m,0.9cm]}},
+  width=\textwidth,
+  hlines,
+  vlines,
+  cells = {font=\mysize}, %scriptsize},
+  cell{1}{1} = {font=\mysize\bfseries},
+  cell{1-2}{2-4} = {light_purple, font=\mysize\bfseries},
+  cell{1-2}{5-7} = {light_green, font=\mysize\bfseries},
+  cell{1-2}{8-10} = {light_yellow, font=\mysize\bfseries},
+  cell{1-2}{11-13} = {light_blue, font=\mysize\bfseries},
+%  cell{1-2}{14-16} = {light_orange, font=\mysize\bfseries},
+%  rows={0em, m, rowsep=0pt},
+%  stretch=0.6pt,
+  }
+\SetCell[c=1,r=2]{c,lightgray} Array & 
+\SetCell[c=3]{c} Cycle 12 & & & 
+\SetCell[c=3]{c} Cycle 13 & & & 
+\SetCell[c=3]{c} Cycle 14 & & & 
+\SetCell[c=3]{c} Cycle 15 & & \\
+& 
+$\bm{N_{\rm\bf ant}}$ for legacy science & $\bm{T_{\rm\bf obs}}$ for legacy science & $\bm{N_{\rm\bf ant}}$ for WSU &
+$\bm{N_{\rm\bf ant}}$ for legacy science & $\bm{T_{\rm\bf obs}}$ for legacy science & $\bm{N_{\rm\bf ant}}$ for WSU &
+$\bm{N_{\rm\bf ant}}$ for legacy science & $\bm{T_{\rm\bf obs}}$ for legacy science & $\bm{N_{\rm\bf ant}}$ for WSU &
+$\bm{N_{\rm\bf ant}}$ for legacy science & $\bm{T_{\rm\bf obs}}$ for legacy science & $\bm{N_{\rm\bf ant}}$ for WSU
+\\
+12 m & 41 & 4300\,hr & $0-1$ & 39 & 3330\,hr & $2-$6 & 39 & 3000\,hr & $7-19$ & 39 & 2640\,hr & $20-43$\\
+7 m  &  8 & 4300\,hr & $0-1$ &  8 & 3240\,hr & $1-2$  &  8 & 2900\,hr & $2-12$ &  8 & 2580\,hr & 12\\
+TP   &  2 & 4300\,hr &    0  &  2 & 2400\,hr & $1-2$  &  2 & 2050\,hr &   $3-4$ &  2 & 1940\,hr &  4\\
+\end{talltblr}  
+\end{center}

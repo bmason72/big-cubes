@@ -1,0 +1,53 @@
+%\begin{center}
+%\begin{talltblr}[caption={Adopted peak data rates for the WSU\TblrNote{a}},
+%   note{a}={Peak data rates are for Band 2 with 0.11\kms\/ resolution for the adopted parameters in the table.},
+%  label=tab:peak_adopted]{
+%  colspec={lcccccc},
+%  width=\textwidth,
+%  hlines,
+%  vlines,
+%  cells={font=\small},
+%  row{1,2} = {bg=headercolor, font=\small\bfseries},
+%  row{10,11} = {bg=highlight2, font=\small\bfseries}
+%  }
+%\SetCell[r=2]{l} Parameter & \SetCell[c=3]{c} {Early WSU\\(16 GHz per pol)} & %& & \SetCell[c=3]{c}{Late WSU\\(32 GHz per pol)} & & \\
+%           & 12-m  & 7-m  & TP  & 12-m  & 7-m  & TP \\
+%$N_{\rm byte}$ &  2 & 2 & 4 &  2 & 2 & 4\\
+%$N_{\rm apc}=$ Number of WVR streams & \SetCell[c=3]{c} 1 & & &\SetCell[c=3]{c} 1 & & \\
+%$N_{\rm ant} =$ Number of antennas & 50 & 12 & 4 & 50 & 12 & 4\\
+%Velocity channel width (\kmss) & \SetCell[c=3]{c} 0.11 & & & \SetCell[c=3]{c} %0.11 & & \\
+%$N_{\rm channels} =$ Total channels per polarization & \SetCell[c=3]{c}595,200 & & & \SetCell[c=3]{c}1,190,400 & & \\
+%$N_{\rm pols} = $ Number of polarizations & \SetCell[c=3]{c} 2 & & & \SetCell[c=3]{c} 2 & & \\
+%$T_{\rm integration} = $ Visibility integration time & 3.072 s & 9.984 s & 64 ms & 3.072 s & 9.984 s & 64 ms\\
+%Peak data rate (\GBs) & 1.98 & 0.037 & 0.298  & 3.95 & 0.074 & 0.595\\
+%Total peak data rate (\GBs) & \SetCell[c=3]{c} 2.32 & &  & \SetCell[c=3]{c}4.62 & &\\
+%\end{talltblr}
+%\end{center}
+
+
+\begin{table}[hbt!]
+\centering
+\begin{talltblr}[caption={Adopted peak data rates for the WSU at Milestone 5\TblrNote{a}},
+   note{a}={Peak data rates are for Band 2 with 0.1\kms\/ resolution for the adopted parameters in the table.},
+  label=tab:peak_adopted]{
+  colspec={lccc},
+  width=\textwidth,
+  hlines,
+  vlines,
+  cells={font=\small},
+  row{1,2} = {bg=headercolor, font=\small\bfseries},
+  row{10,11} = {bg=highlight2, font=\small\bfseries}
+  }
+\SetCell[r=2]{l} Parameter & \SetCell[c=3]{c}{Milestone 5 \\(32~GHz per pol)} \\
+           & 12-m  & 7-m  & TP \\
+$N_{\rm byte}$ & 2 & 2 & 4\\
+$N_{\rm apc}=$ Number of WVR streams & \SetCell[c=3]{c}1\\
+$N_{\rm ant} =$ Number of antennas & 50 & 12 & 4\\
+Velocity channel width (\kmss) & \SetCell[c=3]{c}0.1 \\
+$N_{\rm channels} =$ Total channels per polarization & \SetCell[c=3]{c}2,380,800\\
+$N_{\rm pols} = $ Number of polarizations & \SetCell[c=3]{c}2\\
+$T_{\rm integration} = $ Visibility integration time & 3.072 s & 9.984 s & 96 ms\\
+Peak data rate (\GBs) & 3.96 & 0.074 & 0.4\\
+Total peak data rate (\GBs) & \SetCell[c=3]{c}4.43\\
+\end{talltblr}
+\end{table}

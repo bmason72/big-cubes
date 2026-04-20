@@ -1,0 +1,1000 @@
+# %ECSV 1.0
+# ---
+# datatype:
+# - {name: mous, datatype: string}
+# - {name: proposal_id, datatype: string}
+# - {name: schedblock_name, datatype: string}
+# - {name: array, datatype: string}
+# - {name: science_keyword, datatype: string}
+# - {name: scientific_category, datatype: string}
+# - {name: scientific_category_proposal, datatype: string}
+# - {name: nant_typical, datatype: int64}
+# - {name: nant_array, datatype: int64}
+# - {name: nant_all, datatype: int64}
+# - {name: band, datatype: float64}
+# - {name: ntarget, datatype: float64}
+# - {name: s_fov, unit: deg, datatype: float64}
+# - {name: s_resolution, unit: arcsec, datatype: float64}
+# - {name: mosaic, datatype: string}
+# - {name: imsize, datatype: float64}
+# - {name: pb, unit: arcsec, datatype: float64}
+# - {name: cell, unit: arcsec, datatype: float64}
+# - {name: blc_npol, datatype: int64}
+# - {name: blc_nspw, datatype: int64}
+# - {name: blc_specwidth, unit: kHz, datatype: float64}
+# - {name: blc_freq, unit: GHz, datatype: float64}
+# - {name: blc_velres, unit: km / s, datatype: float64}
+# - {name: blc_nchan_agg, datatype: float64}
+# - {name: blc_nchan_max, datatype: float64}
+# - {name: blc_bandwidth_max, unit: GHz, datatype: float64}
+# - {name: blc_bandwidth_agg, unit: GHz, datatype: float64}
+# - {name: wsu_freq, unit: GHz, datatype: float64}
+# - {name: wsu_npol, datatype: int64}
+# - {name: wsu_bandwidth_early, unit: GHz, datatype: float64}
+# - {name: wsu_bandwidth_later_2x, unit: GHz, datatype: float64}
+# - {name: wsu_bandwidth_later_4x, unit: GHz, datatype: float64}
+# - {name: wsu_bandwidth_spw, unit: GHz, datatype: float64}
+# - {name: wsu_nspw_early, datatype: int64}
+# - {name: wsu_nspw_later_2x, datatype: int64}
+# - {name: wsu_nspw_later_4x, datatype: int64}
+# - {name: wsu_specwidth_finest, unit: kHz, datatype: float64}
+# - {name: wsu_chanavg_finest, datatype: float64}
+# - {name: wsu_velres_finest, unit: km / s, datatype: float64}
+# - {name: wsu_specwidth_stepped, unit: kHz, datatype: float64}
+# - {name: wsu_chanavg_stepped, datatype: float64}
+# - {name: wsu_velres_stepped, unit: km / s, datatype: float64}
+# - {name: wsu_specwidth_stepped2, unit: kHz, datatype: float64}
+# - {name: wsu_chanavg_stepped2, datatype: float64}
+# - {name: wsu_velres_stepped2, unit: km / s, datatype: float64}
+# - {name: wsu_tint, unit: s, datatype: float64}
+# - {name: wsu_nchan_spw_finest, datatype: float64}
+# - {name: wsu_nchan_spw_stepped, datatype: float64}
+# - {name: wsu_nchan_spw_stepped2, datatype: float64}
+# - {name: wsu_nchan_agg_finest_early, datatype: float64}
+# - {name: wsu_nchan_agg_finest_later_2x, datatype: float64}
+# - {name: wsu_nchan_agg_finest_later_4x, datatype: float64}
+# - {name: wsu_nchan_agg_stepped_early, datatype: float64}
+# - {name: wsu_nchan_agg_stepped_later_2x, datatype: float64}
+# - {name: wsu_nchan_agg_stepped_later_4x, datatype: float64}
+# - {name: wsu_nchan_agg_stepped2_early, datatype: float64}
+# - {name: wsu_nchan_agg_stepped2_later_2x, datatype: float64}
+# - {name: wsu_nchan_agg_stepped2_later_4x, datatype: float64}
+# - {name: wsu_frac_bw_early, datatype: float64}
+# - {name: wsu_frac_bw_later_2x, datatype: float64}
+# - {name: wsu_frac_bw_later_4x, datatype: float64}
+# - {name: wsu_frac_bw_spw, datatype: float64}
+# - {name: nbase_typical, datatype: float64}
+# - {name: nbase_array, datatype: float64}
+# - {name: nbase_all, datatype: float64}
+# - {name: L80, unit: m, datatype: float64}
+# - {name: Project, datatype: string}
+# - {name: SB_name, datatype: string}
+# - {name: blc_tint, unit: s, datatype: float64}
+# - {name: blc_ntunings, datatype: float64}
+# - {name: bp_time, unit: s, datatype: float64}
+# - {name: flux_time, unit: s, datatype: float64}
+# - {name: phase_time, unit: s, datatype: float64}
+# - {name: pol_time, unit: s, datatype: float64}
+# - {name: check_time, unit: s, datatype: float64}
+# - {name: target_time_tot, unit: s, datatype: float64}
+# - {name: time_tot, unit: s, datatype: float64}
+# - {name: cal_time, unit: s, datatype: float64}
+# - {name: mfssize, unit: Gbyte, datatype: float64}
+# - {name: wsu_cubesize_stepped2, unit: Gbyte, datatype: float64}
+# - {name: wsu_productsize_early_stepped2, unit: Gbyte, datatype: float64}
+# - {name: wsu_datarate_early_stepped2_typical, unit: Gbyte / s, datatype: float64}
+# - {name: wsu_visrate_early_stepped2_typical, unit: Gvis / h, datatype: float64}
+# - {name: wsu_datavol_early_stepped2_typical_target_tot, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_early_stepped2_typical_cal, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_early_stepped2_typical_total, unit: Gbyte, datatype: float64}
+# - {name: wsu_nvis_early_stepped2_typical_target_tot, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_early_stepped2_typical_cal, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_early_stepped2_typical_total, unit: Gvis, datatype: float64}
+# - {name: blc_datarate_typical, unit: Gbyte / s, datatype: float64}
+# - {name: blc_visrate_typical, unit: Gvis / h, datatype: float64}
+# - {name: blc_datavol_typical_target_tot, unit: Gbyte, datatype: float64}
+# - {name: blc_datavol_typical_cal, unit: Gbyte, datatype: float64}
+# - {name: blc_datavol_typical_total, unit: Gbyte, datatype: float64}
+# - {name: blc_nvis_typical_target_tot, unit: Gvis, datatype: float64}
+# - {name: blc_nvis_typical_cal, unit: Gvis, datatype: float64}
+# - {name: blc_nvis_typical_total, unit: Gvis, datatype: float64}
+# - {name: wsu_datarate_early_stepped2_array, unit: Gbyte / s, datatype: float64}
+# - {name: wsu_visrate_early_stepped2_array, unit: Gvis / h, datatype: float64}
+# - {name: wsu_datavol_early_stepped2_array_target_tot, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_early_stepped2_array_cal, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_early_stepped2_array_total, unit: Gbyte, datatype: float64}
+# - {name: wsu_nvis_early_stepped2_array_target_tot, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_early_stepped2_array_cal, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_early_stepped2_array_total, unit: Gvis, datatype: float64}
+# - {name: blc_datarate_array, unit: Gbyte / s, datatype: float64}
+# - {name: blc_visrate_array, unit: Gvis / h, datatype: float64}
+# - {name: blc_datavol_array_target_tot, unit: Gbyte, datatype: float64}
+# - {name: blc_datavol_array_cal, unit: Gbyte, datatype: float64}
+# - {name: blc_datavol_array_total, unit: Gbyte, datatype: float64}
+# - {name: blc_nvis_array_target_tot, unit: Gvis, datatype: float64}
+# - {name: blc_nvis_array_cal, unit: Gvis, datatype: float64}
+# - {name: blc_nvis_array_total, unit: Gvis, datatype: float64}
+# - {name: wsu_productsize_later_2x_stepped2, unit: Gbyte, datatype: float64}
+# - {name: wsu_datarate_later_2x_stepped2_typical, unit: Gbyte / s, datatype: float64}
+# - {name: wsu_visrate_later_2x_stepped2_typical, unit: Gvis / h, datatype: float64}
+# - {name: wsu_datavol_later_2x_stepped2_typical_target_tot, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_later_2x_stepped2_typical_cal, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_later_2x_stepped2_typical_total, unit: Gbyte, datatype: float64}
+# - {name: wsu_nvis_later_2x_stepped2_typical_target_tot, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_later_2x_stepped2_typical_cal, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_later_2x_stepped2_typical_total, unit: Gvis, datatype: float64}
+# - {name: wsu_datarate_later_2x_stepped2_array, unit: Gbyte / s, datatype: float64}
+# - {name: wsu_visrate_later_2x_stepped2_array, unit: Gvis / h, datatype: float64}
+# - {name: wsu_datavol_later_2x_stepped2_array_target_tot, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_later_2x_stepped2_array_cal, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_later_2x_stepped2_array_total, unit: Gbyte, datatype: float64}
+# - {name: wsu_nvis_later_2x_stepped2_array_target_tot, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_later_2x_stepped2_array_cal, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_later_2x_stepped2_array_total, unit: Gvis, datatype: float64}
+# - {name: wsu_productsize_later_4x_stepped2, unit: Gbyte, datatype: float64}
+# - {name: wsu_datarate_later_4x_stepped2_typical, unit: Gbyte / s, datatype: float64}
+# - {name: wsu_visrate_later_4x_stepped2_typical, unit: Gvis / h, datatype: float64}
+# - {name: wsu_datavol_later_4x_stepped2_typical_target_tot, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_later_4x_stepped2_typical_cal, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_later_4x_stepped2_typical_total, unit: Gbyte, datatype: float64}
+# - {name: wsu_nvis_later_4x_stepped2_typical_target_tot, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_later_4x_stepped2_typical_cal, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_later_4x_stepped2_typical_total, unit: Gvis, datatype: float64}
+# - {name: wsu_datarate_later_4x_stepped2_array, unit: Gbyte / s, datatype: float64}
+# - {name: wsu_visrate_later_4x_stepped2_array, unit: Gvis / h, datatype: float64}
+# - {name: wsu_datavol_later_4x_stepped2_array_target_tot, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_later_4x_stepped2_array_cal, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_later_4x_stepped2_array_total, unit: Gbyte, datatype: float64}
+# - {name: wsu_nvis_later_4x_stepped2_array_target_tot, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_later_4x_stepped2_array_cal, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_later_4x_stepped2_array_total, unit: Gvis, datatype: float64}
+# - {name: blc_cubesize, unit: Gbyte, datatype: float64}
+# - {name: blc_cubesize_sum, unit: Gbyte, datatype: float64}
+# - {name: blc_productsize, unit: Gbyte, datatype: float64}
+# - {name: cycle_info, datatype: string}
+# - {name: plversion, datatype: string}
+# - {name: procedure, datatype: string}
+# - {name: nant, datatype: int64}
+# - {name: pl_totaltime, unit: h, datatype: float64}
+# - {name: pl_imgtime, unit: h, datatype: float64}
+# - {name: pl_cubetime, unit: h, datatype: float64}
+# - {name: pl_aggtime, unit: h, datatype: float64}
+# - {name: pl_fctime, unit: h, datatype: float64}
+# - {name: nEB, datatype: int64}
+# - {name: npt, datatype: int64}
+# - {name: nscan, datatype: int64}
+# - {name: reptgt, datatype: string}
+# - {name: allowedcubesize, unit: Gbyte, datatype: float64}
+# - {name: allowedcubelimit, unit: Gbyte, datatype: float64}
+# - {name: predcubesize, unit: Gbyte, datatype: float64}
+# - {name: mitigatedcubesize, unit: Gbyte, datatype: float64}
+# - {name: allowedprodsize, unit: Gbyte, datatype: float64}
+# - {name: initialprodsize, unit: Gbyte, datatype: float64}
+# - {name: mitigatedprodsize, unit: Gbyte, datatype: float64}
+# - {name: mitigated, datatype: bool}
+# - {name: mit_nbins, datatype: string}
+# - {name: mit_hm_imsize, datatype: string}
+# - {name: mit_hm_cell, datatype: string}
+# - {name: mit_field, datatype: string}
+# - {name: mit_spw, datatype: string}
+# - {name: pl_caltime, unit: h, datatype: float64}
+# - {name: blc_sysperf_typical_allgrid, datatype: float64}
+# - {name: flops_per_vis_allgrid, datatype: float64}
+# - {name: wsu_sysperf_early_stepped2_typical_allgrid, datatype: float64}
+# - {name: wsu_sysperf_later_2x_stepped2_typical_allgrid, datatype: float64}
+# - {name: wsu_sysperf_later_4x_stepped2_typical_allgrid, datatype: float64}
+# - {name: blc_sysperf_typical_aprojonly, datatype: float64}
+# - {name: flops_per_vis_aprojonly, datatype: float64}
+# - {name: wsu_sysperf_early_stepped2_typical_aprojonly, datatype: float64}
+# - {name: wsu_sysperf_later_2x_stepped2_typical_aprojonly, datatype: float64}
+# - {name: wsu_sysperf_later_4x_stepped2_typical_aprojonly, datatype: float64}
+# - {name: weights_all, datatype: float64}
+# - {name: nant_initial, datatype: float64}
+# - {name: wsu_tint_initial, unit: s, datatype: float64}
+# - {name: wsu_bandwidth_initial, unit: GHz, datatype: float64}
+# - {name: wsu_nspw_initial, datatype: float64}
+# - {name: wsu_npol_initial, datatype: int64}
+# - {name: wsu_chanavg_stepped2_initial, datatype: float64}
+# - {name: wsu_specwidth_stepped2_initial, unit: kHz, datatype: float64}
+# - {name: wsu_velres_stepped2_initial, unit: km / s, datatype: float64}
+# - {name: wsu_nchan_spw_stepped2_initial, datatype: float64}
+# - {name: wsu_nchan_agg_stepped2_initial, datatype: float64}
+# - {name: wsu_frac_bw_initial, datatype: float64}
+# - {name: wsu_bandwidth_ms4, unit: GHz, datatype: float64}
+# - {name: wsu_nspw_ms4, datatype: float64}
+# - {name: wsu_nchan_agg_stepped2_ms4, datatype: float64}
+# - {name: wsu_frac_bw_ms4, datatype: float64}
+# - {name: wsu_bandwidth_goal, unit: GHz, datatype: float64}
+# - {name: wsu_nspw_goal, datatype: float64}
+# - {name: wsu_nchan_agg_stepped2_goal, datatype: float64}
+# - {name: wsu_frac_bw_goal, datatype: float64}
+# - {name: nbase_initial, datatype: float64}
+# - {name: wsu_datarate_initial_stepped2_initial, unit: Gbyte / s, datatype: float64}
+# - {name: wsu_visrate_initial_stepped2_initial, unit: Gvis / h, datatype: float64}
+# - {name: wsu_datavol_initial_stepped2_initial_target_tot, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_initial_stepped2_initial_cal, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_initial_stepped2_initial_total, unit: Gbyte, datatype: float64}
+# - {name: wsu_nvis_initial_stepped2_initial_target_tot, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_initial_stepped2_initial_cal, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_initial_stepped2_initial_total, unit: Gvis, datatype: float64}
+# - {name: wsu_cubesize_initial_stepped2, unit: Gbyte, datatype: float64}
+# - {name: wsu_productsize_initial_stepped2, unit: Gbyte, datatype: float64}
+# - {name: wsu_sysperf_initial_stepped2_initial_aprojonly, datatype: float64}
+# - {name: wsu_datarate_ms4_stepped2_typical, unit: Gbyte / s, datatype: float64}
+# - {name: wsu_visrate_ms4_stepped2_typical, unit: Gvis / h, datatype: float64}
+# - {name: wsu_datavol_ms4_stepped2_typical_target_tot, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_ms4_stepped2_typical_cal, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_ms4_stepped2_typical_total, unit: Gbyte, datatype: float64}
+# - {name: wsu_nvis_ms4_stepped2_typical_target_tot, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_ms4_stepped2_typical_cal, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_ms4_stepped2_typical_total, unit: Gvis, datatype: float64}
+# - {name: wsu_productsize_ms4_stepped2, unit: Gbyte, datatype: float64}
+# - {name: wsu_sysperf_ms4_stepped2_typical_aprojonly, datatype: float64}
+# - {name: wsu_datarate_goal_stepped2_typical, unit: Gbyte / s, datatype: float64}
+# - {name: wsu_visrate_goal_stepped2_typical, unit: Gvis / h, datatype: float64}
+# - {name: wsu_datavol_goal_stepped2_typical_target_tot, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_goal_stepped2_typical_cal, unit: Gbyte, datatype: float64}
+# - {name: wsu_datavol_goal_stepped2_typical_total, unit: Gbyte, datatype: float64}
+# - {name: wsu_nvis_goal_stepped2_typical_target_tot, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_goal_stepped2_typical_cal, unit: Gvis, datatype: float64}
+# - {name: wsu_nvis_goal_stepped2_typical_total, unit: Gvis, datatype: float64}
+# - {name: wsu_productsize_goal_stepped2, unit: Gbyte, datatype: float64}
+# - {name: wsu_sysperf_goal_stepped2_typical_aprojonly, datatype: float64}
+# meta: !!omap
+# - __serialized_columns__:
+#     L80:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: m}
+#       value: !astropy.table.SerializedColumn {name: L80}
+#     allowedcubelimit:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: &id001 !astropy.units.Unit {unit: Gbyte}
+#       value: !astropy.table.SerializedColumn
+#         __class__: astropy.utils.masked.core.MaskedNDArray
+#         data: !astropy.table.SerializedColumn {name: allowedcubelimit}
+#     allowedcubesize:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn
+#         __class__: astropy.utils.masked.core.MaskedNDArray
+#         data: !astropy.table.SerializedColumn {name: allowedcubesize}
+#     allowedprodsize:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn
+#         __class__: astropy.utils.masked.core.MaskedNDArray
+#         data: !astropy.table.SerializedColumn {name: allowedprodsize}
+#     blc_bandwidth_agg:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: &id002 !astropy.units.Unit {unit: GHz}
+#       value: !astropy.table.SerializedColumn {name: blc_bandwidth_agg}
+#     blc_bandwidth_max:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id002
+#       value: !astropy.table.SerializedColumn {name: blc_bandwidth_max}
+#     blc_cubesize:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: blc_cubesize}
+#     blc_cubesize_sum:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: blc_cubesize_sum}
+#     blc_datarate_array:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte / s}
+#       value: !astropy.table.SerializedColumn {name: blc_datarate_array}
+#     blc_datarate_typical:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte / s}
+#       value: !astropy.table.SerializedColumn {name: blc_datarate_typical}
+#     blc_datavol_array_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: blc_datavol_array_cal}
+#     blc_datavol_array_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: blc_datavol_array_target_tot}
+#     blc_datavol_array_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: blc_datavol_array_total}
+#     blc_datavol_typical_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: blc_datavol_typical_cal}
+#     blc_datavol_typical_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: blc_datavol_typical_target_tot}
+#     blc_datavol_typical_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: blc_datavol_typical_total}
+#     blc_freq:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id002
+#       value: !astropy.table.SerializedColumn {name: blc_freq}
+#     blc_nvis_array_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: &id003 !astropy.units.Unit {unit: Gvis}
+#       value: !astropy.table.SerializedColumn {name: blc_nvis_array_cal}
+#     blc_nvis_array_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: blc_nvis_array_target_tot}
+#     blc_nvis_array_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: blc_nvis_array_total}
+#     blc_nvis_typical_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: blc_nvis_typical_cal}
+#     blc_nvis_typical_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: blc_nvis_typical_target_tot}
+#     blc_nvis_typical_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: blc_nvis_typical_total}
+#     blc_productsize:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: blc_productsize}
+#     blc_specwidth:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: &id009 !astropy.units.Unit {unit: kHz}
+#       value: !astropy.table.SerializedColumn {name: blc_specwidth}
+#     blc_tint:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: &id004 !astropy.units.Unit {unit: s}
+#       value: !astropy.table.SerializedColumn {name: blc_tint}
+#     blc_velres:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: km / s}
+#       value: !astropy.table.SerializedColumn {name: blc_velres}
+#     blc_visrate_array:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis / h}
+#       value: !astropy.table.SerializedColumn {name: blc_visrate_array}
+#     blc_visrate_typical:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis / h}
+#       value: !astropy.table.SerializedColumn {name: blc_visrate_typical}
+#     bp_time:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id004
+#       value: !astropy.table.SerializedColumn {name: bp_time}
+#     cal_time:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id004
+#       value: !astropy.table.SerializedColumn {name: cal_time}
+#     cell:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: &id005 !astropy.units.Unit {unit: arcsec}
+#       value: !astropy.table.SerializedColumn {name: cell}
+#     check_time:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id004
+#       value: !astropy.table.SerializedColumn {name: check_time}
+#     flux_time:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id004
+#       value: !astropy.table.SerializedColumn {name: flux_time}
+#     initialprodsize:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn
+#         __class__: astropy.utils.masked.core.MaskedNDArray
+#         data: !astropy.table.SerializedColumn {name: initialprodsize}
+#     mfssize:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: mfssize}
+#     mitigatedcubesize:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn
+#         __class__: astropy.utils.masked.core.MaskedNDArray
+#         data: !astropy.table.SerializedColumn {name: mitigatedcubesize}
+#     mitigatedprodsize:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn
+#         __class__: astropy.utils.masked.core.MaskedNDArray
+#         data: !astropy.table.SerializedColumn {name: mitigatedprodsize}
+#     pb:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id005
+#       value: !astropy.table.SerializedColumn {name: pb}
+#     phase_time:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id004
+#       value: !astropy.table.SerializedColumn {name: phase_time}
+#     pl_aggtime:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: &id006 !astropy.units.Unit {unit: h}
+#       value: !astropy.table.SerializedColumn
+#         __class__: astropy.utils.masked.core.MaskedNDArray
+#         data: !astropy.table.SerializedColumn {name: pl_aggtime}
+#     pl_caltime:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id006
+#       value: !astropy.table.SerializedColumn
+#         __class__: astropy.utils.masked.core.MaskedNDArray
+#         data: !astropy.table.SerializedColumn {name: pl_caltime}
+#     pl_cubetime:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id006
+#       value: !astropy.table.SerializedColumn
+#         __class__: astropy.utils.masked.core.MaskedNDArray
+#         data: !astropy.table.SerializedColumn {name: pl_cubetime}
+#     pl_fctime:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id006
+#       value: !astropy.table.SerializedColumn
+#         __class__: astropy.utils.masked.core.MaskedNDArray
+#         data: !astropy.table.SerializedColumn {name: pl_fctime}
+#     pl_imgtime:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id006
+#       value: !astropy.table.SerializedColumn
+#         __class__: astropy.utils.masked.core.MaskedNDArray
+#         data: !astropy.table.SerializedColumn {name: pl_imgtime}
+#     pl_totaltime:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id006
+#       value: !astropy.table.SerializedColumn
+#         __class__: astropy.utils.masked.core.MaskedNDArray
+#         data: !astropy.table.SerializedColumn {name: pl_totaltime}
+#     pol_time:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id004
+#       value: !astropy.table.SerializedColumn {name: pol_time}
+#     predcubesize:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn
+#         __class__: astropy.utils.masked.core.MaskedNDArray
+#         data: !astropy.table.SerializedColumn {name: predcubesize}
+#     s_fov:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: deg}
+#       value: !astropy.table.SerializedColumn {name: s_fov}
+#     s_resolution:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id005
+#       value: !astropy.table.SerializedColumn {name: s_resolution}
+#     target_time_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id004
+#       value: !astropy.table.SerializedColumn {name: target_time_tot}
+#     time_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id004
+#       value: !astropy.table.SerializedColumn {name: time_tot}
+#     weights_all:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: ''}
+#       value: !astropy.table.SerializedColumn {name: weights_all}
+#     wsu_bandwidth_early:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id002
+#       value: !astropy.table.SerializedColumn {name: wsu_bandwidth_early}
+#     wsu_bandwidth_goal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id002
+#       value: !astropy.table.SerializedColumn {name: wsu_bandwidth_goal}
+#     wsu_bandwidth_initial:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id002
+#       value: !astropy.table.SerializedColumn {name: wsu_bandwidth_initial}
+#     wsu_bandwidth_later_2x:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id002
+#       value: !astropy.table.SerializedColumn {name: wsu_bandwidth_later_2x}
+#     wsu_bandwidth_later_4x:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id002
+#       value: !astropy.table.SerializedColumn {name: wsu_bandwidth_later_4x}
+#     wsu_bandwidth_ms4:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id002
+#       value: !astropy.table.SerializedColumn {name: wsu_bandwidth_ms4}
+#     wsu_bandwidth_spw:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id002
+#       value: !astropy.table.SerializedColumn {name: wsu_bandwidth_spw}
+#     wsu_cubesize_initial_stepped2:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_cubesize_initial_stepped2}
+#     wsu_cubesize_stepped2:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_cubesize_stepped2}
+#     wsu_datarate_early_stepped2_array:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte / s}
+#       value: !astropy.table.SerializedColumn {name: wsu_datarate_early_stepped2_array}
+#     wsu_datarate_early_stepped2_typical:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte / s}
+#       value: !astropy.table.SerializedColumn {name: wsu_datarate_early_stepped2_typical}
+#     wsu_datarate_goal_stepped2_typical:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte / s}
+#       value: !astropy.table.SerializedColumn {name: wsu_datarate_goal_stepped2_typical}
+#     wsu_datarate_initial_stepped2_initial:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte / s}
+#       value: !astropy.table.SerializedColumn {name: wsu_datarate_initial_stepped2_initial}
+#     wsu_datarate_later_2x_stepped2_array:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte / s}
+#       value: !astropy.table.SerializedColumn {name: wsu_datarate_later_2x_stepped2_array}
+#     wsu_datarate_later_2x_stepped2_typical:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte / s}
+#       value: !astropy.table.SerializedColumn {name: wsu_datarate_later_2x_stepped2_typical}
+#     wsu_datarate_later_4x_stepped2_array:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte / s}
+#       value: !astropy.table.SerializedColumn {name: wsu_datarate_later_4x_stepped2_array}
+#     wsu_datarate_later_4x_stepped2_typical:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte / s}
+#       value: !astropy.table.SerializedColumn {name: wsu_datarate_later_4x_stepped2_typical}
+#     wsu_datarate_ms4_stepped2_typical:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte / s}
+#       value: !astropy.table.SerializedColumn {name: wsu_datarate_ms4_stepped2_typical}
+#     wsu_datavol_early_stepped2_array_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_early_stepped2_array_cal}
+#     wsu_datavol_early_stepped2_array_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_early_stepped2_array_target_tot}
+#     wsu_datavol_early_stepped2_array_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_early_stepped2_array_total}
+#     wsu_datavol_early_stepped2_typical_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_early_stepped2_typical_cal}
+#     wsu_datavol_early_stepped2_typical_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_early_stepped2_typical_target_tot}
+#     wsu_datavol_early_stepped2_typical_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_early_stepped2_typical_total}
+#     wsu_datavol_goal_stepped2_typical_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte}
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_goal_stepped2_typical_cal}
+#     wsu_datavol_goal_stepped2_typical_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte}
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_goal_stepped2_typical_target_tot}
+#     wsu_datavol_goal_stepped2_typical_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte}
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_goal_stepped2_typical_total}
+#     wsu_datavol_initial_stepped2_initial_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte}
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_initial_stepped2_initial_cal}
+#     wsu_datavol_initial_stepped2_initial_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte}
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_initial_stepped2_initial_target_tot}
+#     wsu_datavol_initial_stepped2_initial_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte}
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_initial_stepped2_initial_total}
+#     wsu_datavol_later_2x_stepped2_array_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_later_2x_stepped2_array_cal}
+#     wsu_datavol_later_2x_stepped2_array_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_later_2x_stepped2_array_target_tot}
+#     wsu_datavol_later_2x_stepped2_array_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_later_2x_stepped2_array_total}
+#     wsu_datavol_later_2x_stepped2_typical_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_later_2x_stepped2_typical_cal}
+#     wsu_datavol_later_2x_stepped2_typical_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_later_2x_stepped2_typical_target_tot}
+#     wsu_datavol_later_2x_stepped2_typical_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_later_2x_stepped2_typical_total}
+#     wsu_datavol_later_4x_stepped2_array_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_later_4x_stepped2_array_cal}
+#     wsu_datavol_later_4x_stepped2_array_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_later_4x_stepped2_array_target_tot}
+#     wsu_datavol_later_4x_stepped2_array_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_later_4x_stepped2_array_total}
+#     wsu_datavol_later_4x_stepped2_typical_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_later_4x_stepped2_typical_cal}
+#     wsu_datavol_later_4x_stepped2_typical_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_later_4x_stepped2_typical_target_tot}
+#     wsu_datavol_later_4x_stepped2_typical_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_later_4x_stepped2_typical_total}
+#     wsu_datavol_ms4_stepped2_typical_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte}
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_ms4_stepped2_typical_cal}
+#     wsu_datavol_ms4_stepped2_typical_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte}
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_ms4_stepped2_typical_target_tot}
+#     wsu_datavol_ms4_stepped2_typical_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gbyte}
+#       value: !astropy.table.SerializedColumn {name: wsu_datavol_ms4_stepped2_typical_total}
+#     wsu_frac_bw_early:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: &id007 !astropy.units.Unit {unit: ''}
+#       value: !astropy.table.SerializedColumn {name: wsu_frac_bw_early}
+#     wsu_frac_bw_goal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: ''}
+#       value: !astropy.table.SerializedColumn {name: wsu_frac_bw_goal}
+#     wsu_frac_bw_initial:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: ''}
+#       value: !astropy.table.SerializedColumn {name: wsu_frac_bw_initial}
+#     wsu_frac_bw_later_2x:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_frac_bw_later_2x}
+#     wsu_frac_bw_later_4x:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_frac_bw_later_4x}
+#     wsu_frac_bw_ms4:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: ''}
+#       value: !astropy.table.SerializedColumn {name: wsu_frac_bw_ms4}
+#     wsu_frac_bw_spw:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_frac_bw_spw}
+#     wsu_freq:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id002
+#       value: !astropy.table.SerializedColumn {name: wsu_freq}
+#     wsu_nchan_agg_finest_early:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_agg_finest_early}
+#     wsu_nchan_agg_finest_later_2x:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_agg_finest_later_2x}
+#     wsu_nchan_agg_finest_later_4x:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_agg_finest_later_4x}
+#     wsu_nchan_agg_stepped2_early:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_agg_stepped2_early}
+#     wsu_nchan_agg_stepped2_goal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_agg_stepped2_goal}
+#     wsu_nchan_agg_stepped2_initial:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: &id008 !astropy.units.Unit {unit: ''}
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_agg_stepped2_initial}
+#     wsu_nchan_agg_stepped2_later_2x:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_agg_stepped2_later_2x}
+#     wsu_nchan_agg_stepped2_later_4x:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_agg_stepped2_later_4x}
+#     wsu_nchan_agg_stepped2_ms4:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_agg_stepped2_ms4}
+#     wsu_nchan_agg_stepped_early:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_agg_stepped_early}
+#     wsu_nchan_agg_stepped_later_2x:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_agg_stepped_later_2x}
+#     wsu_nchan_agg_stepped_later_4x:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_agg_stepped_later_4x}
+#     wsu_nchan_spw_finest:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_spw_finest}
+#     wsu_nchan_spw_stepped:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_spw_stepped}
+#     wsu_nchan_spw_stepped2:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id007
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_spw_stepped2}
+#     wsu_nchan_spw_stepped2_initial:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id008
+#       value: !astropy.table.SerializedColumn {name: wsu_nchan_spw_stepped2_initial}
+#     wsu_nspw_goal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: ''}
+#       value: !astropy.table.SerializedColumn {name: wsu_nspw_goal}
+#     wsu_nspw_initial:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: ''}
+#       value: !astropy.table.SerializedColumn {name: wsu_nspw_initial}
+#     wsu_nspw_ms4:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: ''}
+#       value: !astropy.table.SerializedColumn {name: wsu_nspw_ms4}
+#     wsu_nvis_early_stepped2_array_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_early_stepped2_array_cal}
+#     wsu_nvis_early_stepped2_array_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_early_stepped2_array_target_tot}
+#     wsu_nvis_early_stepped2_array_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_early_stepped2_array_total}
+#     wsu_nvis_early_stepped2_typical_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_early_stepped2_typical_cal}
+#     wsu_nvis_early_stepped2_typical_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_early_stepped2_typical_target_tot}
+#     wsu_nvis_early_stepped2_typical_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_early_stepped2_typical_total}
+#     wsu_nvis_goal_stepped2_typical_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis}
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_goal_stepped2_typical_cal}
+#     wsu_nvis_goal_stepped2_typical_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis}
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_goal_stepped2_typical_target_tot}
+#     wsu_nvis_goal_stepped2_typical_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis}
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_goal_stepped2_typical_total}
+#     wsu_nvis_initial_stepped2_initial_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis}
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_initial_stepped2_initial_cal}
+#     wsu_nvis_initial_stepped2_initial_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis}
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_initial_stepped2_initial_target_tot}
+#     wsu_nvis_initial_stepped2_initial_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis}
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_initial_stepped2_initial_total}
+#     wsu_nvis_later_2x_stepped2_array_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_later_2x_stepped2_array_cal}
+#     wsu_nvis_later_2x_stepped2_array_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_later_2x_stepped2_array_target_tot}
+#     wsu_nvis_later_2x_stepped2_array_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_later_2x_stepped2_array_total}
+#     wsu_nvis_later_2x_stepped2_typical_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_later_2x_stepped2_typical_cal}
+#     wsu_nvis_later_2x_stepped2_typical_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_later_2x_stepped2_typical_target_tot}
+#     wsu_nvis_later_2x_stepped2_typical_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_later_2x_stepped2_typical_total}
+#     wsu_nvis_later_4x_stepped2_array_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_later_4x_stepped2_array_cal}
+#     wsu_nvis_later_4x_stepped2_array_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_later_4x_stepped2_array_target_tot}
+#     wsu_nvis_later_4x_stepped2_array_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_later_4x_stepped2_array_total}
+#     wsu_nvis_later_4x_stepped2_typical_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_later_4x_stepped2_typical_cal}
+#     wsu_nvis_later_4x_stepped2_typical_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_later_4x_stepped2_typical_target_tot}
+#     wsu_nvis_later_4x_stepped2_typical_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id003
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_later_4x_stepped2_typical_total}
+#     wsu_nvis_ms4_stepped2_typical_cal:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis}
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_ms4_stepped2_typical_cal}
+#     wsu_nvis_ms4_stepped2_typical_target_tot:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis}
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_ms4_stepped2_typical_target_tot}
+#     wsu_nvis_ms4_stepped2_typical_total:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis}
+#       value: !astropy.table.SerializedColumn {name: wsu_nvis_ms4_stepped2_typical_total}
+#     wsu_productsize_early_stepped2:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_productsize_early_stepped2}
+#     wsu_productsize_goal_stepped2:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_productsize_goal_stepped2}
+#     wsu_productsize_initial_stepped2:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_productsize_initial_stepped2}
+#     wsu_productsize_later_2x_stepped2:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_productsize_later_2x_stepped2}
+#     wsu_productsize_later_4x_stepped2:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_productsize_later_4x_stepped2}
+#     wsu_productsize_ms4_stepped2:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id001
+#       value: !astropy.table.SerializedColumn {name: wsu_productsize_ms4_stepped2}
+#     wsu_specwidth_finest:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id009
+#       value: !astropy.table.SerializedColumn {name: wsu_specwidth_finest}
+#     wsu_specwidth_stepped:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id009
+#       value: !astropy.table.SerializedColumn {name: wsu_specwidth_stepped}
+#     wsu_specwidth_stepped2:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id009
+#       value: !astropy.table.SerializedColumn {name: wsu_specwidth_stepped2}
+#     wsu_specwidth_stepped2_initial:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id009
+#       value: !astropy.table.SerializedColumn {name: wsu_specwidth_stepped2_initial}
+#     wsu_tint:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id004
+#       value: !astropy.table.SerializedColumn {name: wsu_tint}
+#     wsu_tint_initial:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: *id004
+#       value: !astropy.table.SerializedColumn {name: wsu_tint_initial}
+#     wsu_velres_finest:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: km / s}
+#       value: !astropy.table.SerializedColumn {name: wsu_velres_finest}
+#     wsu_velres_stepped:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: km / s}
+#       value: !astropy.table.SerializedColumn {name: wsu_velres_stepped}
+#     wsu_velres_stepped2:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: km / s}
+#       value: !astropy.table.SerializedColumn {name: wsu_velres_stepped2}
+#     wsu_velres_stepped2_initial:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: km / s}
+#       value: !astropy.table.SerializedColumn {name: wsu_velres_stepped2_initial}
+#     wsu_visrate_early_stepped2_array:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis / h}
+#       value: !astropy.table.SerializedColumn {name: wsu_visrate_early_stepped2_array}
+#     wsu_visrate_early_stepped2_typical:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis / h}
+#       value: !astropy.table.SerializedColumn {name: wsu_visrate_early_stepped2_typical}
+#     wsu_visrate_goal_stepped2_typical:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis / h}
+#       value: !astropy.table.SerializedColumn {name: wsu_visrate_goal_stepped2_typical}
+#     wsu_visrate_initial_stepped2_initial:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis / h}
+#       value: !astropy.table.SerializedColumn {name: wsu_visrate_initial_stepped2_initial}
+#     wsu_visrate_later_2x_stepped2_array:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis / h}
+#       value: !astropy.table.SerializedColumn {name: wsu_visrate_later_2x_stepped2_array}
+#     wsu_visrate_later_2x_stepped2_typical:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis / h}
+#       value: !astropy.table.SerializedColumn {name: wsu_visrate_later_2x_stepped2_typical}
+#     wsu_visrate_later_4x_stepped2_array:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis / h}
+#       value: !astropy.table.SerializedColumn {name: wsu_visrate_later_4x_stepped2_array}
+#     wsu_visrate_later_4x_stepped2_typical:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis / h}
+#       value: !astropy.table.SerializedColumn {name: wsu_visrate_later_4x_stepped2_typical}
+#     wsu_visrate_ms4_stepped2_typical:
+#       __class__: astropy.units.quantity.Quantity
+#       unit: !astropy.units.Unit {unit: Gvis / h}
+#       value: !astropy.table.SerializedColumn {name: wsu_visrate_ms4_stepped2_typical}
+# schema: astropy-2.0
+mous proposal_id schedblock_name array science_keyword scientific_category scientific_category_proposal nant_typical nant_array nant_all band ntarget s_fov s_resolution mosaic imsize pb cell blc_npol blc_nspw blc_specwidth blc_freq blc_velres blc_nchan_agg blc_nchan_max blc_bandwidth_max blc_bandwidth_agg wsu_freq wsu_npol wsu_bandwidth_early wsu_bandwidth_later_2x wsu_bandwidth_later_4x wsu_bandwidth_spw wsu_nspw_early wsu_nspw_later_2x wsu_nspw_later_4x wsu_specwidth_finest wsu_chanavg_finest wsu_velres_finest wsu_specwidth_stepped wsu_chanavg_stepped wsu_velres_stepped wsu_specwidth_stepped2 wsu_chanavg_stepped2 wsu_velres_stepped2 wsu_tint wsu_nchan_spw_finest wsu_nchan_spw_stepped wsu_nchan_spw_stepped2 wsu_nchan_agg_finest_early wsu_nchan_agg_finest_later_2x wsu_nchan_agg_finest_later_4x wsu_nchan_agg_stepped_early wsu_nchan_agg_stepped_later_2x wsu_nchan_agg_stepped_later_4x wsu_nchan_agg_stepped2_early wsu_nchan_agg_stepped2_later_2x wsu_nchan_agg_stepped2_later_4x wsu_frac_bw_early wsu_frac_bw_later_2x wsu_frac_bw_later_4x wsu_frac_bw_spw nbase_typical nbase_array nbase_all L80 Project SB_name blc_tint blc_ntunings bp_time flux_time phase_time pol_time check_time target_time_tot time_tot cal_time mfssize wsu_cubesize_stepped2 wsu_productsize_early_stepped2 wsu_datarate_early_stepped2_typical wsu_visrate_early_stepped2_typical wsu_datavol_early_stepped2_typical_target_tot wsu_datavol_early_stepped2_typical_cal wsu_datavol_early_stepped2_typical_total wsu_nvis_early_stepped2_typical_target_tot wsu_nvis_early_stepped2_typical_cal wsu_nvis_early_stepped2_typical_total blc_datarate_typical blc_visrate_typical blc_datavol_typical_target_tot blc_datavol_typical_cal blc_datavol_typical_total blc_nvis_typical_target_tot blc_nvis_typical_cal blc_nvis_typical_total wsu_datarate_early_stepped2_array wsu_visrate_early_stepped2_array wsu_datavol_early_stepped2_array_target_tot wsu_datavol_early_stepped2_array_cal wsu_datavol_early_stepped2_array_total wsu_nvis_early_stepped2_array_target_tot wsu_nvis_early_stepped2_array_cal wsu_nvis_early_stepped2_array_total blc_datarate_array blc_visrate_array blc_datavol_array_target_tot blc_datavol_array_cal blc_datavol_array_total blc_nvis_array_target_tot blc_nvis_array_cal blc_nvis_array_total wsu_productsize_later_2x_stepped2 wsu_datarate_later_2x_stepped2_typical wsu_visrate_later_2x_stepped2_typical wsu_datavol_later_2x_stepped2_typical_target_tot wsu_datavol_later_2x_stepped2_typical_cal wsu_datavol_later_2x_stepped2_typical_total wsu_nvis_later_2x_stepped2_typical_target_tot wsu_nvis_later_2x_stepped2_typical_cal wsu_nvis_later_2x_stepped2_typical_total wsu_datarate_later_2x_stepped2_array wsu_visrate_later_2x_stepped2_array wsu_datavol_later_2x_stepped2_array_target_tot wsu_datavol_later_2x_stepped2_array_cal wsu_datavol_later_2x_stepped2_array_total wsu_nvis_later_2x_stepped2_array_target_tot wsu_nvis_later_2x_stepped2_array_cal wsu_nvis_later_2x_stepped2_array_total wsu_productsize_later_4x_stepped2 wsu_datarate_later_4x_stepped2_typical wsu_visrate_later_4x_stepped2_typical wsu_datavol_later_4x_stepped2_typical_target_tot wsu_datavol_later_4x_stepped2_typical_cal wsu_datavol_later_4x_stepped2_typical_total wsu_nvis_later_4x_stepped2_typical_target_tot wsu_nvis_later_4x_stepped2_typical_cal wsu_nvis_later_4x_stepped2_typical_total wsu_datarate_later_4x_stepped2_array wsu_visrate_later_4x_stepped2_array wsu_datavol_later_4x_stepped2_array_target_tot wsu_datavol_later_4x_stepped2_array_cal wsu_datavol_later_4x_stepped2_array_total wsu_nvis_later_4x_stepped2_array_target_tot wsu_nvis_later_4x_stepped2_array_cal wsu_nvis_later_4x_stepped2_array_total blc_cubesize blc_cubesize_sum blc_productsize cycle_info plversion procedure nant pl_totaltime pl_imgtime pl_cubetime pl_aggtime pl_fctime nEB npt nscan reptgt allowedcubesize allowedcubelimit predcubesize mitigatedcubesize allowedprodsize initialprodsize mitigatedprodsize mitigated mit_nbins mit_hm_imsize mit_hm_cell mit_field mit_spw pl_caltime blc_sysperf_typical_allgrid flops_per_vis_allgrid wsu_sysperf_early_stepped2_typical_allgrid wsu_sysperf_later_2x_stepped2_typical_allgrid wsu_sysperf_later_4x_stepped2_typical_allgrid blc_sysperf_typical_aprojonly flops_per_vis_aprojonly wsu_sysperf_early_stepped2_typical_aprojonly wsu_sysperf_later_2x_stepped2_typical_aprojonly wsu_sysperf_later_4x_stepped2_typical_aprojonly weights_all nant_initial wsu_tint_initial wsu_bandwidth_initial wsu_nspw_initial wsu_npol_initial wsu_chanavg_stepped2_initial wsu_specwidth_stepped2_initial wsu_velres_stepped2_initial wsu_nchan_spw_stepped2_initial wsu_nchan_agg_stepped2_initial wsu_frac_bw_initial wsu_bandwidth_ms4 wsu_nspw_ms4 wsu_nchan_agg_stepped2_ms4 wsu_frac_bw_ms4 wsu_bandwidth_goal wsu_nspw_goal wsu_nchan_agg_stepped2_goal wsu_frac_bw_goal nbase_initial wsu_datarate_initial_stepped2_initial wsu_visrate_initial_stepped2_initial wsu_datavol_initial_stepped2_initial_target_tot wsu_datavol_initial_stepped2_initial_cal wsu_datavol_initial_stepped2_initial_total wsu_nvis_initial_stepped2_initial_target_tot wsu_nvis_initial_stepped2_initial_cal wsu_nvis_initial_stepped2_initial_total wsu_cubesize_initial_stepped2 wsu_productsize_initial_stepped2 wsu_sysperf_initial_stepped2_initial_aprojonly wsu_datarate_ms4_stepped2_typical wsu_visrate_ms4_stepped2_typical wsu_datavol_ms4_stepped2_typical_target_tot wsu_datavol_ms4_stepped2_typical_cal wsu_datavol_ms4_stepped2_typical_total wsu_nvis_ms4_stepped2_typical_target_tot wsu_nvis_ms4_stepped2_typical_cal wsu_nvis_ms4_stepped2_typical_total wsu_productsize_ms4_stepped2 wsu_sysperf_ms4_stepped2_typical_aprojonly wsu_datarate_goal_stepped2_typical wsu_visrate_goal_stepped2_typical wsu_datavol_goal_stepped2_typical_target_tot wsu_datavol_goal_stepped2_typical_cal wsu_datavol_goal_stepped2_typical_total wsu_nvis_goal_stepped2_typical_target_tot wsu_nvis_goal_stepped2_typical_cal wsu_nvis_goal_stepped2_typical_total wsu_productsize_goal_stepped2 wsu_sysperf_goal_stepped2_typical_aprojonly
+uid://A001/X1465/X1002 2019.1.01326.S Position_i_03_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 3.0 1.0 0.13050363616709187 12.418751976046456 T 220.0 108.514167152526 2.483750395209291 2 4 965.2043680983645 92.45001476575733 2.9778920543263903 14336.0 4096.0 2.0 8.0 92.45001476575733 2 16.0 16.0 32.0 2.0 8 8 16 958.5 71.0 3.108177664666337 297.0 22.0 0.9630973045444989 607.5 45.0 1.9699717592955657 9.984 2086.0 6734.0 3292.0 16688.0 16688.0 33376.0 53872.0 53872.0 107744.0 26336.0 26336.0 52672.0 0.17306649480305175 0.17306649480305175 0.3461329896061035 0.02163331185038147 45.0 66.0 120.0 30.03768 2019.1.01326.S Position_i_03_7M 10.08 1.0 1209.6 0.0 362.88 0.0 0.0 1995.84 3568.3199999999997 1572.48 0.0001936 0.6373312 10.2003968 0.0011606410256410258 1.7093076923076922 2.3164537846153848 1.8250848000000002 4.141538584615385 0.9476401846153846 0.7466256 1.6942657846153844 0.0006257777777777777 0.9216 1.24895232 0.98402304 2.2329753599999997 0.51093504 0.40255488 0.91348992 0.001646 2.5069846153846154 3.2851526399999997 2.58830208 5.873454719999999 1.3898722707692308 1.09505088 2.4849231507692306 0.0008874666666666666 1.35168 1.7712414719999998 1.395523584 3.1667650559999996 0.749371392 0.590413824 1.339785216 10.2003968 0.0011606410256410258 1.7093076923076922 2.3164537846153848 1.8250848000000002 4.141538584615385 0.9476401846153846 0.7466256 1.6942657846153844 0.001646 2.5069846153846154 3.2851526399999997 2.58830208 5.873454719999999 1.3898722707692308 1.09505088 2.4849231507692306 20.4007936 0.0023212820512820516 3.4186153846153844 4.6329075692307695 3.6501696000000003 8.28307716923077 1.8952803692307691 1.4932512 3.3885315692307687 0.003292 5.013969230769231 6.5703052799999995 5.17660416 11.746909439999998 2.7797445415384616 2.19010176 4.969846301538461 0.7929856 2.7754496 5.552448 cycle7 C7 hifa_calimage 10 5.1194444444444445 4.113333333333333 3.731666666666667 0.06194444444444445 0.16666666666666666 1 34 2 Position_8 40.0 60.0 1.68 1.68 350.0 11.7 11.7 False default default default default default 1.0061111111111112 0.0011478220799999998 7472.8 0.0021288857538461535 0.0021288857538461535 0.004257771507692307 0.0011478220799999998 7472.8 0.0021288857538461535 0.0021288857538461535 0.004257771507692307 0.00010820442593218188 10.0 9.984 16.0 8.0 2 45.0 607.5 1.9699717592955654 3292.0 26336.0 0.17306649480305175 16.0 8.0 26336.0 0.17306649480305175 32.0 16.0 52672.0 0.3461329896061035 45.0 0.0011606410256410258 1.7093076923076922 2.3164537846153848 1.8250848000000002 4.141538584615385 0.9476401846153846 0.7466256 1.6942657846153844 0.6373312 10.2003968 0.0021288857538461535 0.0011606410256410258 1.7093076923076922 2.3164537846153848 1.8250848000000002 4.141538584615385 0.9476401846153846 0.7466256 1.6942657846153844 10.2003968 0.0021288857538461535 0.0023212820512820516 3.4186153846153844 4.6329075692307695 3.6501696000000003 8.28307716923077 1.8952803692307691 1.4932512 3.3885315692307687 20.4007936 0.004257771507692307
+uid://A001/X1465/X1008 2019.1.01326.S Position_j_03_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 3.0 1.0 0.13352956949867897 11.495155000772085 T 240.0 99.33587941322293 2.299031000154417 2 4 1116.9672480031732 100.94947251671041 3.1673235453701216 8192.0 2048.0 2.0 8.0 100.94947251671041 2 16.0 16.0 32.0 2.0 8 8 16 1107.0 82.0 3.2874887082848767 324.0 24.0 0.9621918170589883 661.5 49.0 1.9644749598287679 9.984 1806.0 6172.0 3023.0 14448.0 14448.0 28896.0 49376.0 49376.0 98752.0 24184.0 24184.0 48368.0 0.15849513227869003 0.15849513227869003 0.31699026455738005 0.019811891534836253 45.0 66.0 120.0 30.609047 2019.1.01326.S Position_j_03_7M 10.08 1.0 604.8 0.0 120.96 0.0 0.0 393.12 1118.88 725.76 0.0002304 0.6964992 11.1476736 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.0003575873015873016 0.5266285714285714 0.14057472000000001 0.25952256 0.40009728000000006 0.057507840000000005 0.10616832000000001 0.16367616000000001 0.0015115 2.3021307692307693 0.59420088 1.0969862400000001 1.6911871200000002 0.25139268000000004 0.4641095630769231 0.7155022430769231 0.0005071238095238095 0.7723885714285714 0.199360512 0.36805017599999995 0.567410688 0.08434483200000001 0.155713536 0.24005836800000002 11.1476736 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.0015115 2.3021307692307693 0.59420088 1.0969862400000001 1.6911871200000002 0.25139268000000004 0.4641095630769231 0.7155022430769231 22.2953472 0.002131602564102564 3.139269230769231 0.8379755999999999 1.5470318769230769 2.385007476923077 0.3428082 0.6328766769230769 0.975684876923077 0.003023 4.604261538461539 1.18840176 2.1939724800000002 3.3823742400000003 0.5027853600000001 0.9282191261538462 1.4310044861538462 0.4718592 1.8874368 3.7767168 cycle7 C7 hifa_calimage 10 1.9755555555555557 1.267777777777778 0.9855555555555555 0.05583333333333334 0.10694444444444444 1 39 1 Position_2 40.0 60.0 0.86 0.86 350.0 6.88 6.88 False default default default default default 0.7077777777777778 0.0006558983314285715 7472.8 0.0019549275923076916 0.0019549275923076916 0.003909855184615383 0.0006558983314285715 7472.8 0.0019549275923076916 0.0019549275923076916 0.003909855184615383 3.392850643636212e-05 10.0 9.984 16.0 8.0 2 49.0 661.5 1.9644749598287679 3023.0 24184.0 0.15849513227869003 16.0 8.0 24184.0 0.15849513227869003 32.0 16.0 48368.0 0.31699026455738005 45.0 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.6964992 11.1476736 0.0019549275923076916 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 11.1476736 0.0019549275923076916 0.002131602564102564 3.139269230769231 0.8379755999999999 1.5470318769230769 2.385007476923077 0.3428082 0.6328766769230769 0.975684876923077 22.2953472 0.003909855184615383
+uid://A001/X1465/X100e 2019.1.01326.S Position_k_03_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 3.0 1.0 0.1335711696824279 11.477738486513816 T 240.0 99.3358716017038 2.295547697302763 2 4 1116.9768029798806 100.9494845484696 3.1673495625218457 8192.0 2048.0 2.0 8.0 100.9494845484696 2 16.0 16.0 32.0 2.0 8 8 16 1107.0 82.0 3.2874883164624453 324.0 24.0 0.9621917023792522 661.5 49.0 1.9644747256909736 9.984 1806.0 6172.0 3023.0 14448.0 14448.0 28896.0 49376.0 49376.0 98752.0 24184.0 24184.0 48368.0 0.15849511338829875 0.15849511338829875 0.3169902267765975 0.019811889173537343 45.0 66.0 120.0 30.655828 2019.1.01326.S Position_k_03_7M 10.08 1.0 604.8 0.0 120.96 0.0 0.0 393.12 1118.88 725.76 0.0002304 0.6964992 11.1476736 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.0003575873015873016 0.5266285714285714 0.14057472000000001 0.25952256 0.40009728000000006 0.057507840000000005 0.10616832000000001 0.16367616000000001 0.0015115 2.3021307692307693 0.59420088 1.0969862400000001 1.6911871200000002 0.25139268000000004 0.4641095630769231 0.7155022430769231 0.0005071238095238095 0.7723885714285714 0.199360512 0.36805017599999995 0.567410688 0.08434483200000001 0.155713536 0.24005836800000002 11.1476736 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.0015115 2.3021307692307693 0.59420088 1.0969862400000001 1.6911871200000002 0.25139268000000004 0.4641095630769231 0.7155022430769231 22.2953472 0.002131602564102564 3.139269230769231 0.8379755999999999 1.5470318769230769 2.385007476923077 0.3428082 0.6328766769230769 0.975684876923077 0.003023 4.604261538461539 1.18840176 2.1939724800000002 3.3823742400000003 0.5027853600000001 0.9282191261538462 1.4310044861538462 0.4718592 1.8874368 3.7767168 cycle7 C7 hifa_calimage 10 2.3316666666666666 1.5105555555555559 1.1925000000000001 0.06055555555555556 0.12555555555555556 1 39 1 Position_3 40.0 60.0 0.839 0.839 350.0 6.71 6.71 False default default default default default 0.8211111111111107 0.0006558983314285715 7472.8 0.0019549275923076916 0.0019549275923076916 0.003909855184615383 0.0006558983314285715 7472.8 0.0019549275923076916 0.0019549275923076916 0.003909855184615383 3.392850643636212e-05 10.0 9.984 16.0 8.0 2 49.0 661.5 1.9644747256909736 3023.0 24184.0 0.15849511338829875 16.0 8.0 24184.0 0.15849511338829875 32.0 16.0 48368.0 0.3169902267765975 45.0 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.6964992 11.1476736 0.0019549275923076916 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 11.1476736 0.0019549275923076916 0.002131602564102564 3.139269230769231 0.8379755999999999 1.5470318769230769 2.385007476923077 0.3428082 0.6328766769230769 0.975684876923077 22.2953472 0.003909855184615383
+uid://A001/X1465/X1014 2019.1.01326.S Position_l_03_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 3.0 1.0 0.1335853198822303 11.302668272847619 T 245.0 99.33587213428518 2.2605336545695236 2 4 1116.9790739480793 100.94948499173799 3.1673558199446665 8192.0 2048.0 2.0 8.0 100.94948499173799 2 16.0 16.0 32.0 2.0 8 8 16 1107.0 82.0 3.28748830202711 324.0 24.0 0.9621916981542762 661.5 49.0 1.9644747170649806 9.984 1806.0 6172.0 3023.0 14448.0 14448.0 28896.0 49376.0 49376.0 98752.0 24184.0 24184.0 48368.0 0.15849511269234795 0.15849511269234795 0.3169902253846959 0.019811889086543494 45.0 66.0 120.0 31.127703 2019.1.01326.S Position_l_03_7M 10.08 1.0 604.8 0.0 120.96 0.0 0.0 393.12 1118.88 725.76 0.0002401 0.7258223 11.6169984 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.0003575873015873016 0.5266285714285714 0.14057472000000001 0.25952256 0.40009728000000006 0.057507840000000005 0.10616832000000001 0.16367616000000001 0.0015115 2.3021307692307693 0.59420088 1.0969862400000001 1.6911871200000002 0.25139268000000004 0.4641095630769231 0.7155022430769231 0.0005071238095238095 0.7723885714285714 0.199360512 0.36805017599999995 0.567410688 0.08434483200000001 0.155713536 0.24005836800000002 11.6169984 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.0015115 2.3021307692307693 0.59420088 1.0969862400000001 1.6911871200000002 0.25139268000000004 0.4641095630769231 0.7155022430769231 23.2339968 0.002131602564102564 3.139269230769231 0.8379755999999999 1.5470318769230769 2.385007476923077 0.3428082 0.6328766769230769 0.975684876923077 0.003023 4.604261538461539 1.18840176 2.1939724800000002 3.3823742400000003 0.5027853600000001 0.9282191261538462 1.4310044861538462 0.4917248 1.9668992 3.9357192000000003 cycle7 C7 hifa_calimage 9 2.283888888888889 1.5136111111111115 1.2166666666666668 0.04527777777777778 0.1175 1 39 1 Position_4 40.0 60.0 0.86 0.86 350.0 6.88 6.88 False default default default default default 0.7702777777777774 0.0006558983314285715 7472.8 0.0019549275923076916 0.0019549275923076916 0.003909855184615383 0.0006558983314285715 7472.8 0.0019549275923076916 0.0019549275923076916 0.003909855184615383 3.392850643636212e-05 10.0 9.984 16.0 8.0 2 49.0 661.5 1.9644747170649806 3023.0 24184.0 0.15849511269234795 16.0 8.0 24184.0 0.15849511269234795 32.0 16.0 48368.0 0.3169902253846959 45.0 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.7258223 11.6169984 0.0019549275923076916 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 11.6169984 0.0019549275923076916 0.002131602564102564 3.139269230769231 0.8379755999999999 1.5470318769230769 2.385007476923077 0.3428082 0.6328766769230769 0.975684876923077 23.2339968 0.003909855184615383
+uid://A001/X1465/X101a 2019.1.01326.S Position_m_03_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 3.0 1.0 0.1336314854176951 11.413765574280458 T 240.0 99.33587285679403 2.2827531148560913 2 4 1116.978577743549 100.94948404645515 3.1673544786256693 8192.0 2048.0 2.0 8.0 100.94948404645515 2 16.0 16.0 32.0 2.0 8 8 16 1107.0 82.0 3.2874883328108857 324.0 24.0 0.9621917071641618 661.5 49.0 1.9644747354601635 9.984 1806.0 6172.0 3023.0 14448.0 14448.0 28896.0 49376.0 49376.0 98752.0 24184.0 24184.0 48368.0 0.1584951141764834 0.1584951141764834 0.3169902283529668 0.019811889272060425 45.0 66.0 120.0 30.823065 2019.1.01326.S Position_m_03_7M 10.08 1.0 604.8 0.0 120.96 0.0 0.0 393.12 1118.88 725.76 0.0002304 0.6964992 11.1476736 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.0003575873015873016 0.5266285714285714 0.14057472000000001 0.25952256 0.40009728000000006 0.057507840000000005 0.10616832000000001 0.16367616000000001 0.0015115 2.3021307692307693 0.59420088 1.0969862400000001 1.6911871200000002 0.25139268000000004 0.4641095630769231 0.7155022430769231 0.0005071238095238095 0.7723885714285714 0.199360512 0.36805017599999995 0.567410688 0.08434483200000001 0.155713536 0.24005836800000002 11.1476736 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.0015115 2.3021307692307693 0.59420088 1.0969862400000001 1.6911871200000002 0.25139268000000004 0.4641095630769231 0.7155022430769231 22.2953472 0.002131602564102564 3.139269230769231 0.8379755999999999 1.5470318769230769 2.385007476923077 0.3428082 0.6328766769230769 0.975684876923077 0.003023 4.604261538461539 1.18840176 2.1939724800000002 3.3823742400000003 0.5027853600000001 0.9282191261538462 1.4310044861538462 0.4718592 1.8874368 3.7767168 cycle7 C7 hifa_calimage 9 2.1558333333333333 1.357777777777778 1.0480555555555557 0.058333333333333334 0.12361111111111112 1 39 1 Position_5 40.0 60.0 0.86 0.86 350.0 6.88 6.88 False default default default default default 0.7980555555555553 0.0006558983314285715 7472.8 0.0019549275923076916 0.0019549275923076916 0.003909855184615383 0.0006558983314285715 7472.8 0.0019549275923076916 0.0019549275923076916 0.003909855184615383 3.392850643636212e-05 10.0 9.984 16.0 8.0 2 49.0 661.5 1.9644747354601633 3023.0 24184.0 0.1584951141764834 16.0 8.0 24184.0 0.1584951141764834 32.0 16.0 48368.0 0.3169902283529668 45.0 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.6964992 11.1476736 0.0019549275923076916 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 11.1476736 0.0019549275923076916 0.002131602564102564 3.139269230769231 0.8379755999999999 1.5470318769230769 2.385007476923077 0.3428082 0.6328766769230769 0.975684876923077 22.2953472 0.003909855184615383
+uid://A001/X1465/X1020 2019.1.01326.S Position_n_03_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 3.0 1.0 0.13371358744210624 12.310711444421296 T 225.0 99.33586798161843 2.4621422888842592 2 4 1116.9863042364896 100.94949231787314 3.1673755615409136 8192.0 2048.0 2.0 8.0 100.94949231787314 2 16.0 16.0 32.0 2.0 8 8 16 1107.0 82.0 3.2874880634465784 324.0 24.0 0.9621916283258277 661.5 49.0 1.964474574498565 9.984 1806.0 6172.0 3023.0 14448.0 14448.0 28896.0 49376.0 49376.0 98752.0 24184.0 24184.0 48368.0 0.15849510118999574 0.15849510118999574 0.3169902023799915 0.019811887648749468 45.0 66.0 120.0 28.57859 2019.1.01326.S Position_n_03_7M 10.08 1.0 604.8 0.0 120.96 0.0 0.0 393.12 1118.88 725.76 0.0002025 0.6121575 9.79776 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.0003575873015873016 0.5266285714285714 0.14057472000000001 0.25952256 0.40009728000000006 0.057507840000000005 0.10616832000000001 0.16367616000000001 0.0015115 2.3021307692307693 0.59420088 1.0969862400000001 1.6911871200000002 0.25139268000000004 0.4641095630769231 0.7155022430769231 0.0005071238095238095 0.7723885714285714 0.199360512 0.36805017599999995 0.567410688 0.08434483200000001 0.155713536 0.24005836800000002 9.79776 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.0015115 2.3021307692307693 0.59420088 1.0969862400000001 1.6911871200000002 0.25139268000000004 0.4641095630769231 0.7155022430769231 19.59552 0.002131602564102564 3.139269230769231 0.8379755999999999 1.5470318769230769 2.385007476923077 0.3428082 0.6328766769230769 0.975684876923077 0.003023 4.604261538461539 1.18840176 2.1939724800000002 3.3823742400000003 0.5027853600000001 0.9282191261538462 1.4310044861538462 0.41472 1.65888 3.3193799999999998 cycle7 C7 hifa_calimage 9 2.058611111111111 1.3386111111111112 1.0475 0.05 0.10333333333333333 1 39 1 Position_6 40.0 60.0 0.708 0.708 350.0 5.67 5.67 False default default default default default 0.7199999999999998 0.0006558983314285715 7472.8 0.0019549275923076916 0.0019549275923076916 0.003909855184615383 0.0006558983314285715 7472.8 0.0019549275923076916 0.0019549275923076916 0.003909855184615383 3.392850643636212e-05 10.0 9.984 16.0 8.0 2 49.0 661.5 1.964474574498565 3023.0 24184.0 0.15849510118999574 16.0 8.0 24184.0 0.15849510118999574 32.0 16.0 48368.0 0.3169902023799915 45.0 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.6121575 9.79776 0.0019549275923076916 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 9.79776 0.0019549275923076916 0.002131602564102564 3.139269230769231 0.8379755999999999 1.5470318769230769 2.385007476923077 0.3428082 0.6328766769230769 0.975684876923077 19.59552 0.003909855184615383
+uid://A001/X1465/X1026 2019.1.01326.S Position_o_03_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 3.0 1.0 0.13373216928158022 11.753922287777575 T 235.0 99.33586625816268 2.3507844575555152 2 4 1116.988488853616 100.94949500553065 3.1673815119399906 8192.0 2048.0 2.0 8.0 100.94949500553065 2 16.0 16.0 32.0 2.0 8 8 16 1107.0 82.0 3.2874879759212075 324.0 24.0 0.962191602708646 661.5 49.0 1.9644745221968187 9.984 1806.0 6172.0 3023.0 14448.0 14448.0 28896.0 49376.0 49376.0 98752.0 24184.0 24184.0 48368.0 0.15849509697025646 0.15849509697025646 0.3169901939405129 0.019811887121282058 45.0 66.0 120.0 29.931335 2019.1.01326.S Position_o_03_7M 10.08 1.0 604.8 0.0 120.96 0.0 0.0 393.12 1118.88 725.76 0.0002209 0.6677807 10.6880256 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.0003575873015873016 0.5266285714285714 0.14057472000000001 0.25952256 0.40009728000000006 0.057507840000000005 0.10616832000000001 0.16367616000000001 0.0015115 2.3021307692307693 0.59420088 1.0969862400000001 1.6911871200000002 0.25139268000000004 0.4641095630769231 0.7155022430769231 0.0005071238095238095 0.7723885714285714 0.199360512 0.36805017599999995 0.567410688 0.08434483200000001 0.155713536 0.24005836800000002 10.6880256 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.0015115 2.3021307692307693 0.59420088 1.0969862400000001 1.6911871200000002 0.25139268000000004 0.4641095630769231 0.7155022430769231 21.3760512 0.002131602564102564 3.139269230769231 0.8379755999999999 1.5470318769230769 2.385007476923077 0.3428082 0.6328766769230769 0.975684876923077 0.003023 4.604261538461539 1.18840176 2.1939724800000002 3.3823742400000003 0.5027853600000001 0.9282191261538462 1.4310044861538462 0.4524032 1.8096128 3.6209928000000002 cycle7 C7 hifa_calimage 10 2.2508333333333335 1.4333333333333336 1.1119444444444446 0.060833333333333336 0.11722222222222223 1 39 1 Position_7 40.0 60.0 0.892 0.892 350.0 7.14 7.14 False default default default default default 0.8174999999999999 0.0006558983314285715 7472.8 0.0019549275923076916 0.0019549275923076916 0.003909855184615383 0.0006558983314285715 7472.8 0.0019549275923076916 0.0019549275923076916 0.003909855184615383 3.392850643636212e-05 10.0 9.984 16.0 8.0 2 49.0 661.5 1.9644745221968187 3023.0 24184.0 0.15849509697025646 16.0 8.0 24184.0 0.15849509697025646 32.0 16.0 48368.0 0.3169901939405129 45.0 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.6677807 10.6880256 0.0019549275923076916 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 10.6880256 0.0019549275923076916 0.002131602564102564 3.139269230769231 0.8379755999999999 1.5470318769230769 2.385007476923077 0.3428082 0.6328766769230769 0.975684876923077 21.3760512 0.003909855184615383
+uid://A001/X1465/X102c 2019.1.01326.S Position_p_03_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 3.0 1.0 0.1337135102695543 12.23308102480371 T 225.0 99.33585300632527 2.446616204960742 2 4 1117.0123506192197 100.94951872567178 3.1674466780927557 8192.0 2048.0 2.0 8.0 100.94951872567178 2 16.0 16.0 32.0 2.0 8 8 16 1107.0 82.0 3.2874872034590923 324.0 24.0 0.9621913766221734 661.5 49.0 1.964474060603604 9.984 1806.0 6172.0 3023.0 14448.0 14448.0 28896.0 49376.0 49376.0 98752.0 24184.0 24184.0 48368.0 0.15849505972861216 0.15849505972861216 0.31699011945722433 0.01981188246607652 45.0 66.0 120.0 28.755129 2019.1.01326.S Position_p_03_7M 10.08 1.0 604.8 0.0 120.96 0.0 0.0 393.12 1118.88 725.76 0.0002025 0.6121575 9.79776 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.0003575873015873016 0.5266285714285714 0.14057472000000001 0.25952256 0.40009728000000006 0.057507840000000005 0.10616832000000001 0.16367616000000001 0.0015115 2.3021307692307693 0.59420088 1.0969862400000001 1.6911871200000002 0.25139268000000004 0.4641095630769231 0.7155022430769231 0.0005071238095238095 0.7723885714285714 0.199360512 0.36805017599999995 0.567410688 0.08434483200000001 0.155713536 0.24005836800000002 9.79776 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.0015115 2.3021307692307693 0.59420088 1.0969862400000001 1.6911871200000002 0.25139268000000004 0.4641095630769231 0.7155022430769231 19.59552 0.002131602564102564 3.139269230769231 0.8379755999999999 1.5470318769230769 2.385007476923077 0.3428082 0.6328766769230769 0.975684876923077 0.003023 4.604261538461539 1.18840176 2.1939724800000002 3.3823742400000003 0.5027853600000001 0.9282191261538462 1.4310044861538462 0.41472 1.65888 3.3193799999999998 cycle7 C7 hifa_calimage 10 2.8238888888888884 1.7941666666666667 1.4258333333333335 0.07944444444444444 0.11638888888888889 1 39 1 Position_7 40.0 60.0 0.472 0.472 350.0 3.78 3.78 False default default default default default 1.0297222222222218 0.0006558983314285715 7472.8 0.0019549275923076916 0.0019549275923076916 0.003909855184615383 0.0006558983314285715 7472.8 0.0019549275923076916 0.0019549275923076916 0.003909855184615383 3.392850643636212e-05 10.0 9.984 16.0 8.0 2 49.0 661.5 1.964474060603604 3023.0 24184.0 0.15849505972861216 16.0 8.0 24184.0 0.15849505972861216 32.0 16.0 48368.0 0.31699011945722433 45.0 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 0.6121575 9.79776 0.0019549275923076916 0.001065801282051282 1.5696346153846155 0.41898779999999997 0.7735159384615384 1.1925037384615385 0.1714041 0.31643833846153846 0.4878424384615385 9.79776 0.0019549275923076916 0.002131602564102564 3.139269230769231 0.8379755999999999 1.5470318769230769 2.385007476923077 0.3428082 0.6328766769230769 0.975684876923077 19.59552 0.003909855184615383
+uid://A001/X1465/X1032 2019.1.01326.S Position_a_06_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 6.0 1.0 0.0953885090332464 4.746153018752506 T 390.0 39.372868528027226 0.9492306037505012 2 4 1124.341452660613 253.9875893216515 1.291762480501279 8192.0 2048.0 2.0 8.0 253.9875893216515 2 16.0 16.0 32.0 2.0 8 8 16 1120.5 83.0 1.322574264696028 837.0 62.0 0.9879470410982377 418.5 31.0 0.49397352054911886 9.984 1784.0 2389.0 4778.0 14272.0 14272.0 28544.0 19112.0 19112.0 38224.0 38224.0 38224.0 76448.0 0.0629952039890323 0.0629952039890323 0.1259904079780646 0.007874400498629038 45.0 66.0 120.0 29.364004 2019.1.01326.S Position_a_06_7M 10.08 1.0 604.8 0.0 423.36 0.0 0.0 2802.24 3830.3999999999996 1028.1599999999999 0.0006084 2.9069352 46.5206976 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.0003575873015873016 0.5266285714285714 1.00204544 0.36765696 1.3697024 0.40992768 0.15040511999999998 0.5603328 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 0.0005071238095238095 0.7723885714285714 1.4210826239999998 0.5214044159999999 1.9424870399999996 0.6012272639999999 0.22059417599999998 0.8218214399999999 46.5206976 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 93.0413952 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 0.004778 7.277261538461539 13.389102719999999 4.912548479999999 18.3016512 5.6646203815384615 2.0783858953846153 7.743006276923076 1.2460032 4.9840128 9.9728928 cycle7 2020 hifa_calimage 9 7.6258333333333335 5.505833333333334 3.595277777777778 0.34055555555555556 1.0438888888888889 1 139 6 Position_1-R 40.0 60.0 1.39 1.39 350.0 11.1 11.1 False default default default default default 2.119999999999999 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.00011615164365601445 10.0 9.984 11.0 6.0 2 31.0 418.5 0.4939735205491189 4778.0 28668.0 0.04330920274245971 11.0 5.5 26279.0 0.04330920274245971 32.0 16.0 76448.0 0.1259904079780646 45.0 0.0012634134615384614 1.8606634615384614 3.540387738461538 1.2989911846153843 4.839378923076922 1.4483404384615384 0.5314054846153845 1.9797459230769225 2.9069352 34.890523200000004 0.0023173943192307685 0.0011581290064102566 1.7056081730769233 3.2453554269230773 1.1907419192307693 4.436097346153846 1.327645401923077 0.48712169423076923 1.814767096153846 31.9829796 0.002124278125961538 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 93.0413952 0.006179718184615384
+uid://A001/X1465/X1038 2019.1.01326.S Position_b_06_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 6.0 1.0 0.09538978725789772 5.3415929176888115 T 350.0 39.37287184938703 1.0683185835377622 2 4 1124.3154212239854 253.9875624206228 1.2917324452390802 8192.0 2048.0 2.0 8.0 253.9875624206228 2 16.0 16.0 32.0 2.0 8 8 16 1120.5 83.0 1.322574404776148 837.0 62.0 0.9879471457363999 418.5 31.0 0.49397357286819993 9.984 1784.0 2389.0 4778.0 14272.0 14272.0 28544.0 19112.0 19112.0 38224.0 38224.0 38224.0 76448.0 0.06299521066115348 0.06299521066115348 0.12599042132230695 0.007874401332644184 45.0 66.0 120.0 25.706133 2019.1.01326.S Position_b_06_7M 10.08 1.0 604.8 0.0 423.36 0.0 0.0 2802.24 3830.3999999999996 1028.1599999999999 0.00049 2.34122 37.46736 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.0003575873015873016 0.5266285714285714 1.00204544 0.36765696 1.3697024 0.40992768 0.15040511999999998 0.5603328 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 0.0005071238095238095 0.7723885714285714 1.4210826239999998 0.5214044159999999 1.9424870399999996 0.6012272639999999 0.22059417599999998 0.8218214399999999 37.46736 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 74.93472 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 0.004778 7.277261538461539 13.389102719999999 4.912548479999999 18.3016512 5.6646203815384615 2.0783858953846153 7.743006276923076 1.00352 4.01408 8.03208 cycle7 2020 hifa_image 9 1.5972222222222223 1.1397222222222223 0.7816666666666667 0.05333333333333334 0.16666666666666666 1 139 6 Position_1-L 40.0 60.0 1.72 1.72 350.0 13.8 13.8 False default default default default default 0.4575 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.00011615164365601445 10.0 9.984 11.0 6.0 2 31.0 418.5 0.49397357286819993 4778.0 28668.0 0.04330920732954301 11.0 5.5 26279.0 0.04330920732954301 32.0 16.0 76448.0 0.12599042132230695 45.0 0.0012634134615384614 1.8606634615384614 3.540387738461538 1.2989911846153843 4.839378923076922 1.4483404384615384 0.5314054846153845 1.9797459230769225 2.34122 28.10052 0.0023173943192307685 0.0011581290064102566 1.7056081730769233 3.2453554269230773 1.1907419192307693 4.436097346153846 1.327645401923077 0.48712169423076923 1.814767096153846 25.758809999999997 0.002124278125961538 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 74.93472 0.006179718184615384
+uid://A001/X1465/X103e 2019.1.01326.S Position_c_06_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 6.0 1.0 0.09537148607236658 4.718358833986751 T 390.0 39.372870359257995 0.9436717667973502 2 4 1124.3202563025134 253.98758071410998 1.2917390499338628 8192.0 2048.0 2.0 8.0 253.98758071410998 2 16.0 16.0 32.0 2.0 8 8 16 1120.5 83.0 1.3225743095175617 837.0 62.0 0.9879470745793834 418.5 31.0 0.4939735372896917 9.984 1784.0 2389.0 4778.0 14272.0 14272.0 28544.0 19112.0 19112.0 38224.0 38224.0 38224.0 76448.0 0.06299520612391557 0.06299520612391557 0.12599041224783114 0.007874400765489446 45.0 66.0 120.0 28.112553 2019.1.01326.S Position_c_06_7M 10.08 1.0 1209.6 0.0 846.72 0.0 0.0 5604.48 7660.799999999999 2056.3199999999997 0.0006084 2.9069352 46.5206976 0.001684551282051282 2.4808846153846154 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 0.0003575873015873016 0.5266285714285714 2.00409088 0.73531392 2.7394048 0.81985536 0.30081023999999995 1.1206656 0.002389 3.6386307692307693 13.389102719999999 4.912548479999999 18.3016512 5.6646203815384615 2.0783858953846153 7.743006276923076 0.0005071238095238095 0.7723885714285714 2.8421652479999997 1.0428088319999997 3.884974079999999 1.2024545279999999 0.44118835199999995 1.6436428799999998 46.5206976 0.001684551282051282 2.4808846153846154 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 0.002389 3.6386307692307693 13.389102719999999 4.912548479999999 18.3016512 5.6646203815384615 2.0783858953846153 7.743006276923076 93.0413952 0.003369102564102564 4.961769230769231 18.882067938461535 6.927952984615383 25.81002092307692 7.724482338461538 2.834162584615384 10.55864492307692 0.004778 7.277261538461539 26.778205439999997 9.825096959999998 36.6033024 11.329240763076923 4.1567717907692305 15.486012553846152 1.2460032 4.9840128 9.9728928 cycle7 2020 hifa_calimage 8 5.701388888888889 3.016111111111111 2.091388888888889 0.20277777777777778 0.2847222222222222 2 139 6 Position_2-R 40.0 60.0 1.47 1.47 350.0 11.8 11.8 False default default default default default 2.6852777777777783 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.0002323032873120289 10.0 9.984 11.0 6.0 2 31.0 418.5 0.4939735372896917 4778.0 28668.0 0.04330920421019195 11.0 5.5 26279.0 0.04330920421019195 32.0 16.0 76448.0 0.12599041224783114 45.0 0.0012634134615384614 1.8606634615384614 7.080775476923076 2.5979823692307686 9.678757846153845 2.8966808769230767 1.062810969230769 3.959491846153845 2.9069352 34.890523200000004 0.0023173943192307685 0.0011581290064102566 1.7056081730769233 6.490710853846155 2.3814838384615387 8.872194692307692 2.655290803846154 0.9742433884615385 3.629534192307692 31.9829796 0.002124278125961538 0.003369102564102564 4.961769230769231 18.882067938461535 6.927952984615383 25.81002092307692 7.724482338461538 2.834162584615384 10.55864492307692 93.0413952 0.006179718184615384
+uid://A001/X1465/X1044 2019.1.01326.S Position_d_06_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 6.0 1.0 0.09537282065815332 4.886645341797239 T 380.0 39.37286999093627 0.9773290683594478 2 4 1124.3192594326745 253.98757602555477 1.2917366994946462 8192.0 2048.0 2.0 8.0 253.98757602555477 2 16.0 16.0 32.0 2.0 8 8 16 1120.5 83.0 1.3225743339319949 837.0 62.0 0.9879470928166708 418.5 31.0 0.4939735464083354 9.984 1784.0 2389.0 4778.0 14272.0 14272.0 28544.0 19112.0 19112.0 38224.0 38224.0 38224.0 76448.0 0.06299520728679332 0.06299520728679332 0.12599041457358665 0.007874400910849165 45.0 66.0 120.0 27.941324 2019.1.01326.S Position_d_06_7M 10.08 1.0 604.8 0.0 423.36 0.0 0.0 2802.24 3830.3999999999996 1028.1599999999999 0.0005776 2.7597728 44.1656064 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.0003575873015873016 0.5266285714285714 1.00204544 0.36765696 1.3697024 0.40992768 0.15040511999999998 0.5603328 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 0.0005071238095238095 0.7723885714285714 1.4210826239999998 0.5214044159999999 1.9424870399999996 0.6012272639999999 0.22059417599999998 0.8218214399999999 44.1656064 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 88.3312128 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 0.004778 7.277261538461539 13.389102719999999 4.912548479999999 18.3016512 5.6646203815384615 2.0783858953846153 7.743006276923076 1.1829248 4.7316992 9.4680192 cycle7 2020 hifa_calimage 8 3.334166666666667 2.0480555555555555 1.4927777777777778 0.16027777777777777 0.20277777777777778 1 139 6 Position_2-L 40.0 60.0 1.65 1.65 350.0 13.2 13.2 False default default default default default 1.2861111111111114 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.00011615164365601445 10.0 9.984 11.0 6.0 2 31.0 418.5 0.4939735464083354 4778.0 28668.0 0.04330920500967041 11.0 5.5 26279.0 0.04330920500967041 32.0 16.0 76448.0 0.12599041457358665 45.0 0.0012634134615384614 1.8606634615384614 3.540387738461538 1.2989911846153843 4.839378923076922 1.4483404384615384 0.5314054846153845 1.9797459230769225 2.7597728 33.124204799999994 0.0023173943192307685 0.0011581290064102566 1.7056081730769233 3.2453554269230773 1.1907419192307693 4.436097346153846 1.327645401923077 0.48712169423076923 1.814767096153846 30.3638544 0.002124278125961538 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 88.3312128 0.006179718184615384
+uid://A001/X1465/X104a 2019.1.01326.S Position_e_06_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 6.0 1.0 0.09535955993561653 4.922936959371812 T 380.0 39.37286976502824 0.9845873918743624 2 4 1124.338064057613 253.98758052631885 1.2917586071486882 8192.0 2048.0 2.0 8.0 253.98758052631885 2 16.0 16.0 32.0 2.0 8 8 16 1120.5 83.0 1.3225743104954353 837.0 62.0 0.9879470753098432 418.5 31.0 0.4939735376549216 9.984 1784.0 2389.0 4778.0 14272.0 14272.0 28544.0 19112.0 19112.0 38224.0 38224.0 38224.0 76448.0 0.06299520617049241 0.06299520617049241 0.12599041234098482 0.007874400771311551 45.0 66.0 120.0 27.513659 2019.1.01326.S Position_e_06_7M 10.08 1.0 604.8 0.0 423.36 0.0 0.0 2802.24 3830.3999999999996 1028.1599999999999 0.0005776 2.7597728 44.1656064 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.0003575873015873016 0.5266285714285714 1.00204544 0.36765696 1.3697024 0.40992768 0.15040511999999998 0.5603328 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 0.0005071238095238095 0.7723885714285714 1.4210826239999998 0.5214044159999999 1.9424870399999996 0.6012272639999999 0.22059417599999998 0.8218214399999999 44.1656064 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 88.3312128 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 0.004778 7.277261538461539 13.389102719999999 4.912548479999999 18.3016512 5.6646203815384615 2.0783858953846153 7.743006276923076 1.1829248 4.7316992 9.4680192 cycle7 2020 hifa_calimage 10 11.731666666666667 9.498611111111112 4.897777777777777 1.7077777777777778 1.1047222222222222 1 139 6 Position_3-R 40.0 60.0 1.34 1.34 350.0 10.7 10.7 False default default default default default 2.2330555555555556 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.00011615164365601445 10.0 9.984 11.0 6.0 2 31.0 418.5 0.4939735376549216 4778.0 28668.0 0.04330920424221353 11.0 5.5 26279.0 0.04330920424221353 32.0 16.0 76448.0 0.12599041234098482 45.0 0.0012634134615384614 1.8606634615384614 3.540387738461538 1.2989911846153843 4.839378923076922 1.4483404384615384 0.5314054846153845 1.9797459230769225 2.7597728 33.124204799999994 0.0023173943192307685 0.0011581290064102566 1.7056081730769233 3.2453554269230773 1.1907419192307693 4.436097346153846 1.327645401923077 0.48712169423076923 1.814767096153846 30.3638544 0.002124278125961538 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 88.3312128 0.006179718184615384
+uid://A001/X1465/X1050 2019.1.01326.S Position_f_06_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 6.0 1.0 0.09536095043361041 4.638764605887859 T 400.0 39.372868114557924 0.9277529211775718 2 4 1124.3374683877194 253.9875909732084 1.2917578686250417 8192.0 2048.0 2.0 8.0 253.9875909732084 2 16.0 16.0 32.0 2.0 8 8 16 1120.5 83.0 1.3225742560959752 837.0 62.0 0.9879470346741022 418.5 31.0 0.4939735173370511 9.984 1784.0 2389.0 4778.0 14272.0 14272.0 28544.0 19112.0 19112.0 38224.0 38224.0 38224.0 76448.0 0.06299520357940536 0.06299520357940536 0.1259904071588107 0.00787440044742567 45.0 66.0 120.0 29.73462 2019.1.01326.S Position_f_06_7M 10.08 1.0 604.8 0.0 423.36 0.0 0.0 2802.24 3830.3999999999996 1028.1599999999999 0.00064 3.05792 48.936960000000006 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.0003575873015873016 0.5266285714285714 1.00204544 0.36765696 1.3697024 0.40992768 0.15040511999999998 0.5603328 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 0.0005071238095238095 0.7723885714285714 1.4210826239999998 0.5214044159999999 1.9424870399999996 0.6012272639999999 0.22059417599999998 0.8218214399999999 48.936960000000006 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 97.87392000000001 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 0.004778 7.277261538461539 13.389102719999999 4.912548479999999 18.3016512 5.6646203815384615 2.0783858953846153 7.743006276923076 1.31072 5.24288 10.49088 cycle7 2020 hifa_calimage 10 10.952222222222222 8.658055555555555 5.104166666666666 1.075 1.1769444444444443 1 139 6 Position_3-L 40.0 60.0 1.44 1.44 350.0 11.5 11.5 False default default default default default 2.2941666666666674 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.00011615164365601445 10.0 9.984 11.0 6.0 2 31.0 418.5 0.4939735173370511 4778.0 28668.0 0.043309202460841176 11.0 5.5 26279.0 0.043309202460841176 32.0 16.0 76448.0 0.1259904071588107 45.0 0.0012634134615384614 1.8606634615384614 3.540387738461538 1.2989911846153843 4.839378923076922 1.4483404384615384 0.5314054846153845 1.9797459230769225 3.05792 36.70272 0.0023173943192307685 0.0011581290064102566 1.7056081730769233 3.2453554269230773 1.1907419192307693 4.436097346153846 1.327645401923077 0.48712169423076923 1.814767096153846 33.64416000000001 0.002124278125961538 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 97.87392000000001 0.006179718184615384
+uid://A001/X1465/X1056 2019.1.01326.S Position_g_06_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 6.0 1.0 0.09535542654830349 4.660512940468418 T 400.0 39.37286873396065 0.9321025880936835 2 4 1124.3456743907077 253.98758893332916 1.2917673718483156 8192.0 2048.0 2.0 8.0 253.98758893332916 2 16.0 16.0 32.0 2.0 8 8 16 1120.5 83.0 1.3225742667181155 837.0 62.0 0.9879470426087128 418.5 31.0 0.4939735213043564 9.984 1784.0 2389.0 4778.0 14272.0 14272.0 28544.0 19112.0 19112.0 38224.0 38224.0 38224.0 76448.0 0.06299520408534585 0.06299520408534585 0.1259904081706917 0.007874400510668232 45.0 66.0 120.0 29.787912 2019.1.01326.S Position_g_06_7M 10.08 1.0 604.8 0.0 423.36 0.0 0.0 2802.24 3830.3999999999996 1028.1599999999999 0.00064 3.05792 48.936960000000006 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.0003575873015873016 0.5266285714285714 1.00204544 0.36765696 1.3697024 0.40992768 0.15040511999999998 0.5603328 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 0.0005071238095238095 0.7723885714285714 1.4210826239999998 0.5214044159999999 1.9424870399999996 0.6012272639999999 0.22059417599999998 0.8218214399999999 48.936960000000006 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 97.87392000000001 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 0.004778 7.277261538461539 13.389102719999999 4.912548479999999 18.3016512 5.6646203815384615 2.0783858953846153 7.743006276923076 1.31072 5.24288 10.49088 cycle7 2020 hifa_calimage 9 4.551388888888889 3.0902777777777777 2.4547222222222222 0.13583333333333333 0.2263888888888889 1 139 6 Position_4-R 40.0 60.0 1.41 1.41 350.0 11.3 11.3 False default default default default default 1.4611111111111112 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.00011615164365601445 10.0 9.984 11.0 6.0 2 31.0 418.5 0.4939735213043564 4778.0 28668.0 0.04330920280867527 11.0 5.5 26279.0 0.04330920280867527 32.0 16.0 76448.0 0.1259904081706917 45.0 0.0012634134615384614 1.8606634615384614 3.540387738461538 1.2989911846153843 4.839378923076922 1.4483404384615384 0.5314054846153845 1.9797459230769225 3.05792 36.70272 0.0023173943192307685 0.0011581290064102566 1.7056081730769233 3.2453554269230773 1.1907419192307693 4.436097346153846 1.327645401923077 0.48712169423076923 1.814767096153846 33.64416000000001 0.002124278125961538 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 97.87392000000001 0.006179718184615384
+uid://A001/X1465/X105c 2019.1.01326.S Position_h_06_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 6.0 1.0 0.09535683775558826 5.291476876225929 T 350.0 39.37287242006012 1.0582953752451858 2 4 1124.33889042604 253.98756366989193 1.2917596445974213 8192.0 2048.0 2.0 8.0 253.98756366989193 2 16.0 16.0 32.0 2.0 8 8 16 1120.5 83.0 1.322574398270903 837.0 62.0 0.98794714087706 418.5 31.0 0.49397357043853 9.984 1784.0 2389.0 4778.0 14272.0 14272.0 28544.0 19112.0 19112.0 38224.0 38224.0 38224.0 76448.0 0.06299521035130376 0.06299521035130376 0.12599042070260752 0.00787440129391297 45.0 66.0 120.0 25.734941 2019.1.01326.S Position_h_06_7M 10.08 1.0 604.8 0.0 423.36 0.0 0.0 2802.24 3830.3999999999996 1028.1599999999999 0.00049 2.34122 37.46736 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.0003575873015873016 0.5266285714285714 1.00204544 0.36765696 1.3697024 0.40992768 0.15040511999999998 0.5603328 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 0.0005071238095238095 0.7723885714285714 1.4210826239999998 0.5214044159999999 1.9424870399999996 0.6012272639999999 0.22059417599999998 0.8218214399999999 37.46736 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 74.93472 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 0.004778 7.277261538461539 13.389102719999999 4.912548479999999 18.3016512 5.6646203815384615 2.0783858953846153 7.743006276923076 1.00352 4.01408 8.03208 cycle7 2020 hifa_calimage 10 6.636388888888888 4.477777777777778 2.362777777777778 0.7736111111111111 0.8847222222222222 1 139 6 Position_4-L 40.0 60.0 1.57 1.57 350.0 12.6 12.6 False default default default default default 2.15861111111111 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.00011615164365601445 10.0 9.984 11.0 6.0 2 31.0 418.5 0.4939735704385301 4778.0 28668.0 0.04330920711652134 11.0 5.5 26279.0 0.04330920711652134 32.0 16.0 76448.0 0.12599042070260752 45.0 0.0012634134615384614 1.8606634615384614 3.540387738461538 1.2989911846153843 4.839378923076922 1.4483404384615384 0.5314054846153845 1.9797459230769225 2.34122 28.10052 0.0023173943192307685 0.0011581290064102566 1.7056081730769233 3.2453554269230773 1.1907419192307693 4.436097346153846 1.327645401923077 0.48712169423076923 1.814767096153846 25.758809999999997 0.002124278125961538 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 74.93472 0.006179718184615384
+uid://A001/X1465/X1062 2019.1.01326.S Position_i_06_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 6.0 1.0 0.09534166807933282 4.743510407701869 T 390.0 39.37286865432448 0.9487020815403738 2 4 1124.3424981678897 253.98758874022147 1.2917636943262751 8192.0 2048.0 2.0 8.0 253.98758874022147 2 16.0 16.0 32.0 2.0 8 8 16 1120.5 83.0 1.3225742677236736 837.0 62.0 0.9879470433598526 418.5 31.0 0.4939735216799263 9.984 1784.0 2389.0 4778.0 14272.0 14272.0 28544.0 19112.0 19112.0 38224.0 38224.0 38224.0 76448.0 0.06299520413324133 0.06299520413324133 0.12599040826648267 0.007874400516655167 45.0 66.0 120.0 29.27522 2019.1.01326.S Position_i_06_7M 10.08 1.0 604.8 0.0 423.36 0.0 0.0 2802.24 3830.3999999999996 1028.1599999999999 0.0006084 2.9069352 46.5206976 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.0003575873015873016 0.5266285714285714 1.00204544 0.36765696 1.3697024 0.40992768 0.15040511999999998 0.5603328 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 0.0005071238095238095 0.7723885714285714 1.4210826239999998 0.5214044159999999 1.9424870399999996 0.6012272639999999 0.22059417599999998 0.8218214399999999 46.5206976 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 93.0413952 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 0.004778 7.277261538461539 13.389102719999999 4.912548479999999 18.3016512 5.6646203815384615 2.0783858953846153 7.743006276923076 1.2460032 4.9840128 9.9728928 cycle7 2020 hifa_calimage 9 7.814166666666667 5.725833333333334 2.9533333333333336 0.9450000000000001 1.0941666666666667 1 139 6 Position_5-R 40.0 60.0 1.41 1.41 350.0 11.3 11.3 False default default default default default 2.088333333333333 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.00011615164365601445 10.0 9.984 11.0 6.0 2 31.0 418.5 0.49397352167992625 4778.0 28668.0 0.04330920284160342 11.0 5.5 26279.0 0.04330920284160342 32.0 16.0 76448.0 0.12599040826648267 45.0 0.0012634134615384614 1.8606634615384614 3.540387738461538 1.2989911846153843 4.839378923076922 1.4483404384615384 0.5314054846153845 1.9797459230769225 2.9069352 34.890523200000004 0.0023173943192307685 0.0011581290064102566 1.7056081730769233 3.2453554269230773 1.1907419192307693 4.436097346153846 1.327645401923077 0.48712169423076923 1.814767096153846 31.9829796 0.002124278125961538 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 93.0413952 0.006179718184615384
+uid://A001/X1465/X1068 2019.1.01326.S Position_j_06_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 6.0 1.0 0.09534313288962264 4.640342942712573 T 400.0 39.372868596777295 0.9280685885425146 2 4 1124.3399245679332 253.987588538787 1.2917607147695767 8192.0 2048.0 2.0 8.0 253.987588538787 2 16.0 16.0 32.0 2.0 8 8 16 1120.5 83.0 1.322574268772591 837.0 62.0 0.9879470441433813 418.5 31.0 0.49397352207169065 9.984 1784.0 2389.0 4778.0 14272.0 14272.0 28544.0 19112.0 19112.0 38224.0 38224.0 38224.0 76448.0 0.06299520418320206 0.06299520418320206 0.12599040836640413 0.007874400522900258 45.0 66.0 120.0 29.772186 2019.1.01326.S Position_j_06_7M 10.08 1.0 604.8 0.0 423.36 0.0 0.0 2802.24 3830.3999999999996 1028.1599999999999 0.00064 3.05792 48.936960000000006 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.0003575873015873016 0.5266285714285714 1.00204544 0.36765696 1.3697024 0.40992768 0.15040511999999998 0.5603328 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 0.0005071238095238095 0.7723885714285714 1.4210826239999998 0.5214044159999999 1.9424870399999996 0.6012272639999999 0.22059417599999998 0.8218214399999999 48.936960000000006 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 97.87392000000001 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 0.004778 7.277261538461539 13.389102719999999 4.912548479999999 18.3016512 5.6646203815384615 2.0783858953846153 7.743006276923076 1.31072 5.24288 10.49088 cycle7 2020 hifa_calimage 10 4.278888888888889 2.7397222222222224 2.1302777777777777 0.14833333333333332 0.25166666666666665 1 139 6 Position_5-L 40.0 60.0 1.47 1.47 350.0 11.8 11.8 False default default default default default 1.5391666666666666 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.00011615164365601445 10.0 9.984 11.0 6.0 2 31.0 418.5 0.4939735220716907 4778.0 28668.0 0.04330920287595142 11.0 5.5 26279.0 0.04330920287595142 32.0 16.0 76448.0 0.12599040836640413 45.0 0.0012634134615384614 1.8606634615384614 3.540387738461538 1.2989911846153843 4.839378923076922 1.4483404384615384 0.5314054846153845 1.9797459230769225 3.05792 36.70272 0.0023173943192307685 0.0011581290064102566 1.7056081730769233 3.2453554269230773 1.1907419192307693 4.436097346153846 1.327645401923077 0.48712169423076923 1.814767096153846 33.64416000000001 0.002124278125961538 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 97.87392000000001 0.006179718184615384
+uid://A001/X1465/X106e 2019.1.01326.S Position_k_06_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 6.0 1.0 0.09531609861364997 4.782066442856172 T 390.0 39.37286850931733 0.9564132885712343 2 4 1124.3234690141653 253.9875862268231 1.2917415544751516 8192.0 2048.0 2.0 8.0 253.9875862268231 2 16.0 16.0 32.0 2.0 8 8 16 1120.5 83.0 1.3225742808115415 837.0 62.0 0.9879470531363322 418.5 31.0 0.4939735265681661 9.984 1784.0 2389.0 4778.0 14272.0 14272.0 28544.0 19112.0 19112.0 38224.0 38224.0 38224.0 76448.0 0.0629952047566263 0.0629952047566263 0.1259904095132526 0.007874400594578288 45.0 66.0 120.0 28.726225 2019.1.01326.S Position_k_06_7M 10.08 1.0 604.8 0.0 423.36 0.0 0.0 2802.24 3830.3999999999996 1028.1599999999999 0.0006084 2.9069352 46.5206976 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.0003575873015873016 0.5266285714285714 1.00204544 0.36765696 1.3697024 0.40992768 0.15040511999999998 0.5603328 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 0.0005071238095238095 0.7723885714285714 1.4210826239999998 0.5214044159999999 1.9424870399999996 0.6012272639999999 0.22059417599999998 0.8218214399999999 46.5206976 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 93.0413952 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 0.004778 7.277261538461539 13.389102719999999 4.912548479999999 18.3016512 5.6646203815384615 2.0783858953846153 7.743006276923076 1.2460032 4.9840128 9.9728928 cycle7 2020 hifa_calimage 8 8.344444444444445 6.868611111111111 4.398055555555556 0.6861111111111111 0.7477777777777778 1 139 6 Position_6-R 40.0 60.0 1.72 1.72 350.0 13.8 13.8 False default default default default default 1.475833333333334 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.00011615164365601445 10.0 9.984 11.0 6.0 2 31.0 418.5 0.4939735265681661 4778.0 28668.0 0.043309203270180584 11.0 5.5 26279.0 0.043309203270180584 32.0 16.0 76448.0 0.1259904095132526 45.0 0.0012634134615384614 1.8606634615384614 3.540387738461538 1.2989911846153843 4.839378923076922 1.4483404384615384 0.5314054846153845 1.9797459230769225 2.9069352 34.890523200000004 0.0023173943192307685 0.0011581290064102566 1.7056081730769233 3.2453554269230773 1.1907419192307693 4.436097346153846 1.327645401923077 0.48712169423076923 1.814767096153846 31.9829796 0.002124278125961538 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 93.0413952 0.006179718184615384
+uid://A001/X1465/X1074 2019.1.01326.S Position_l_06_7M 7m "Outflows, jets, feedback, Galactic centres/nuclei" "Active galaxies" "Galaxies and galactic nuclei" 10 12 16 6.0 1.0 0.095317683311623 4.690891100195776 T 395.0 39.37286903673838 0.9381782200391552 2 4 1124.3430567614914 253.98758640000275 1.2917643532558014 8192.0 2048.0 2.0 8.0 253.98758640000275 2 16.0 16.0 32.0 2.0 8 8 16 1120.5 83.0 1.3225742799097537 837.0 62.0 0.9879470524627075 418.5 31.0 0.49397352623135377 9.984 1784.0 2389.0 4778.0 14272.0 14272.0 28544.0 19112.0 19112.0 38224.0 38224.0 38224.0 76448.0 0.06299520471367347 0.06299520471367347 0.12599040942734693 0.007874400589209183 45.0 66.0 120.0 29.416042 2019.1.01326.S Position_l_06_7M 10.08 1.0 604.8 0.0 423.36 0.0 0.0 2802.24 3830.3999999999996 1028.1599999999999 0.0006241 2.9819498 47.721182400000004 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.0003575873015873016 0.5266285714285714 1.00204544 0.36765696 1.3697024 0.40992768 0.15040511999999998 0.5603328 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 0.0005071238095238095 0.7723885714285714 1.4210826239999998 0.5214044159999999 1.9424870399999996 0.6012272639999999 0.22059417599999998 0.8218214399999999 47.721182400000004 0.001684551282051282 2.4808846153846154 4.720516984615384 1.7319882461538458 6.45250523076923 1.9311205846153845 0.708540646153846 2.63966123076923 0.002389 3.6386307692307693 6.694551359999999 2.4562742399999995 9.1508256 2.8323101907692307 1.0391929476923076 3.871503138461538 95.44236480000001 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 0.004778 7.277261538461539 13.389102719999999 4.912548479999999 18.3016512 5.6646203815384615 2.0783858953846153 7.743006276923076 1.2781568 5.1126272 10.2302472 cycle7 2020 hifa_calimage 10 4.576944444444444 2.95 2.1305555555555555 0.18694444444444444 0.23944444444444443 1 139 6 Position_-R 40.0 60.0 1.0 1.0 350.0 8.03 8.03 False default default default default default 1.6269444444444439 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.0006558983314285715 7472.8 0.003089859092307692 0.003089859092307692 0.006179718184615384 0.00011615164365601445 10.0 9.984 11.0 6.0 2 31.0 418.5 0.49397352623135377 4778.0 28668.0 0.043309203240650504 11.0 5.5 26279.0 0.043309203240650504 32.0 16.0 76448.0 0.12599040942734693 45.0 0.0012634134615384614 1.8606634615384614 3.540387738461538 1.2989911846153843 4.839378923076922 1.4483404384615384 0.5314054846153845 1.9797459230769225 2.9819498 35.7908868 0.0023173943192307685 0.0011581290064102566 1.7056081730769233 3.2453554269230773 1.1907419192307693 4.436097346153846 1.327645401923077 0.48712169423076923 1.814767096153846 32.8083129 0.002124278125961538 0.003369102564102564 4.961769230769231 9.441033969230768 3.4639764923076917 12.90501046153846 3.862241169230769 1.417081292307692 5.27932246153846 95.44236480000001 0.006179718184615384

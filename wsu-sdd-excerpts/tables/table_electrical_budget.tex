@@ -1,0 +1,35 @@
+%%%%%%%%%%%%%%%%
+\begin{table}[p]
+    \centering
+    \caption{WSU Additional Electrical Budget}
+    \label{tab:powerBudget}
+    \begin{tblr}{
+        colspec = {Q[l,4cm] Q[c,2cm] Q[c,2cm] Q[l,7cm]},
+        cells={font=\footnotesize},
+        row{1}={headercolor},
+        row{2,10}={highlight2},
+        row{9,18}={light_green},
+        hlines,
+        vlines
+    }
+    \textbf{Component} & \textbf{Average demand (kW)} & \textbf{UPS needed?} & \textbf{Notes/References} \\
+    \SetCell[c=4]{c} AOS \\
+    Front-End additional instruments & 0.1 & No & Additional power consumption will occur only with the new Band 2 receiver. \\
+    \ac{WIFP}-\ac{IFSC} & 0.0 & No & The same power supply voltages from the \ac{FEPS} used for the existing IF switch are reused \cite{WIFPDescription}.\\
+    \ac{WIFP}-\ac{DGOT} & 0.11 & No & \cite{WIFPDescription} \\
+    \ac{WIFP}-\ac{DSPOT} & 0.34 & No & \cite{WIFPDescription} \\
+    \ac{DTS}-\ac{AOS} Patch Panels & 0.0 & No & Additional EDFAs will be installed for future antennas located more than 15 km from AOS-TB \cite{dts_pdr_dsn}. \\
+    Total additional power per antenna & 0.55 &  &  \\
+    \textbf{Total additional power at AOS for 66 antennas} & \textbf{36.4} &  & The worst-case scenario assumes 66 antennas, each configured for parallel deployment. \\
+    \SetCell[c=4]{c} OSF \\
+    \ac{ATAC} & 332 & Yes & \cite{OCRO_DSN} \\
+    \ac{DTS} at \ac{OCRO} & 10 & Yes & \cite{OCRO_DSN}, estimated as 7.7~kW in \cite{dts_pdr_dsn} \\
+    \ac{TPGS} & 40 & Yes & \cite{OCRO_DSN} \cite{TPGS_cosdd} \\
+    Computing infrastructure & 44 & Yes & \cite{OCRO_DSN} \\
+    OCRO auxiliaries & 30.5 & Yes & \cite{OCRO_DSN} \\
+    UPS room loads & 70 &  & \cite{OCRO_DSN} \\
+    HVAC for OCRO & 352 &  & \cite{OCRO_DSN} \\
+    \textbf{Total additional power at OSF} & \textbf{879} &  & \cite{OCRO_DSN} \\
+    \end{tblr}
+\end{table}
+%%%%%%%%%%%%%%%%

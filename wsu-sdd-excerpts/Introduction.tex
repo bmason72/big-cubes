@@ -1,0 +1,184 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction} 
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Purpose}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+This \ac{SDD} establishes the architectural framework for the ALMA \ac{WSU} at the preliminary design level. It describes the major components of the system (subsystems) and references detailed subsystem designs where available.
+
+This document serves as a system-level technical reference, providing engineers, developers, project managers, and scientists with a comprehensive overview of the upgraded observatory architecture. The current version supports preparation for the  System \ac{PDR} scheduled for July 2025 and will evolve iteratively as the design matures through subsequent development phases.
+This SDD serves as an explanatory snapshot of the design, with the binding requirements codified and maintained in the System Technical Requirements.
+
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Scope}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The document defines the  WSU system as envisioned after completion of all the WSU Program Milestones defined in the ALMA WSU Implementation Plan \cite{imp_plan_b}.
+%The full system includes:
+%\begin{itemize}[itemsep=-0.5em]
+%    \item Deployment of wideband receivers for Bands 2, 6, 7, and 8.
+%    \item A fourfold increase in bandwidth (32~GHz per polarization) with the \ac{ATAC} and the \ac{TPGS}.
+%    \item Completion of the computing and data processing infrastructure.
+%\end{itemize}
+
+The scope of this document does not include
+\begin{itemize}[itemsep=-0.5em]
+    \item Planning and execution of \ac{AIVC} activities described in \cite{aivc_report}.
+    \item Transition activities associated with Milestones $1-5$, defined in Section~\ref{intro:background} below and in \cite{imp_plan_b}, including the transition to WSU operations \cite{TWO} and the data processing transition \cite{dp_tp}.
+    \item Systems and upgrades scheduled for implementation beyond Milestone 5.
+    \item Developments in the ALMA Development Roadmap~\cite{road_map} outside the scope of the WSU.
+\end{itemize}
+
+The \ac{SDD} provides a high-level description of the WSU system. It does not present detailed subsystem designs, which will be addressed in separate design documents. The design presented herein is presented to satisfy the requirements~\cite{pa_req} for the System \ac{PDR} in July 2025. The \ac{SDD} will continue to evolve in accordance with the product design process defined in~\cite{pa_req}. 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ \subsection{Background}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\label{intro:background}
+
+Since beginning science operations in 2011, ALMA has transformed our understanding of the cold universe. With unparalleled sensitivity and angular resolution at millimeter and submillimeter wavelengths, ALMA has enabled landmark discoveries in planetary system formation, the structure and chemistry of the interstellar medium, the birth of stars, and the evolution of galaxies across cosmic time. Reflecting its scientific impact, ALMA receives about 1700 observing proposals each year, with an oversubscription rate of approximately 7:1, making it one of the most competitive observatories in the world.
+
+To meet growing scientific demand and unlock new discovery space, ALMA must overcome limitations in instantaneous bandwidth and spectral agility that constrain both the efficiency and breadth of current observations. The \ac{WSU}, identified as the top priority in the ALMA Development Roadmap \cite{road_map}, addresses these challenges by significantly expanding spectral coverage and improving sensitivity \cite{memo621}. This comprehensive system-wide upgrade will enable a fourfold increase in instantaneous bandwidth for both interferometric and single-dish (Total Power) observations. Achieving this capability requires substantial upgrades across multiple subsystems, including:
+\begin{itemize}[itemsep=-0.5em]
+    \item Wideband receivers with 16~GHz per polarization per sideband (32~GHz total observing bandwidth per polarization), which is $4\times$ the current bandwidth of most ALMA receivers.
+    \item New digitizers, associated \ac{DTS} components, and fiber optics system.
+    \item A new correlator for interferometric and \ac{VLBI}/Phased Array (a.k.a., Beamforming) observations.
+    \item A new spectrometer for single-dish (Total Power) observations.
+    \item Enhancements to the computing infrastructure and data processing infrastructure.
+\end{itemize}
+These upgrades will provide ALMA with the capacity to handle larger data volumes and offer greater flexibility for observing a wider range of scientific targets. % , ensuring that ALMA remains at the forefront of astronomical research.
+
+The WSU program is being executed under a structured systems engineering framework that ensures traceability from scientific goals to system-level requirements and technical implementation. The process began with the development of top-level Science Requirements~\cite{sci_specs}, which served as the basis for the \ac{SRR}. The \ac{SRR} confirmed the scientific priorities and established a firm foundation for design.
+
+Building on that foundation, the \ac{CoSDD} refined the system architecture and defined critical subsystem interfaces through iterative development. This \ac{SDD} advances the architectural baseline to the preliminary design level and supports the System \ac{PDR} scheduled for July 2025. 
+%The \ac{PDR} will assess whether the design is sufficiently mature to meet the performance, schedule, and integration goals required to realize the WSU.
+
+% System and subsystem-level oversight of the WSU is managed by the \ac{AMT}. The \ac{ADD-Dev} is the WSU Project Director and is responsible for the planning and implementation of the WSU, which includes coordinating activities across ALMA in order to ensure timely delivery, integration, verification, and compliance of the entire WSU system. The \ac{JDT} supports the \ac{ADD-Dev} in this role and serves as the WSU Project Office, building and monitoring system-level schedules, ensuring project management and system engineering processes are in place for the WSU, and managing onsite implementation.
+
+System and subsystem-level oversight of the WSU is managed by the \ac{AMT}. The \ac{ADD-Dev}, as WSU Project Director, is responsible for system-level planning and implementation, including coordinating activities across ALMA to ensure timely delivery, integration, verification, and compliance of the full WSU system. The \ac{JDT} supports the \ac{ADD-Dev} in this role and serves as the WSU Project Office, building and monitoring system-level schedules, ensuring project management and system engineering processes are in place, and managing onsite implementation. The Executive's members of the AMT, the Executive Program(me) Managers, are responsible for  subsystems delivered by their region's Development Projects.  Each subsystem undergoes its own design, development, and review process. Table~\ref{tbl:status_projects} summarizes the status of individual subsystems.
+
+\input{tables/table_status_projects}
+
+Deployment of the WSU will follow a phased approach as defined in the WSU Implementation Plan~\cite{imp_plan_b}. The process is structured around five milestones that mark key transition points, from initial deployment to full scientific capability, and guide the integration, testing, and commissioning of upgraded components across the array. The major components of each milestone are as follows:
+
+% Milestone 1
+\noindent\textcolor{milestoneblue}{\textbf{Milestone 1: Initial WSU Scientific Observations}}\par
+\vspace{-0.6\baselineskip} % Pulls bullets up close to title
+\begin{itemize}[itemsep=-0.5em]
+    \item Sensitivity similar to the legacy system; top-priority modes commissioned.
+    \item Legacy receivers for Bands 1/3--10; WSU Band 2 receiver with 4$\times$ IF bandwidth.
+    \item At least $36\times12$-m antennas retrofitted with \ac{WIFP} and \ac{DTS}. 
+    \item \ac{ATAC} supports 4$\times$ ingest, 2$\times$ correlation.
+    \item Initial software and archive capabilities with  limits on data rates and size of data products.
+    \item Legacy pipeline adapted for WSU calibration and imaging integrated into RADPS-ALMA  workflow and resource manager (State 4 in data processing transition plan~\cite{dp_tp}).
+\end{itemize}\vspace{0pt}
+
+% Milestone 2
+\noindent\textcolor{milestoneblue}{\textbf{Milestone 2: End of System \ac{AIV}}}\par
+\vspace{-0.6\baselineskip}
+\begin{itemize}[itemsep=-0.5em]
+    \item All antennas retrofitted with \ac{WIFP} and \ac{DTS}.
+    \item \ac{TPGS} \ac{AIV} completed.
+\end{itemize}\vspace{0pt}
+
+% Milestone 3
+\noindent\textcolor{milestoneblue}{\textbf{Milestone 3: End of Commissioning}}\par
+\vspace{-0.6\baselineskip}
+\begin{itemize}[itemsep=-0.5em]
+    \item All legacy ALMA observing modes commissioned with WSU hardware at 2$\times$ bandwidth.
+\end{itemize}\vspace{0pt}
+
+% Milestone 4
+\noindent\textcolor{milestoneblue}{\textbf{Milestone 4: End of Data Processing Transition}}\par
+\vspace{-0.6\baselineskip}
+\begin{itemize}[itemsep=-0.5em]
+    \item Full \ac{WSU} data processing software deployed capable of handling $4\times$ bandwidth.
+    \item Restrictions lifted on the allowed data rate and the size of science products.
+\end{itemize}\vspace{0pt}
+
+% Milestone 5
+\noindent\textcolor{milestoneblue}{\textbf{Milestone 5: Top Scientific Priorities Achieved}}\par
+\vspace{-0.6\baselineskip}
+\begin{itemize}[itemsep=-0.5em]
+    \item New Bands 6, 7, and 8 wideband receivers installed.
+    \item \ac{ATAC} expanded to process 32~GHz/polarization (4$\times$ the current bandwidth).
+    \item Final computing and storage capacity in place.
+\end{itemize}
+
+The design presented in this \ac{SDD} corresponds to the system configuration at the completion of Milestones $1-5$, which marks the completion of major upgrades and the realization of ALMA’s top scientific priorities for the WSU.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Document Organization}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This document presents the WSU system design, structured into five main parts.
+
+\begin{enumerate}
+\item \textbf{Processes}\\
+Section~\ref{sec:wsu_processes} outlines the end-to-end operational workflows, from proposal submission to data delivery. These workflows are based on the current ALMA model, refined over more than a decade of operations. The section highlights where existing processes are retained and which modifications are required to support the upgraded system.
+
+\item \textbf{Signal Chain}\\
+Section~\ref{sec:wsu_signal_chain} details the hardware infrastructure of the \ac{WSU} signal path, including upgrades to all major components—from front-end receivers and digitizers to the data transmission system, correlator, and spectrometer. The section emphasizes the integrated design required to achieve the fourfold increase in bandwidth and maintain system-wide compatibility.
+
+\item \textbf{Computing Infrastructure – IT}\\
+Section~\ref{sec:wsu_compu_it} describes the computing architecture that supports data processing, storage, and archival services. It includes the transition to a new processing framework and the expansion of real-time and offline capabilities to accommodate the increased data volume.
+
+\item \textbf{Computing Infrastructure - Software}\\
+Section~\ref{sec:wsu_compu_sw} describes how the software will need to evolve to handle the increased data volume obtained with the WSU, including data processing.
+
+\item \textbf{Design Functional and Non-Functional Constraints}\\
+Section~\ref{sec:nf_design_constraints} describes the main functional and non-functional constraints (i.e., reliability, availability, maintainability, safety, power standards, etc.) that the WSU design is subject to, both for signal chain, computing equipment, and computing software.
+
+\end{enumerate}
+
+This document establishes the first baseline for the WSU System Design, covering the upgraded observatory processes, signal chain, computing infrastructure, and software components. The design builds on the existing ALMA system architecture, incorporating lessons learned from more than a decade of operations. Readers seeking additional context on the current ALMA architecture may refer to the companion document, \textit{Wideband Sensitivity Upgrade – Current ALMA System Architecture and the Associated WSU Impact Assessment (CSA-IA)} \cite{CSA-IA}, 
+which includes an overview of the ALMA Telescope (CSA-IA Section~2),
+a description of the current ALMA processes, signal chain, \ac{IT} infrastructure, and software infrastructure  (CSA-IA Sections $3-6$), and a WSU impact assessment for each of these areas (CSA-IA Sections $7-10$).
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Applicable Documents}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The following documents are part of this document to the extent specified herein. If not explicitly stated otherwise, the latest release of the document is applicable.
+
+
+\vspace*{0.8cm}
+%%%%%%%%%%%%%%%%%
+\begin{center}
+\newrefcontext[labelprefix=AD]
+\printbibtabular[env=bibtabular, heading=none, keyword=AD] % Filter for AD
+\end{center}
+%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Reference Documents}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The following documents contain additional information.
+
+\vspace*{0.8cm}
+%%%%%%%%%%%%%%%%%
+\begin{center}
+\newrefcontext[labelprefix=RD]
+\printbibtabular[env=bibtabular, heading=none, keyword=RD] % Filter for RD
+%\printbibtabular[env=bibtabular, heading=none, keyword=RD] % Filter for RD
+\end{center}
+%%%%%%%%%%%%%%%%%
+
+% This is needed since the AD/RD lists are formally tables. This subtracts 2 fromthe table counter to ignore these tables. The other way to do this is use longtable* when generating the AD/RD tables, but this broke the link from the references cited in the text to the AD/RD tables.
+\addtocounter{table}{-2}
+
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{List of Acronyms}
+\input{AcronymsList}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

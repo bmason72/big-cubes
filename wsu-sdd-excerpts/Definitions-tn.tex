@@ -1,0 +1,68 @@
+\definecolor{highlight}{RGB}{0, 110, 255}
+\definecolor{gray}{gray}{0.75}
+\definecolor{lightgray}{gray}{0.9}
+\colorlet{headercolor}{blue!10}
+\definecolor{highlight2}{RGB}{255,235,205}
+\colorlet{my2x}{blue!10}
+\definecolor{my4x}{RGB}{251, 206, 177}
+
+\definecolor{light_red}{RGB}{254, 196, 193}
+\definecolor{light_purple}{RGB}{250, 226, 254}
+\colorlet{light_orange}{orange!20}
+\definecolor{light_green}{RGB}{232, 240, 227}
+\definecolor{light_yellow}{RGB}{255, 255, 204}
+\definecolor{light_blue}{RGB}{214, 228, 243}
+\definecolor{milestoneblue}{RGB}{0,90,156}
+
+
+\titlespacing{\section}{15pt}{1.5ex}{0.5ex}
+\titlespacing{\subsection}{18pt}{20pt}{5pt}
+\titlespacing{\subsubsection}{18pt}{15pt}{5pt}
+
+%define page dimensions and margins
+\textheight=210mm
+\textwidth=170mm
+\topmargin=-7mm
+\oddsidemargin=-5mm
+\evensidemargin=-5mm
+\parindent 20pt
+\setlength{\parskip}{10pt} %this parameter sets the space between paragraphs
+
+
+
+%define line spacing 
+\linespread{1.2}
+
+%define space between header and text
+\setlength{\headsep}{60pt}
+
+
+% Units
+\newcommand{\kmss}{\mbox{km/s}}
+\newcommand{\kms}{~\kmss}
+%\newcommand{\GBss}{\mbox{Gb/s}}
+%\newcommand{\GBs}{~\GBss}
+%\newcommand{\MBss}{\mbox{Mb/s}}
+%\newcommand{\MBs}{~\MBss}
+
+% Bits
+\newcommand{\Gbs}{\mbox{Gb/s}}
+\newcommand{\Mbs}{\mbox{Mb/s}}
+% Bytes
+\newcommand{\GBs}{\mbox{GB/s}}
+\newcommand{\MBs}{\mbox{MB/s}}
+
+% Ultra-compact itemize
+\newenvironment{tightitemize}
+{\begin{itemize}
+  \setlength{\itemsep}{0pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+  \setlength{\topsep}{0em} 
+  \setlength{\partopsep}{0pt}
+  \setlength{\leftmargin}{1.5em}}
+{\end{itemize}}
+
+% Prevent widow and club lines
+\widowpenalty=10000
+\clubpenalty=10000

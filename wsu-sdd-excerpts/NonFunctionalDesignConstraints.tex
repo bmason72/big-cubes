@@ -1,0 +1,68 @@
+\section{Non-Functional Design Constraints}
+\label{sec:nf_design_constraints}
+
+The previous sections of the \ac{SDD} were all related to the functional description of the system. This section deals with the non-functional constraints to the \ac{WSU} design.
+
+Section 4.4 in the \ac{ASTR}~\cite{sys_reqs} indicates a number of non-functional constraints that all ALMA subsystem must comply to. They can be grouped in three families:
+
+\begin{itemize}[itemsep=-0.5em]
+    \item \textbf{Project Quality and Standards}
+    \begin{itemize}[itemsep=-0.5em]
+        \item Coordinate Systems Specification~\cite{coord_sys_spec}.
+        \item Policy document on the use of metric and SI units~\cite{si_units_policy}.
+        \item Product Assurance Requirements~\cite{pa_req}.
+        \item ALMA Reviews Definitions, Guidelines and Procedure~\cite{ALMA_Reviews_Definitions}.
+    \end{itemize}
+    
+    \item \textbf{Safety, Electrical, and EMC}
+    \begin{itemize}[itemsep=-0.5em]
+        \item ALMA System General Safety Design Specification~\cite{safety_design_spec}.
+        \item ALMA Power Quality (Compatibility Levels)~\cite{power_quality_spec}.
+        \item ALMA System Electromagnetic Compatibility (EMC) Requirements~\cite{sys_emc_reqs}.
+        \item Standard for AC Plugs, Socket-Outlets, and Couplers ALMA System Electrical Design Requirements~\cite{ac_plugs_standards}.
+        \item ALMA System Electrical Design Requirements~\cite{sys_elec_design_reqs}.
+    \end{itemize}
+    
+    \item \textbf{System Environment}
+    \begin{itemize}[itemsep=-0.5em]
+        \item ALMA Environmental Specification~\cite{environ_spec}.
+        \item Seismic Design Specifications for ALMA-AOS and ALMA-OSF Project~\cite{Seismic_Design_Specifications}.
+    \end{itemize}
+    
+    \item \textbf{System Configuration}
+    \begin{itemize}[itemsep=-0.5em]
+        \item ALMA Documentation Standards~\cite{doc_standards}.
+        \item ALMA Documentation Control Plan~\cite{doc_control_plan}.
+        \item Requirements and guidelines for identification and labeling of ALMA equipment~\cite{labeling_reqs}.
+        \item Interface Control Document Management Plan~\cite{interface_mgmt_plan}.
+    \end{itemize}
+\end{itemize}
+
+A new requirement was added to version F of the \ac{ASTR}: Sys-Req-2031 (Inherent Availability of the Telescope). This requirement is accompanied by a \ac{ram-reliability} Plan~\cite{ram_plan}, which indicates how subsystems need to flow-down their \ac{ram-reliability} requirements. Sys-Req-2032 (Inherent Availability of Other Subsystems) provides individual allocation to subsystems, which also needs to be flown down.
+
+Furthermore, \ac{ASTR} version F also introduced Sys-Req-2076 (Lifetime of major subsystem hardware), to establish what is the expected service life for subsystems. ALMA Antenna Elements are expected to have 30 years of lifetime, while other major subsystems need to be designed for a lifetime of 15 years.
+
+These three requirements, together, help teams assess design options with respect to their impact on system reliability.
+
+Some of the decisions taken so far in the design align with aiming for high reliability, availability, and maintainability of the future WSU systems:
+
+%%%%%%%%%%%%%%%%%%%
+\begin{itemize}[itemsep=-0.5em]
+    \item Widespread use of COTS: the new \ac{DTS}, \ac{WIFP}, \ac{ATAC}, and \ac{TPGS} do not use, or minimize the usage of custom parts and rely on \ac{COTS} instead.
+    \item Together with the usage of COTS, communications standards (such as Ethernet-based communications) are being preferred, which much improve bit error rates, which helps even functional requirements.
+    \item Parallel deployment allows maintaining the current system without downtime while the antenna elements are retrofitted with the WSU equipment.
+    \item A dedicated fiber for the new WSU data coming from the antennas, together with the parallel deployment, improves the RAM for the system.
+    \item Moving both ATAC and TPGS to the \ac{OSF} makes them less susceptible to \acp{SEU}, and makes it easier to start remedial action with respect to them being based at the \ac{AOS}, improving all aspects of RAM.
+    \item The WSU no longer requires a second \ac{LO}, which is expected to reduce the number of failure points in the tuning sequence.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%
+
+Some of the current options of the design might impact RAM, and are being analyzed for whether the right tradeoff can be found:
+
+\begin{itemize}[itemsep=-0.5em]
+    \item The current option of having parts of \ac{WIFP} installed on top of the cryostat has the potential to impact all RAM aspects for the cryostat. Moving the \ac{DGOT} and \ac{DSPOT} together, as a single module, in the \ac{BE} digital rack, would be preferable in terms of RAM.
+\end{itemize}
+
+Both the PA Requirements~\cite{pa_req} and the ALMA Review Guidelines and Definitions~\cite{ALMA_Reviews_Definitions} require \ac{FMEA} and \ac{ram-reliability} analyses to be performed no later than for each subsystem's \ac{CDR}.
+
+% end section The WSU Processes

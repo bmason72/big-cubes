@@ -1,0 +1,213 @@
+\section{Glossary}
+\label{sec:glossary}
+
+Some of the definitions provided below originate from~\cite{dp}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{description}
+%%%%%
+\item[The ALMA Data Mining Toolkit (ADMIT)]\footnote{\url{https://admit.astro.umd.edu/}} - A value-added Python software package which  integrates with the ALMA Archive and CASA to provide scientists with quick access to traditional science data products such as moment maps, as well as with new innovative tools for exploring data cubes and their many derived products.
+%%%%%
+\item[AE Partitioning with Dynamic VLAN] - Array Elements can be partitioned into isolated groups by placing them on their own VLAN dynamically, meaning by remote configuration.  This mechanism is used to enable the \ac{HILSE}, and will also be used to enable the WSU Test System during the WSU AIVC period and the WSU HILSE during WSU Operations.
+%%%%%
+\item[Angular Resolution (AR)] - The point spread function  full-width at half-maximum associated with a given science product. In the context of ALMA Quality Assurance Level 2 (QA2), this refers specifically to the mean synthesized beam width of a specific science product from the representative spectral window (spw), generally a spectral cube or single-spw continuum image. It is one of the PI-specified performance parameters set at the Science Group (SG) level.
+%%%%%
+%\item[Archive and Pipeline Operations (APO) group] - APO is in charge of the data-processing infrastructure (processing nodes and disk space, the hardware infrastructure related to the ALMA Science Archive) and the associated databases.
+%%%%%
+\item[Array] - An Array is a set of one or more antennas and associated hardware resources grouped, by software, together to perform observations.
+\item[Array Element] - An Array Element comprises the entire antenna structure (which can be moved to different Pads, or Antenna Stations, using the ALMA Transporter). The term Array Element also includes the associated (per-antenna) Central Local Oscillator (CLO) modules which are themselves physically located in the AOS Technical Building.
+%%%%%
+\item[Astronomer on Duty (AoD)] - ALMA staff member from the JAO, ARC or ARC node who carries out observations on the telescope. 
+
+%%%%%
+%\item[ALMA Observing Tool (ALMA OT)] - Software used to set up observing projects for the ALMA Observatory. It can be used to generate and submit an observing proposal containing SGs (Phase 1) and to prepare and submit SGs and SBs for observation (Phase 2).
+%%%%%
+\item[ALMA-D3] - A data processing, data management, and data flow system needed to handle WSU data. It is formed from a combination of existing ALMA data-flow subsystems and the new \acf{RADPS-ALMA} data processing software infrastructure. In ALMA-D3, the existing ALMA subsystems and RADPS-ALMA will work together to provide the functionality required to process and manage WSU data.
+%%%%%
+\item[ALMA Project Data Model (APDM)] - The information of any Observing Project is stored in the ALMA Archive following the ALMA Project Data Model (APDM). The APDM defines a series of generic structures that are shared by all Observing Projects, including the project status, the proposal information, the outcome of the proposal review process, and the Scheduling Blocks (SB)\index{Scheduling Block(s)}\seeonlyindex{SB}{Scheduling Block(s)} with their inter-dependencies.
+All these structures are filled with the relevant information (or with links to it in the Archive) at the time of the creation of the project, and updated accordingly during its complete lifecycle.
+%%%%%
+\item[ALMA Quality Assurance Tool (AQUA)] - Web interface to assist DRMs, DRs and other staff members to search, review and modify the status of raw and processed data products during the quality assurance process.
+%%%%%
+\item[ALMA Regional Center (ARC)] - Centers at each of the three Executive regions (East Asia, Europe, and North America; EA, EU, and NA) staffed by scientists with expertise in radio astronomy, millimeter/submillimeter astronomy, and interferometry whose purpose is to provide the interface between the JAO and their respective regional scientific communities, provide operational support to the JAO, and to maximize the productivity of the ALMA telescope. 
+%%%%%%
+\item[ALMA Science Data Model (ASDM)] The ASDM\index{ALMA Science Data Model} is the ALMA format specialization of the Science Data Model (SDM)\index{Science Data Model}\seeonlyindex{SDM}{Science Data Model}\Alsoindex{ALMA Science Data Model}{Science Data Model}\Alsoindex{Science Data Model}{ALMA Science Data Model}, which was developed for ALMA and the Expanded VLA~\cite{Viallefond2006,Pokorny2009,Lucas2010}.
+
+Each product in the ASDM\index{ALMA Science Data Model} format has a unique name containing the Array and Execution identifiers as hexadecimal values. The ASDM\index{ALMA Science Data Model} contains the metadata (headers, descriptions of the observation setup, ancillary data, etc) and the binary data (the raw data itself). Details can be found in Chapters 5.8 and 12.2 of~\cite{c12_thb}.
+
+Colloquially, the final product from each observation, recorded in the Archive in the ASDM\index{ALMA Science Data Model} format, is also referred to as an ASDM\index{ALMA Science Data Model}.
+%%%%%%
+\item[Common Astronomy Software Applications - CASA] - The primary data processing software package used for ALMA and VLA data is CASA. One of its core functionalities is to support the calibration and imaging pipelines for ALMA, VLA, VLA Sky Survey, and the Nobeyama 45 m telescope.
+%%%%%%
+\item[Commissioning Scientist] - Scientists within ALMA who are involved in commissioning new observing modes, researching and writing requirements for heuristics, and validating the resulting features and the overall data processing system. %Many of these scientists are also members of the PLWG.
+%%%%%
+\item[Cube Analysis and Rendering Tool for Astronomy (CARTA)]\footnote{\url{https://cartavis.org/}} - Is a next-generation image
+visualization and analysis tool designed for ALMA, VLA, and SKA pathfinders. It allows users to remotely visualize and perform basic analysis on very large images and cubes through their web browser and can also be installed on a laptop or desktop as a stand-
+alone application.
+
+%%%%%
+\item[Cycle] - ALMA's 1-yr observing period, usually starting in October. 
+%%%%%
+\item[Data Reducer (DR)] - Users internal to the ALMA project who are responsible for data processing in operations.
+%%%%%%
+\item[Data Reduction Manager (DRM)] - A staff role in the ALMA QA2 workflow. The DRM reviews the processing and science products of PI observations and sets the QA2 state. At the ARCs, DRMs typically advise data analysts or Data Reducers (DRs) and review their work, then make the final assessment and set the state. DRMs also perform other tasks related to ingesting the products (e.g. review of manually processed packages, and facilitating/troubleshooting the package upload and ingestion process). At the JAO, the role of DRM and Data Reducer is typically performed by a single person (a SACM). In the context of automated deliveries (``Fast-Lane''), the actions of the DRM are performed by a software process.
+%%%%%
+\item[Delivery] - Delivery is the process of making a given dataset available to the PI within the ALMA Science Archive and notifying the PI of its availability.
+%%%%%
+\item[DMS] - Data Management \& Software. A Division of NRAO, in charge of designing a data processing system for ALMA and ngVLA. More details can be found in Section 4 of~\cite{dp}. 
+%%%%%
+%\item[Data Management Group (DMG)] - DMG is in charge of the data processing, review, and delivery of the ALMA data, consists of experts in data reduction from the ARCs and the JAO.
+%%%%%
+\item[Dynamic Scheduling Algorithm (DSA)] - The scheduling subsystem is a tool that algorithmically determines the optimal SB to execute at any given moment based on a given set of criteria.
+%%%%%
+\item[Executive] - The formal definition in the ALMA Trilateral Agreement\footnote{The ALMA Trilateral Agreement can be found at: \url{https://www.nrao.edu/archives/items/show/36692}} is the following:\\
+\textit{Each Party shall designate an Executive to perform the specific tasks required to operate and further develop ALMA on behalf of their respective Parties. ESO is both a Party to this Agreement and Executive. The NSF Executive currently is Associated Universities Inc. (AUI), in its capacity as manager of the National Radio Astronomy Observatory (NRAO) and the NINS Executive is the National Astronomical Observatory of Japan (NAOJ).}
+
+The parties are the signatories of the ALMA Trilateral Agreement: ESO, NSF and NINS.
+%%%%%
+\item[Execution Block (EB)] - A single observational execution of an SB\index{Execution Block}\seeonlyindex{EB}{Execution Block}\Alsoindex{Scheduling Block(s)}{Execution Block}\Alsoindex{Execution Block}{Scheduling Block(s)}.
+%%%%%
+\item[Execution Fraction (EF)] - a number used to track 
+the sensitivity that is expected from all executions of a given Scheduling Block in aggregate. When the EF equals 1, then the PI-requested noise is expected to be achieved from a thermal noise perspective.
+%%%%%
+\item[Group Observing Unit Set (GOUS)] - the set of Member Obs Unit Sets that are required to satisfy the performance requirements of a Science Goal. This is the level at which products coming from different arrays or configurations will be created and delivered.
+% BSM 22apr25 - replace with more correct and useful version above: The Group ObsUnitSets are the smallest group of observation from two or more distinct ALMA Arrays which need combination within a SG.
+%%%%%
+\item[Joint ALMA Observatory (JAO)] - The JAO provides the unified leadership and management of the operation of ALMA. The JAO is located in Santiago (Chile) and synchronizes activities of the Executives in East Asia, Europe, and North America, as well as at the ALMA site near San Pedro de Atacama, Chile. 
+%%%%%
+\item[lifecycle] - The sequence of stages that a particular unit of data or a system goes through from its initial generation, capture, or creation to its eventual archival, deletion, or decommissioning at the end of its useful life. 
+%%%%%
+%%%%%
+\item[Life Cycle] - ``Life Cycle'' is part of the State System ALMA subsystem software component that handles the state of a project unit (Projects, OUSes, and SBs). It describes the state structure of those project units and the allowed transitions between them. 
+%%%%%
+%\item[Manual Data Reduction (MDR) working group] - Science Operations group responsible for the data processing software need to process data manually, where ``manually'' refers to either not or not exclusively using the automated ALMA Pipeline.
+
+%%%%%
+\item[Measurement Set (MS)] - A database designed to hold radioastronomical data,\footnote{\url{https://casadocs.readthedocs.io/en/stable/notebooks/casa-fundamentals.html}} to be calibrated following the Measurement Equation approach by~\cite{Hamaker1996}.
+% moved to RD list: \footnote{Hamaker, J.P.; Bregman, J.D.; Sault, R.J. 1996, A\&AS 117, 137}.
+%%%%
+%%%%%
+\item[Member Observing Unit Set (MOUS)] - the set of all Execution Blocks from a given Scheduling Block. This is the primary level at which science products have been created and delivered in ALMA operations.
+
+% BSM 22apr25 - replaced with the more correct and useful definition above: Member ObsUnitSets are the smallest structures within a GOUS, %executed in a single array or configuration (e.g. TP, 7-m, or C-3).
+\item[Metadata] - Data that provides information about other data, but not the content of the data itself. In current CASA table and ASDM\index{ALMA Science Data Model} parlance, metadata includes e.g. antenna, spw, observation subtables, but not information like visibilities in the actual data columns of the main table.
+%%%%%
+\item[Observing Unit Set (ObsUnitSet, OUS)] - An ObsUnitSet is a metadata construct that has three specific types: a Science Goal Obs Unit Set (SGOUS), a Group Obs Unit Set (GOUS), and a Member Obs Unit Set (MOUS). For a more complete description of the ALMA project data structure, see Chapter 12 of~\cite{c12_thb}.
+%%%%%
+\item[Observing Tool (OT)] - The ALMA OT\index{Observing Tool} is a Java desktop application used for the preparation and submission of ALMA proposals (Phase 1) and, for those which are accepted, Scheduling Blocks\index{Scheduling Block(s)} preparation (Phase 2). 
+%It is also used for preparing and submitting Director's Discretionary Time (DDT) proposals and Supplemental Call (ACA stand-alone) proposals. 
+More information can be found at \url{https://almascience.eso.org/documents-and-tools/cycle10/alma-ot-quickstart}.
+%%%%%
+\item[Phase 2 Generation (P2G)] - The process of preparing and modifying ALMA SBs performed by an ALMA-wide group of staff known as the Phase 2 Group.
+%%%%%
+%\item[Pipeline Operator] - Individuals responsible for overseeing the hardware and software for Pipeline processing in operations.
+%%%%%
+\item[Pipeline Calibration Products] - A collection of (a) calibration tables, (b) applycal commands, (c) flagging tables, (d) auxiliary products (calibrator fluxes, antenna positions, etc.) and (e) scripts for restoring the calibration and to fully execute the pipeline again. 
+%%%%%
+\item[Pipeline Imaging Products] - Depending on the mitigations applied during the imaging process, the pipeline imaging products could include 
+(a) a continuum image per spectral window and per science target,
+(b) a continuum image, combining all spectral windows per science target,
+(c) a continuum-subtracted line cube per spectral window and per science target, and
+(d) a continuum-subtracted binned cube of the representative spectral window, for the representative science target.
+%%%%%%%
+\item[Pipeline Weblog (weblog)] - Collection of HTML documents generated by the ALMA Pipeline to show a summary of the characteristics of the dataset processed, along with diagnostic plots and QA scores related to the processing itself. Note that, for consistency, the term ``weblog'' is used throughout, but in future such reports may be changed to a different format than HTML. However, the concept of a report containing information and pngs detailing the data and processing information will remain the same.
+%%%%%
+\item[Pipeline Working Group (PLWG)] - Scientists and domain experts on the ALMA pipeline team who research and prototype heuristics, define and prioritize requirements for developments, perform validation at feature and end-to-end levels, write documentation, and support operations by answering questions and investigating reported problems. Refer to~\cite{dp,dpda} for more details. 
+%%%%%
+\item[PipelineMakeRequest] - PipelineMakeRequest queries the archive to obtain the project and data metadata, generate a pipeline processing request, and download the raw data and metadata.
+%%%%%
+\item[Project Tracker (ProTrack)] - The software tool that allows ALMA staff to track the observational and processing status of ALMA science projects.
+%%%%%%
+\item[Principal Investigator (PI)] - Individuals who submit observing proposals for ALMA data.
+%%%%%
+\item[Project] - A PI observing project that results from an accepted observing proposal. Projects consist of a set of SGs.
+%%%%%
+\item[Quality Assurance Level 0 (QA0)] - QA0 is the first quality assurance step after an SB is observed (referred to as an ``execution'') with the goal of determining whether the resulting data sets are valid, calibratable and contribute to the completion of the MOUS science objective. This is done soon after an observation is completed. The possible QA0 statuses are Pass, Semi-pass and Fail. QA0=Semi-pass is used for datasets that do not fulfill all the QA0 criteria, but contain data that is deemed of some scientific value (for instance, the presence of usable bandpass/amplitude calibrator data). Refer to Chapter $11.2$ of~\cite{c12_thb} for details.
+%%%%%%
+\item[Quality Assurance Level 1 (QA1)] - QA1 is the quality assurance process that tracks the array and antenna performance parameters which vary slowly (typically on scales longer than a week) and which can affect data quality. Refer to Chapter 11.4 of~\cite{c12_thb} for details. 
+%%%%%%%%
+\item[Quality Assurance Level 2 (QA2)] - QA2 is the quality assurance process that verifies whether the data that have been acquired meet all applicable quality
+standards, including the PI-specified science goal performance parameters. The possible QA2 statuses are Pass, resulting in ingestion of products to the Archive and delivery to the PI; Semi-pass, meaning applicable performance or quality parameters were not met but will be ingested and delivered anyway; or Fail, which sends the SB back to the telescope for more observations to be collected. Refer to Chapter 11.5 of~\cite{c12_thb} for details.
+%%%%%%%%
+\item[Quality Assurance Level 3 (QA3)] -  QA3 is the process that is engaged to diagnose and fix data quality issues identified after ingestion to the Archive and delivery to the PI.  Refer to Chapter 11.6 of~\cite{c12_thb} for details. 
+%%%%%%
+\item[Quality Assurance Score (QA Score)] - Numerical and categorical scores computed at numerous, specific steps of ALMA data processing. A QA score measures the efficacy of the processing step and the resulting data quality.
+%%%%%%
+\item[Quicklook] - Quicklook is a monitoring tool that provides real-time visualization of TelCal-produced solutions, including per antenna
+pointing and focus, delay/phase, and atmospheric calibration (opacity, receiver and system tem\-peratures). See also \textbf{TelCal Spy}.
+%%%%%%
+\item[RADPS] - The Radio Astronomy Data Processing System (RADPS) is an NRAO-led program to develop a system for processing radio astronomy data that supports the increased data rates from planned upgrades to existing radio telescope and future radio telescopes. The primary objective of this program is to develop a data processing system that supports production of high-level data products for the ALMA Wideband Sensitivity Upgrade and the ngVLA. The secondary objective is to support the continued evolution of radio astronomy data processing through a widely accessible package enabling specialization and innovation at facilities and universities.
+%%%%%%
+\item[RADPS -- ALMA]  RADPS-ALMA is a project within the larger RADPS program. It is a collaboration between NRAO's DMS, ESO, and NAOJ to support the development of a data processing system for ALMA WSU.
+%%%%%%
+%\item[Resubmission] - A previously-approved PI observing project that is submitted again to a new proposal in a subsequent observing cycle in order to complete the originally proposed observations.
+%%%%%%%
+\item[Scan] - In accordance with the description in the ALMA Software Science Requirements~\cite{SSRdoc}, a Scan is a time interval of data acquisition during which a single target source is observed with a particular Spectral Specification and visibility integration time. Scans are assembled from one or more subscans, where a subscan contains at least one visibility integration time.
+%%%%%%%%%
+\item[Scheduling Block (SB)] - A Scheduling Block\index{Scheduling Block(s)} is the smallest observing unit in ALMA that can be scheduled independently and contains a full description of how the science and the calibration targets have to be observed. Each run of an SB produces an Execution Block (EB). Refer to Chapter 12.1 of~\cite{c12_thb} for details.
+%%%%%
+\item[Science Goal (SG)] -  Science Goals are set up in the ALMA Observing Tool and are designed to capture the scientific aims of a particular observation whilst hiding the technical details of the observations from the user. The technical information is contained within SBs that are automatically generated from the Phase-2 SG. A SG consists of one or more SBs.
+%%%%%
+\item[Science Goal Observing Unit Set (SOUS)] - The top-level ObsUnitSets are called `Science Goal ObsUnitSets’; they correspond to the individual SGs of an Observing Project. 
+%%%%%
+\item[Session] - Group of EBs observed as the continuous execution of a single SB, until a certain scientific goal is reached, while keeping the SB information in run-time memory for the sake of observation integrity.
+%%%%%%
+\item[Science Software Requirements (SSR)] - Control software that generates an on-the-fly sequence of commands and structure necessary for the actual execution of an SB on the telescope at observing time. Part of the ONLINE software subsystem.
+%%%%%%
+\item[Spectral Window (spw)] - A continuous spectral region with uniform spectral resolution to be observed, as set by the PI in the ALMA Observing Tool (ALMA OT).
+%%%%%
+\item[(Pipeline) Stage] - Logical processing step e.g. ``solve bandpass'', or ``create one type of image''. Details will need to be refined in future, but for the purposes of this document refers to items with scope similar to current Pipeline tasks.
+%%%%%
+\item[Subscan] - A subdivision of a Scan.
+All subscans within a Scan must be encoded with the same scan intent, corresponding to either the science target or one of the calibration intents (such as atmosphere, phase, bandpass, pointing, flux, polarization). Subscans may differ in their subscan intent, for example, atmospheric (\Tsys) calibrations are performed in a single scan with individual subscans acquired at different positions of the ALMA calibration device: hot load, ambient load, on-source, and sky. Subscans within a Scan may differ in their phase center, for example, pointed mosaics are observed using subscans in which different pointing positions within the source (called fields) correspond to independent subscans within a Scan.
+%%%%%%%%
+
+\item [TelCal] - Software sub-system responsible for the observatory calibrations in ALMA.
+
+\item[TelCal Spy] - Software component used to receive TelCal data reduction events on the console and print the corresponding numerical results to check system performance during calibration scans. See also \textbf{Quicklook}.
+
+\item [Telescope Monitoring \& Control Database (TMCDB)] - It is used to store information on the state of various devices and restore the system after restarts. It also allows one to dynamically change values of the parameters to be used more or less on the fly. Some of the most commonly consulted and updated portions of TMCDB are the telescope pointing and focus models, pad locations, tilts and cable delays, and the delay models.
+
+%%%%%%%%
+\item[Water Vapor Radiometer (WVR)] - Device designed to track path length variations due to atmospheric water vapor. It generates data used to compute phase corrections to increase the coherence of interferometric ALMA data.
+%%%%%
+\item[WSU Test System] - The use of AE Partitioning with Dynamic VLAN to establish a group
+of antennas for AIVC testing on ATAC\index{Advanced Technology ALMA Correlator} or TPGS\index{Total Power GPU Spectrometer} via the Parallel operations mode of Parallel Deployment.  These antennas will have been retrofitted with the WSU signal chain, and the ALMA Production Environment associated with them will be running a different version of software from the legacy ALMA system. 
+\end{description}
+
+\begin{comment}
+\textbf{Aos Check}:
+
+\textbf{Bulk Data Handling}:
+
+\textbf{Offline System}:
+
+\textbf{TelCal\index{TelCal}}:
+
+\textbf{ALMA Science Archive Query Interface}
+
+\textbf{Data Packer}
+
+\textbf{Data Tracker}
+
+\textbf{Harvester}
+
+NGAS Archive 
+
+Oracle Archive
+
+Product Ingestor
+
+Request Handler
+
+TMCDB
+
+Data Capturer
+
+Quick Look
+
+Cluster/ADAPT Interface (CLAI)
+
+Project Tracker
+\end{comment}
+

@@ -1,0 +1,64 @@
+\def\syma{\hspace{0.2cm}$\bullet$\hspace*{0.15cm}}
+\def\symb{\hspace{0.6cm}$-$\hspace*{0.15cm}}
+
+\begin{center}
+\begin{talltblr}[caption={Antenna Retrofit Tasks},label={tab:PD_retrofitting_activities_for_first_4_antennas},]
+{
+colspec={|QQ|},
+%hlines,
+cells={font=\small},
+row{1,10,25,37}={light_blue, font=\small\bfseries},
+%row{2,5,13,19,26,28,33}={light_orange},
+%rows={0em, m, rowsep=0pt},
+stretch=0.5pt,
+}
+%%%%%%%%%%%%%%%%% STAGE 1 %%%%%%%%%%%%%%%%%%%
+\hline
+\SetCell[c=2]{l} Stage-1: New LRU pre-acceptance \\ \hline
+   & \syma Phase 1: Reception and inspection of the upgrade kits \\
+       & \symb Crate inspection and move to FE Lab \\ 
+       & \symb Open crates and inspect equipment \\ 
+   & \syma Phase 2: Tests at OSF Lab \\ 
+       & \symb Modify power supplies\\
+       % Integrate upgrade kits into FE\\
+       & \symb Replace IF switches and install IF splitter\\
+       & \symb Install IF conditioner, digitizers/DSPOT and DTS\index{Data Transmission System}\\
+       & \symb Power up FE and WSU unit tests\\
+\hline
+%%%%%%%%%%%%%%%%% STAGE 2 %%%%%%%%%%%%%%%%%%%
+\SetCell[c=2]{l}Stage-2: Installation and integration \\ \hline
+     & \syma Legacy compliance verification (pre-intervention) \\
+     & \syma Relocation to OSF  \\ 
+%   & \syma Remove LRUs  \\ 
+   & \syma Installation \\    
+        & \symb FO splice in antenna \\
+        & \symb Equipment installation (FE, ADC, WVR and FEPS) \\ 
+        & \symb Equipment electrical connection \\ 
+        & \syma Antenna balance \\ 
+        & \syma Product Assurance and work inspection \\ 
+   & \syma Integration \\  
+        & \symb Antenna verification  \\ 
+        & \symb Legacy engineering verification \\ 
+        & \symb WSU engineering verification \\
+        & \symb Legacy compliance verification (post-intervention) \\
+        & \symb Acceptance review \\ 
+\hline
+%%%%%%%%%%%%%%%%% STAGE 3 %%%%%%%%%%%%%%%%%%%
+\SetCell[c=2]{l}Stage-3: Commissioning and integration to array \\  \hline
+   & \syma CSV tests / Amplitude Calibrator Tests \\ 
+   & \syma IF processor bias measurements \\
+   & \syma AE back to AOS \\ 
+        & \symb Relocation to AOS \\
+        & \symb Connection to legacy system \\
+        & \symb Connection to WSU system \\
+        & \symb Engineering verification completion \\
+   & \syma DSO verification and back to array \\ 
+        & \symb Legacy system tests and integration post-relocation \\
+        & \symb WSU system tests and integration post-relocation \\
+   & \syma LRU acceptance \\
+\hline
+%%%%%%%%%%%%%%%%% STAGE 4 %%%%%%%%%%%%%%%%%%%
+\SetCell[c=2]{l}Stage-4: De-commissioning of legacy systems \\
+\hline
+\end{talltblr}
+\end{center}

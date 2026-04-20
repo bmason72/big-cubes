@@ -1,0 +1,29 @@
+\begin{center}
+\begin{talltblr}
+   [caption={Data Transmission System (DTS\index{Data Transmission System}) properties}, 
+   label={tab:DTSreqs},
+   remark{Notes}={Column 2 lists the current DTS properties, and columns 3 and 4 list the requirements to support 4$\times$ bandwidth and extended baselines.\\$^a$Subsystem requirements for DTS have not yet been established.  70 is currently used in this document as a placeholder value that can accommodate some future expansion in number of antennas.},
+   ]
+   {
+    cells = {font=\small},
+    colspec={|l|l|l|l|},
+    row{1} = {headercolor},
+    stretch=0.6pt,
+   }
+\hline
+\bf Parameter&	\bf Legacy design	& \bf ALMA 2030 design & \bf Comment\\
+\hline
+Number of bits	& 3	& 6	& 6b\,+\,6b complex\\
+Data rate	& 120 Gb/s	& 1.2 Tb/s	&  \\ %Several \\% overhead needed for FEC
+Maximum Span &	15 km &	80 km	& 50 km to AOS + 30 km to OSF\\
+Modulation format &	OOK/AM	& DP-16QAM/Coherent	& \\
+WDM usage &	Yes: 12$\times$10 Gb/s & Yes: 4$\times$400 Gb/s	& \\
+Bit Error Rate (BER) &	$10^{-6}$ &	$10^{-15}$ &	Forward Error Correction enabled\\
+Protocol &	SONET/SDH &	Gigabit Ethernet	& \\
+3R usage &	No	& No &	Optical amplification only\\
+Number of antennas &	66	& 70$^a$ & \\
+Fibers per antenna &  1  & 2  & Required for 400G COTS\\
+\hline
+\end{talltblr}
+
+\end{center}

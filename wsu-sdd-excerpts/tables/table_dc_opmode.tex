@@ -1,0 +1,36 @@
+\begin{center}
+%\begin{adjustbox}{width=1.0\textwidth,center=\textwidth}
+\begin{talltblr}
+[caption={Deployment tentative schedule.}, 
+  remark{Note}={Column 1 refers to the associated ALMA Cycle, with the corresponding time for the beginning of the Cycle in Column 2. Column 3 refers to the number of 12-m antennas with the WSU signal chain fully deployed. Column 4 presents the operational mode chosen during the specific period, which will strongly depend on the number of array elements required for AIVC and the minimum number of antennas for PI observations.},
+  label={tab:PD_science_operation_model}]{
+  colspec={Q[c,m]Q[c,m]Q[c,m,2cm]Q[l,m]},
+  width=\textwidth,
+  hlines,
+  vlines,
+  cells = {font=\small},
+  cell{2}{3-4} = {light_red},
+  cell{3}{3-4} = {light_orange},
+  cell{4}{3-4} = {light_yellow},
+  cell{5}{3-4} = {light_green},
+  cell{6}{3-4} = {light_blue},
+  cell{7}{3-4} = {light_purple},
+  row{1} = {bg=headercolor, font=\small\bfseries},
+%  rows={0em, m, rowsep=0pt},
+%  stretch=0,
+  }
+Cycle & Cycle Start & 12-m WSU ready AE &  AIVC mode\\
+12 & Oct-2025 & $0-1$  & Parallel ($\le 4\times$ 12~m~AE)\\
+%
+13 & Oct-2026 &  $2-6$  & Parallel ($\le 4 \times$ 12~m~AE) + \newline Interleaved short (> 4 $\times$ 12~m~AE)\\
+%
+14 & Oct-2027 & $7-19$  & Parallel ($\le 4 \times$ 12~m~AE) + \newline Interleaved short (> 4 $\times$ 12~m~AE)\\
+%
+15 & Oct-2028 & $20-43$  & Interleaved extended (>4 $\times$ 12~m~AE)\\
+%
+16 & Oct-2029 & $44-50$    & Interleaved extended (>4 $\times$ 12~m~AE) \newline WSU READY\\
+%
+17 & Oct-2030 & 50   & WSU READY\\
+\end{talltblr}  
+\end{center}
+%\end{adjustbox}

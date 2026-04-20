@@ -1,0 +1,215 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx,enumitem}
+\usepackage{tabularx}
+\usepackage{tabularray}
+\usepackage{longtable}
+\usepackage{placeins} % to make floats stay in their section
+\usepackage[compact]{titlesec}
+\usepackage{booktabs}
+\usepackage{enumitem}
+%\usepackage{footmisc}
+
+
+%Create lines in the document
+\usepackage[left]{lineno}
+%OUTCOMENT TO PRODUCE FILE WITH NO LINE NUMBERS
+%\linenumbers
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{verbatim}
+\usepackage{amssymb} 
+\usepackage{amsmath}
+\usepackage{placeins}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{makecell}
+\usepackage{gensymb} 
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{appendix}
+\usepackage{pdflscape}
+\usepackage{booktabs} % For better table rules
+\usepackage[hidelinks]{hyperref} % to avoid the red boxes around links
+
+\usepackage[style=numeric, backend=biber, defernumbers]{biblatex}
+\usepackage{biblatex-ext-tabular}
+\usepackage[table,dvipsnames]{xcolor}
+\usepackage{multirow}
+\usepackage[hypcap=false]{caption}
+\usepackage{longtable} % Required for customizing glossary column widths
+\usepackage{hyperref}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage{helvet}
+\usepackage{wasysym}
+\usepackage{rotating}
+\usepackage{makeidx}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{adjustbox}
+\usepackage{framed}
+\usepackage{bm}
+\usepackage[normalem]{ulem}
+\usepackage{caption} % to support a smaller font size in captions
+%\usepackage{draftwatermark}
+%\SetWatermarkText{DRAFT}
+%\SetWatermarkScale{1}
+
+%%%%%%%%%% Acronyms
+%\usepackage[acronym]{glossaries}
+%\makeglossaries
+%\usepackage{acronym} 
+\usepackage[printonlyused]{acronym}
+
+\def\Tsys{$T_{\rm sys}$}
+% Todd added these definitions: The following sets up \paragraph to be numbered four levels deep: 1.x.x.x
+\usepackage{titlesec}
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{18pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+%{36pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+% Define \subsubsubsection as a synonym for \paragraph
+\newcommand\subsubsubsection{\paragraph}
+\usepackage{indentfirst}
+% added to align the text within the 4th subsection (paragraph) level with the same indent
+
+% Juande added these definitions for indexing before `\makeindex`
+% Based on https://tex.stackexchange.com/a/318504/35224 (CC BY-SA 3.0-)
+
+\newcommand\gobbleone[1]{}
+\newcommand{\seeonly}[2]{\ (\emph{\seename} #1)}
+\newcommand{\also}[2]{\unskip(\emph{\alsoname} #1)}
+\newcommand{\Also}[2]{\unskip\emph{See also} #1}
+\let\oldindex\index
+\renewcommand{\index}[1]{\def\exptoindex{#1}\expandafter\oldindex\expandafter{\exptoindex}}
+
+\newcommand{\seeonlyindex}[2]{\index{#1@#1\protect\gobbleone|seeonly{#2}}}
+\newcommand{\alsoindex}[2]{\index{#1!zzzz@\protect\gobbleone|also{#2}}}
+\newcommand{\Alsoindex}[2]{\index{#1!zzzz@\protect\gobbleone|Also{#2}}}
+
+\makeindex
+
+% Juande added these definitions for TODO lists
+\newcommand{\leftbarnote}[1]{\begin{leftbar}{#1}\end{leftbar}}
+\newcommand{\todo}[2][TO\-DO]{\leftbarnote{\noindent\textbf{#1}: #2}}
+\newcommand{\todoblock}[2][TO\-DO]{\begin{minipage}{0.95\columnwidth}
+\todo[#1]{#2}\end{minipage}}
+\newcommand{\todoinline}[2][TO\-DO]{\fbox{\textbf{#1}: #2}}
+\newcommand{\citeneeded}{\todoinline[needed]{cite/attribute}}
+\newcommand{\figneeded}{\todoinline[needed]{figure}}
+
+%create a shortcut for the SDD document name
+%\def\aedm{ALMA-05.15.00.00-3050-1-DSN}
+%\def\aedm{ALMA-05.15.00.00-3050-A.1-DSN}
+\def\aedm{ALMA-05.15.00.00-3050-B-DSN}
+
+
+% Added caption setup; requires caption package
+\captionsetup[figure]{font=small,labelfont=small}
+\captionsetup[table]{font=small,labelfont=small}
+
+\input{Definitions_bib}
+
+%The Definitions-tn.tex file contains ALL definitions (page dimensions, spacing, fontsize, etc) 
+\input{Definitions-tn}
+
+
+%%%%%%%%%%% DOCUMENT STARTS HERE %%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\pagestyle{plain}
+\pagenumbering{arabic}
+
+%%%%%%%%%% COVER PAGE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\thispagestyle{noheader}
+\input{CoverPage}
+
+%\newpage
+
+%%%%%%%%%% ADD HEADER AND FOOTER  %%%%%%%%%%%%%%%%%%%%%%%
+
+\input{HeaderFooter}
+
+%%%%%%%%%% LISTS OF CONTRIBUTORS  %%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{Contributors-list}
+\newpage
+
+
+%%%%%%%%%% LISTS OF OVERSIGHT TEAM MEMBERS
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{OversightTeam}
+\newpage
+
+
+%%%%%%%%%% CHANGE RECORD  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{-0.3cm}
+\input{ChangeRecord}
+\newpage
+
+
+%%%%%%%%%%% TABLE OF CONTENTS %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tableofcontents
+\newpage
+
+%%%%%%%%%% EXECUTIVE SUMMARY %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{ExecutiveSummary}
+\newpage
+
+% Reset acronyms after Executive Summary
+\acresetall
+
+%%%%%%%%%%%%%%% INTRODUCTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\include{Introduction}
+
+%%%%%%%%%%%%%%%% PROCESSES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\include{WSU-Processes}
+
+%%%%%%%%%%%%%%%%SIGNAL CHAIN %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\include{WSU-SignalChain}
+
+%%%%%%%%%%%%%%%% COMPUTING IT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\include{WSU-Computing-IT}
+
+%%%%%%%%%%%%%%%%%COMPUTING SW %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\include{WSU-Computing-SW}
+
+%%%%%%%%%%%%%%%%%FUNCTIONAL NON FUNCTIONAL CONSTRAINTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\include{NonFunctionalDesignConstraints}
+
+
+%%%%%%%%%  BEGIN APPENDICES SECTION %%%%%%%%%%%%%%%%%%%%
+
+\begin{appendices}
+
+\include{WSU-DataProperties}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\acresetall
+
+\include{Glossary}
+
+
+\end{appendices}
+
+%%%%%%%%% END APPENDICES SECTION %%%%%%%%%%%%%%%%%%%%%%%
+
+\printindex
+\vfill
+
+\end{document}
+
