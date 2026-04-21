@@ -26,3 +26,8 @@
 *.dylib
 *.exe
 
+# Pipeline build / test / validation artifacts
+build/
+validation/
+data/sample_band1_band2/
+

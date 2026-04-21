@@ -1,0 +1,2042 @@
+Prepared by Organization / Role Signature
+Katharina Immer ESO / TSI lead, OT-deputy SSS
+(on behalf of the TSI team)
+John Carpenter JAO / IST
+Jongsuk Hong KASI / TPGS
+Robert Kurowski ESO / ISAP lead
+Ryan Loomis NRAO / PLWG Imaging lead
+Luke Maud ESO / Commissioning Team
+Hugo Messias JAO / P2G lead
+Jennifer Donovan Meyer NRAO / ATAC
+Paula Santos ESO / Obsprep ICT lead
+Approved by Organization / Role Signature
+Sergio Martin JAO / Head of DSO
+Released by Organization / Role Signature
+Alvaro Gonzales JAO / ALMA Deputy Director for Development
+TSI Report:
+Defining the proposal submission and project preparation
+tools in the WSU era
+ALMA-05.15.00.00-3072-A-REP
+Status: Released
+September 23, 2025
+2
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 3 of 53
+Contents
+1 Related Documents and Acronyms 5
+1.1 1.2 1.3 Applicable documents . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+Reference documents . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+List of Acronyms . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+2 Charges 8
+3 Executive Summary 8
+4 Use Cases 10
+4.1 Current Status . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4.1.1 Use Case A - Phase 1 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4.1.2 Use Case B - Phase 1 SB generation . . . . . . . . . . . . . . . . . . . . . . . . 4.1.3 Use Case C - Phase 2 SB generation . . . . . . . . . . . . . . . . . . . . . . . . 4.1.4 Use Case D - Phase 2 SB editing . . . . . . . . . . . . . . . . . . . . . . . . . . 4.1.5 Use Case E - Commissioning . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4.2 Requirements . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4.2.1 Requirements for the WSU-OT . . . . . . . . . . . . . . . . . . . . . . . . . . . 4.2.2 Requirements for the SB Builder . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+11
+12
+12
+12
+13
+13
+14
+16
+5 APDM 18
+6 Spectral Setup 18
+6.1 Current Status . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6.1.1 Basic description of the Phase 1 spectral setup . . . . . . . . . . . . . . . . . . 6.2 ATAC . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6.2.1 Overview of capabilities for users . . . . . . . . . . . . . . . . . . . . . . . . . . 6.2.2 ATAC functionality . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6.3 6.4 6.5 TPGS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . WSU Spectral Setup Overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . Requirements . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6.5.1 High level requirements . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6.5.2 Capture of user science intent requirements . . . . . . . . . . . . . . . . . . . . 6.5.3 Correlator setup and visualization requirements . . . . . . . . . . . . . . . . . . 6.5.4 Updates for future milestone . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+20
+22
+22
+23
+25
+25
+26
+26
+29
+32
+35
+7 Deliverables 35
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 4 of 53
+7.1 7.2 ALMA Internal and External Stakeholders . . . . . . . . . . . . . . . . . . . . . . . . . Further Studies . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 36
+39
+8 Priorities and Timeline 41
+8.1 8.2 8.3 WSU Timelines . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . Timeline for proposal and program tools . . . . . . . . . . . . . . . . . . . . . . . . . . Key Priorities . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
+43
+44
+9 Next Steps 45
+A ATAC 46
+A.1 Processing Flow . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . A.2 Usable FS in the WSU signal chain . . . . . . . . . . . . . . . . . . . . . . . . . . . . . A.3 Spectral window setups . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . A.4 Frequency resolution, time resolution, and observing modes . . . . . . . . . . . . . . . 46
+47
+48
+50
+B TPGS 51
+B.1 TPGS signal chain . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 51
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 5 of 53
+1 Related Documents and Acronyms
+1.1 Applicable documents
+No. Title Identifier
+[AD1] ALMA System Technical Requirements ALMA-80.04.00.00-005-G-SPE
+[AD2] The ALMA 2030 Wideband Sensitivity Upgrade ALMA Memo 621
+1.2 Reference documents
+No. Title Identifier
+[RD1] ALMA Cycle 12 Technical Handbook Doc 12.3 v1 March 1, 2025
+[RD2] ATAC Memo 23: ATAC simultaneous Imaging
+Correlation and VLBI Beamforming improvement
+for CCB-89 Sys-Req Version G review
+Attached to
+https://jira.alma.cl/browse/RID-
+4852
+[RD3] ATAC Memo 24: WSU Spectral Window
+Properties Supported by the ATAC Configuration
+Library
+In Preparation
+[RD4] Scientific Priorities for the First WSU Proposal
+ALMA-05.00.00.00-3124-A-GEN
+Call
+[RD5] Transition to WSU Operations Working Group
+Report
+ALMA-05.15.00.00-3052-A-REP
+[RD6] WSU APDM TSI Report ALMA-05.15.00.00-3012-A-REP
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 6 of 53
+[RD7] WSU Assembly, Integration, Verification, and
+Commissioning (AIVC) Working Group Report
+ALMA-05.15.00.00-3016-3-REP
+1.3 List of Acronyms
+The acronyms used in this document are listed below.
+ACA Atacama Compact Array
+AD Applicable Document
+AFSP ALMA Frequency Slice Processor
+AIV Assembly, Integration, Verification
+AIVC Assembly, Integration, Verification and Commissioning
+ALMA Atacama Large Millimetre/submillimetre Array
+APDM ALMA Project Data Model
+ATAC Advanced Technology ALMA Correlator
+BDF Binary Data File/Format
+BLC ALMA Baseline Correlator
+CDP (ATAC) Correlator Data Processor
+CSV Commissioning and Science Verification
+DSO Department of Science Operations
+E2E End-to-End
+EOC Extension and Optimization of Capabilities
+FFX Frequency division / Fourier transform / Cross correlation
+FS Frequency Slice
+HA Hour Angle
+GPU Graphics Processing Unit
+ICT Integrated Computing Team
+IDT Integrated Development Team
+IF Intermediate Frequency
+ISOpT Integrated Science Operations Team
+LO Local Oscillator
+LSB Lower Sideband
+LST Local Sidereal Time
+MDR Manual Data Reduction
+ngOT ‘next-generation’ OT - the web-based version of the current OT
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 7 of 53
+OSPFB Oversampled Polyphase Filter Bank
+OSS Observing Script Simulator
+OT Observing Tool
+PDR Preliminary Design Review
+PFB Polyphase Filter Bank
+PHT Proposal Handling Team
+PI Principle Investigator
+P2G Phase-2 Group
+QA Quality Assurance
+RD Reference Document
+RID Review Item Discrepancy
+SB Scheduling Block
+SCIREQ Science Requirements
+SG Science Goal
+SPW Spectral Window
+SSR Science Software Requirements
+SSS Sub-System Scientist
+TP Total Power
+TPGS Total Power Graphics processing unit Spectrometer
+TSI Technical Solution Investigation
+TWO Transition to WSU Operations
+USB Upper Sideband
+VLBI Very Long Baseline Interferometry
+WG Working Group
+WIFP Wideband IF Processor
+WSU Wideband Sensitivity Upgrade
+WSU-OT WSU version of the OT
+WVR Water Vapour Radiometers
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 8 of 53
+2 Charges
+The charges defined by ISOpT and ICT for this TSI are1:
+1. Identify the different use cases of the WSU-OT (e.g., Phase 1, batch mode, Commissioning,
+Phase 2 SB Generation, Phase 2 tool used by the PIs to check the parameters at the SB level).
+Define the scientific requirements and high-level design of the software employed in these use
+cases in the WSU era.
+2. Define the scientific requirements for the WSU spectral setup as will be offered to the users.
+Such requirements shall guide the design of the spectral setup in the WSU-OT, including the
+spectral visualizer. It is encouraged to consider how the foreseen changes will guide users to
+make sensible choices when setting up their proposals (e.g. showing data rates and/or warnings
+about long processing/delivery times). Such requirements should be considered as upstream,
+while downstream data processing requirements are beyond the scope of this TSI.
+3. Identify a list of deliverables for the design of the WSU-OT (e.g., calculation of LO solution,
+parameters provided by ATAC, etc.) and identify a list of stakeholders who will deliver them.
+4. Define a high-level priority list and timeline for the delivery of the different software men-
+tioned in charge 1, considering the commissioning phases defined by the TWO-WG.
+3 Executive Summary
+The ALMA Observing Tool (OT) is the main interface for ALMA users and staff with which to
+submit proposals and create observing Scheduling Blocks (SBs) to undertake science or testing and
+commissioning observations alike. With the transition into the Wideband Sensitivity Upgrade (WSU)
+era, ALMA will use significantly different correlators for the 12m and 7m ACA arrays (Advanced
+Technology ALMA Correlator, ATAC), and in TP mode (Total Power GPU Spectrometer, TPGS),
+that will require considerable updates for the observing tool(s) used in the WSU era.
+From the discussion and investigations of this TSI, based upon the charges, it has been established
+that the Use Cases (Section 4) will remain unchanged in practice, but should be captured in different
+tools for each user group (scientific users vs ALMA staff). With the restructuring, a nomenclature
+change would be adopted, moving away from a Phase 1 and Phase 2 definition to a “Proposal” and
+“Program” scheme. Specifically, a single web-based tool is envisaged for the user facing “Proposal side”,
+currently called the Phase 1 process. This will be the only interface seen by PIs, but will also be used
+by ALMA staff to set up the Science Goals (SGs). This interface will effectively be the “WSU-OT”.
+1These were reordered considering the flow of this document.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 9 of 53
+For all other processes that involve generating SBs, so-called Phase 2 (and current Phase 1 SB batch
+generation), will be referred to as the “Program” side. There will be a separate web-based tool, the
+“SB Builder”, where Proposal SGs are imported and generated into the GOUS/MOUS/SB structure2
+-
+only the parameters in this structure are displayed and editable at the tool interface. There will be no
+replication or copying of SGs from the Proposal to the Program side as occurs with the current OT.
+The SB Builder will be accessible only to ALMA staff, within which privileged staff will have editing
+permissions.
+The largest single change within the WSU-OT “Proposal” comes from a complete revamp required
+for the front- and back-end of the Spectral Setup (see Section 6) node3 - the place where the user
+selects the Spectral Windows (SPWs). PIs are currently presented with a limited selection of options
+for the spectral setup subject to the current limitations of the Baseline Correlator (BLC). This picture
+will drastically change in the WSU era due to the capabilities offered by ATAC and the TPGS. The
+new correlators will enhance the level of freedom in the spectral setup of ALMA observations due to
+a change in architecture. The process and concept of spectral setup definition will need to be adapted
+to consider the usage of Frequency Slices (see Section 6.2 and Appendix A) when building SPWs.
+It is therefore crucial to define the spectral capabilities that will be offered to PIs in the WSU
+era and how these capabilities will be presented to the users during the proposal preparation. The
+capabilitiesandtheirpresentationshouldallowuserstomaximizethescientificoutputoftheirproposals
+while keeping the data rates and volumes within the limits set by operations during the transition to
+WSU operations (see [RD5]).
+Within the TSI we critically note that a new Visualization Facility is imperative to show the
+complex spectral setup, given the new concept of Frequency Slices and the selection of SPWs within
+the broader frequency coverage offered by the WSU. We also highlight that such a Visualizer should,
+ideally, be made interactive and allow manual positioning and selection of the SPWs.
+Moreover, the priority for the new Spectral Setup node shall be the shift to a more intelligent tool
+that creates a SPW setup as defined by a User’s needs - based on their scientific requirements, and the
+overall scientific context, without any manual intervention4. Specifically, with regard to the creation of
+more intelligent software, we advocate for a three option approach whereby the WSU-OT will create
+the SPWs based upon:
+1. A pre-defined spectral setup based on extensive templates, including continuum coverage and
+2This structure is well established and there are no plans to change this in the WSU era.
+3Node being the nomenclature for the various setup selection items in the current OT, where a Proposal has a tree
+and branch like structure that expands, and finally ends, in a node where a setup is editable.
+4Meaning that a user does not specify the positions, widths, spectral resolution of each SPW by-hand.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 10 of 53
+spectral line cases for different scientific contextual cases.
+2. User input of spectral lines, which are to be selected with a “line-picker”; the names of the lines
+of interest and their expected line widths are minimum requirements.
+3. Input of an interface file within which a user specifies the preferred center frequency, bandwidth
+and spectral resolution of SPWs.
+From whichever approach a User takes, the OT will create all spectral windows working within ATAC
+and TPGS rules, and any other rules based on, e.g., data rates.
+This document explains the use cases and the associated requirements in Section 4; describes the
+ALMA Project Data Model in Section 5; summarizes the spectral setup, including the current design,
+the ATAC and TPGS, the WSU spectral setup overview and the important requirements for the new
+WSU spectral setup in Section 6; identifies the deliverables for the WSU-OT and SB builder designs
+and who is responsible in Section 7; indicates the priorities and notional timeline in Section 8; while
+finally indicating the next steps in Section 9. Technical details of ATAC and TPGS are more fully
+described in two Appendices.
+4 Use Cases
+In the following section, we will first describe the current use cases of the OT and then discuss
+possible new software as well as the corresponding requirements as user stories.
+4.1 Current Status
+ALMA Principal Investigators (PIs) must design their entire observation within the ALMA OT.
+Their basis is to create a Proposal and define a science plan that is composed of one or more SGs.
+The OT is the single interface for any user to interact with the observing setup. Two phases are
+distinguished in the OT: Phase 1 - the proposal preparation and submission stage, and Phase 2 - the
+generation of observatory-ready SBs5. PIs have editable access in Phase 1 for SG creation, but only
+reading rights for the SB parameters in Phase 2. ALMA internal staff have (various) edit rights in
+Phase 2 to flexibly implement changes (as required) into any observing setup.
+Currently, the tool used for ALMA Operations is the classic OT – a Java-based desktop application
+- while a new generation web-based observing tool, the ngOT, is being developed and is expected to
+form the basis of what will be used in the WSU era. In this document, we refer to the observing tool(s)
+needed for WSU specifically as the WSU-OT and the SB Builder.
+5An SB is the minimum set of instructions describing an ALMA observation that can be fully calibrated.; [RD1],
+Section 8.1
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 11 of 53
+Many of the OT use cases will be affected by the WSU and might require significant optimizations.
+Currently, allthesecapabilitiesareincludedinasinglesoftwaretool(i.e., theALMAOT)withseparate
+functional tabs for ‘Proposal’ and ‘Program’ (i.e., Phase 1 and Phase 2), but the development of the
+ngOT presents an opportunity to re-design and optimize the project preparation tools, especially in
+anticipation of the upcoming shift to the WSU-OT that will need new features. A common back-end
+code will likely be needed, but the front-end interfaces can in principle be different.
+4.1.1 Use Case A - Phase 1
+This is the proposal preparation and submission stage. The PI of a proposal is responsible for
+filling out all necessary fields in the OT, confirming that it validates and then submitting the proposal
+before the deadline.
+The following description of features in the Phase 1 tool is non-exhaustive, but rather indicates a
+generic workflow.
+Each proposal has a title, abstract, proposal type, and a scientific category including keywords.
+The PI decides on the co-investigators on their project, specifies who will be the reviewer for the
+distributed review process, and whether that person holds a PhD.
+The proposal contains a science plan, which is made up of one or more SGs. For each SG, the PI
+must provide all necessary information for the observation: the target properties including sky location
+and brightness (“Field Setup” node); the spectral setup (“Spectral Setup” node), specifying the observ-
+ing band, the frequency position of spectral windows and their bandwidth and spectral resolution;
+the calibration strategy, either ALMA- or user-defined (“Calibration Setup” node); required observa-
+tional parameters such as angular resolution and requested sensitivity, which are used to estimate the
+observing time (“Control and Performance” node); and a technical justification regarding the chosen
+parameters and proposed SGs (“Technical Justification” node). The “planning and time estimate” in
+the “Control and Performance” node is calculated by generating virtual Scheduling Blocks that are
+invisible to the PI at Phase 1.
+Submitted proposals can be opened as new proposals from the archive such that they can be
+resubmitted under a new project code or used as templates such that their SGs can be copied into a
+new proposal. During validation, the OT checks that the proposed project is valid and can be observed
+as requested. Only once all validation errors are cleared can the project be submitted.
+The OT also provides a stand-alone sensitivity calculator and a PDF generator for the proposal.
+After the submission deadline a PI’s proposal can be retrieved and opened in read-only mode.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 12 of 53
+4.1.2 Use Case B - Phase 1 SB generation
+This stage starts soon after the proposal deadline. With the Phase 1 batch mode, the Phase 1
+SBs are generated and uploaded to the archive together with the project. Phase 1 SBs are normally
+not visible to the PI but provide important information for internal use. The Phase 1 SBs provide
+representative coordinates, estimated execution durations, and angular resolution constraints among
+other science specific constraints (time constraints, weather constraints, etc). This information is used
+to create a “pressure" for each project by LST range, configuration, and weather requested and aids
+in the queue building process. The Phase 1 SBs are also used to identify resubmissions and duplicate
+observationsandgiveinputforDSOstatisticsandP2Gtechnicalassessment. Atthisstage, allproposal
+PDFs are regenerated to make sure that there are no issues in the formatting, etc. These are the PDFs
+that are then provided to reviewers during the proposal review process.
+4.1.3 Use Case C - Phase 2 SB generation
+At this stage, with the Phase 2 batch mode, all accepted proposals are turned into Programs by
+copying their Proposal SGs to the Program level and generating Phase 2 SBs from the information in
+the Program SGs. The Phase 2 SBs are in principle observatory-ready but are checked by P2G before
+the start of the observations to tackle multiple topics referred in P2G’s Best Practices.
+4.1.4 Use Case D - Phase 2 SB editing
+Unlike the Phase 1 SBs, the Phase 2 SBs are displayed in the OT (Program tab). The PI sees
+all parameters in the SBs in read-only mode. Superusers like P2G have editing rights and can change
+almost any parameter. However, validation checks ensure that the project stays valid. A validation
+run needs to be executed before P2G can re-submit a modified program. Scheduling blocks connected
+to an SG can be regenerated with the OT if no observations have been started yet.
+P2G uses the Phase 2 batch mode in a different way to allow flexibility, such as SB generation only
+for some SGs within a Project, or to edit parameters at the SB level. For that purpose, P2G needs to
+provide the OT with an input file in xml format referencing the projects and SBs by using their UID’s,
+sources by name or intent, etc... Currently, one example that is making use of this batch mode is the
+implementation of TP OFF positions in an automated way.
+SBs are edited manually to implement change requests from the PIs, define fixed calibrators, limit
+hour angle (HA) ranges, or improve spectral setups to avoid known issues or improve calibration. A
+complete set of usual edits and actions done by P2Gs is described in the current Cycle’s P2G Best
+Practices page on confluence.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 13 of 53
+4.1.5 Use Case E - Commissioning
+For commissioning of new modes or extensive testing of non-standard setups the OT is released as
+a separate build. Unlike the OT for PIs, the CSV6 version has (some of) the modes-to-be-commissioned
+already implemented and allows unrestricted access to all editable parameters, especially on the SB
+level, related to the observational setup. Since CSV projects are unrestricted, validation can be per-
+formed and provides useful information, but validation errors do not prohibit submission. The com-
+missioning scientist is fully responsible for the validity of the SB, not the OT.
+Only superusers with the right credentials are allowed to prepare and submit CSV projects. A
+submitted CSV project receives a “.csv” suffix to distinguish it from PI-submitted projects. A CSV
+project does not require a Proposal or Phase 1 SG or SB; it is directly created as a Program using
+manually created (or copied) SG(s). The Phase 2 SBs are generated from the Program SG(s).
+Within a generated SB there are no restrictions to the editing of any parameters. Within the
+main “Resources” tab (containing three sub-tables: “field sources”, “instrument setups”, “observing
+parameters”) all properties can be edited. In short, this allows access to where the telescope points in
+the sky, the spectral setup, the integration times, the schedule of calibrators, etc. Parts or all of an SB
+can be copied into another SB for easier project building from a common SB already made.
+Specifics of the Spectral Setup: The current OT interface provides an easy visualization of all
+options that the commissioning team might want to test (e.g., different frequency resolutions, different
+spectral averaging, default spectral presets). Access to the spectral setup builder and visualizer at the
+SG level is essential for generating at least the first draft spectral setup that propagates to a generated
+SB. Despite all parameters being editable at the SB level, often commissioning scientists rather use
+the SG spectral setup node and then simply regenerate the SB(s). The “instrumental setup” sub-tab
+is mainly used7 to adjust correlator timing away from defaults that the OT has encoded (i.e., faster or
+slower integration durations).
+4.2 Requirements
+We recommend the preparation of two tools: the user-facing Phase 1 WSU-OT and a new ALMA-
+internal “SB Builder” (and editor). We foresee that the second tool will encompass the use cases B, C,
+D, and E for ALMA-internal use. The preparation and editing of SBs is essential for the Observatory.
+The distinction into Phase 1 and Phase 2 SBs is not necessary anymore. Furthermore, this distinction
+6CSV stands for commissioning and science verification. This term has transitioned to EOC - the extension and
+optimization of capabilities. In recent years, the terms CSV/EOC are often used interchangeably.
+7Original ALMA commissioning occurred over a decade ago, where more flexibility was likely required in chang-
+ing/editing/adding extra fields, extra instrumental setups or extensively testing observing parameters not encoded in
+the OT. Within the last couple of years, in ‘EOC’, the SG nodes are largely used to set up the majority of the project
+with only final tweaks that require editing within the SB.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 14 of 53
+can lead to issues if the preparation tool for Phase 1 and Phase 2 SBs changes in between generating
+those two types of SBs, for example due to updates as is often seen with the classic OT.
+InvestigatorsonlyneedtoknowasubsetofthePhase2SBparameterstojudgeiftheirobservations
+are set up correctly. It will be sufficient to display these parameters in the Snooping Project Interface
+(SnooPI). This will require an expansion of SnooPI’s capabilities. However, their description is out of
+scope for this report.
+The below requirements are written as ‘User Stories’, that are brief and simple descriptions of
+what a software must do from the perspective of a user. The necessary and beneficial requirements
+generally translate to need and want respectively (also see Section 6.5), while the requirements, or
+recommended ways forward, are also listed directly in some user stories. If not specifically highlighted,
+already existing capabilities of the ALMA-OT are not listed here.
+4.2.1 Requirements for the WSU-OT
+1. As an investigator, I want a guided tour of the interface so that I can understand how to use the
+tool without prior experience.
+(a) This requires the preparation of video tutorials and documentation by the OT WG which
+can be made available directly through the WSU-OT.
+2. As an investigator, I want access to spectral setup templates or examples so that I can turn my
+science requirements more easily into a SPW setup.
+(a) This requires the preparation of spectral setup templates by the Observatory.
+3. As an investigator, I need a simple interface to configure my spectral setup so that I can visualize
+my spectral coverage in the more complex context of the WSU which will provide a larger choice
+of options.
+(a) The high level requirements for the spectral setup are listed in Section 6.5.
+4. As an investigator, I need version control or change history so that I can revert to earlier edits if
+needed.
+(a) This will also allow manipulation of the SG level by P2G without overwriting the user input.
+5. As an investigator, I want to see an elevation vs. time plot for all my targets in a science goal so
+that I can understand over which LST range my targets will be observable.
+6. As an investigator, I want to know during which months my proposed observations could be
+conducted and I want to see, for each month, the fraction of time when atmospheric conditions
+(PWV and phase stability) are expected to meet the requirements of my Science Goal, so that I
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 15 of 53
+can assess the environmental feasibility of my observations and adjust the setup if needed.
+7. As an investigator or P2G assignee of a project with user-defined calibration, I want to see the
+simulated observing sequence to check if the proposed changes to the standard calibration are
+valid.
+(a) This requires alignment with SSR.
+8. As an investigator or P2G assignee of an ephemeris or Target of Opportunity (ToO) or time-
+critical (TC) project, I want to know if my resolution requirements are in conflict with the
+configuration plan so that I can adjust them if necessary.
+(a) This requires alignment with DSA.
+9. As an investigator of a ToO project, I want the option to trigger each visit independently or with
+time dependencies so that I can choose the strategy that best fits my observations.
+10. As an investigator, I want to declare dependencies between SGs so that I can propose back-to-
+back observations in different bands.
+(a) This requires a connection between SBs of the SGs in questions so that scheduler is aware
+of the corresponding linkage.
+11. As an investigator or P2G assignee, I need to be aware where the WVR and other known
+instrumentation leakages fall so that I can assess their impact on the science goal(s).
+12. As an investigator, I want to create a single large mosaic at the SG level so that I can propose
+for mosaics exceeding the 150 pointing limit.
+(a) TheOTwillberesponsibleforthesplittingofthelargemosaicintoindependentMOUS/SBs
+with smaller mosaics which are in agreement with the 150 pointing limit.
+13. As an observatory, we need to make sure that resubmissions are already marked as such during
+the proposal preparation and submission stage so that resubmitted projects are identified quickly
+after submission and without much human intervention.
+(a) This would be applied if the investigator opens the original project as a new proposal in the
+OT and subsequently does not make significant changes to the project.
+(b) This might require an APDM addition to record information of the original project.
+(c) This needs coordination with JAO since there is already a project in the works being pro-
+posed.
+14. As PHT, we need to automatically regenerate all PDFs in case they are corrupted so that we can
+provide the correct PDFs to the reviewers.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 16 of 53
+4.2.2 Requirements for the SB Builder
+The SB Builder (and editor− replacing the “Program” side of the current OT) is envisioned as a
+web-based tool which will generate all xml control files for the telescope observations. It will use the
+information stored in the SGs in the WSU-OT to ‘build’ the corresponding SBs. The tool will also
+allow edits to the parameters on the GOUS/MOUS/SB levels. Below details new requirements for the
+tool, but does not necessarily repeat features which are already implemented in the current OT Phase
+2 Program side.
+15. Asaninvestigator, IneedtocalculateobservingtimesforagivensensitivitysothatIcanestimate
+if a project is feasible.
+16. As an investigator, I need to have read-only access to the important parameters of the scheduling
+blocks of my projects so that I can check that the observations are set up correctly.
+(a) We recommend that the user-facing side of the Project SBs (Phase 2) will be implemented
+in SnooPI.
+17. As an investigator of a ToO project, I need to submit source coordinates and velocities that are
+readily implemented in the SB so that the triggered SB can be set to Ready as fast as possible.
+(a) This requires a connection of some sort with the interface PIs will use to trigger their
+observations and submit source specifications. The flexibility to change tuning likely needs
+more discussion, and potentially will need human intervention.
+18. As P2G of a ToO project, I need the PI-provided information to be automatically implemented
+on the SB level of the triggered SB and the SB set to Ready without my intervention.
+19. As OT, I need a time estimate for each science goal so that I can give a total time for a proposal.
+(a) This requires alignment with SSR and a connection between the WSU-OT and the SB
+Builder.
+20. As Observatory, we need the preparation of scheduling blocks for all submitted proposals so that
+the information provided in the scheduling blocks helps in the project selection exercise.
+21. As scheduling team, we need TM1 and TM2 SBs to have a connection not-relying on their names
+so that scheduler can easily identify their linkage or be aware of new ones if need be.
+22. As resubmission/duplication team, we need the preparation of scheduling blocks for all submitted
+proposals so that we can check for resubmissions and duplicate projects.
+23. As P2G team, we need investigators to be able to submit minor change requests to the helpdesk
+and have the changes automatically implemented in their scheduling blocks so that involvement
+of P2G is not required.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 17 of 53
+24. As P2G team, we need to manually manipulate one or several fields in one or several SBs in one
+project so that we can work more efficiently.
+25. As P2G team, we need to automatically manipulate one or several fields in one or several SBs in
+one or several projects so that we can work more efficiently.
+26. As P2G team, we need to automatically regenerate scheduling blocks (not necessarily in all SGs
+in a project) so that any updates impacting the information in the SBs can be easily applied.
+27. As P2G team, we want to resolve J-name calibrators directly from the ALMA Source Catalogue
+so that calibrator searches are more efficient.
+28. As P2G team, we need the OT to split spectral-scan or multi-tuning observations into different
+MOUS/SB levels if the original SB requires more than one execution and if the splitting does
+not compromise the scientific goal so that observations are more efficient.
+(a) This may require an “opt-out” feature in case the PI prioritizes flux scaling between tunings
+rather than observation efficiency.
+29. As P2G team, we need to know which SBs triggered Attention Flags (i.e., observation specifica-
+tions/modes that need attention from P2G assignees) so that P2G can focus on the correctness
+checks of those SBs.
+30. As cone search and TP Off position teams, we need to automatically hardwire specific calibrators
+or update calibrator setup parameters, and TP OFF position fields so that SBs can be set to
+Ready more efficiently.
+31. As a VLBI/Phased-Array P2G assignee, I need to add a VLBI schedule file (VEX format) either
+at the SG or SB levels so that VLBI observations can be conducted.
+(a) VEX format (Rev 15b1 links: definition and parameters) is a standard file used for VLBI
+schedule planning that each station uses as reference for a given coordinated observation. It
+shows which sources are to be observed when by which stations in a given frequency setup
+(a "VLBI ephemeris" file).
+(b) If the VLBI schedule file is added at the SG level, the assignee may need to add more than
+one file (each one corresponding to a different observing date), in which case the OT will
+need to create independent MOUS/SB levels for each VEX file.
+32. As commissioning team, we need to interactively manipulate all parameters of the scheduling
+blocks so that test observations for existing or new modes can be set up efficiently.
+33. As commissioning team, we need validation errors to be inconsequential so that we can submit
+any project at any time.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 18 of 53
+34. As commissioning team, we need to make “non-standard” SBs so that we can test different setups.
+35. As commissioning team, we need to simulate the scheduling blocks so that we can test that they
+run correctly.
+(a) We recommend an interaction with OSS code (or a back-end) as to align what the SB
+Builder shows with what the telescope will run.
+36. As commissioning team, we need a feasibility assessment/probability tool (LST ranges and at-
+mospheric conditions) so that we can plan when to ideally schedule the SBs.
+5 APDM
+The information of any Observing Project is stored in the ALMA Project Data Model (APDM).
+The APDM defines a series of generic structures that are shared by all Observing Projects, including
+the project status, the proposal information, the outcome of the proposal review process, and the
+scheduling blocks (SBs) with their inter-dependencies. All these structures are filled with the relevant
+information (or with links to it in the Archive) at the time of the creation of the project, and updated
+accordingly during its complete lifecycle.
+Over the years, the APDM has evolved while adhering to the principle that no elements are
+renamed or removed to prevent disruptions in the distributed software system. To maintain APDM
+backward compatibility while allowing new correlator configurations to adopt a clean design, these
+new configurations will be integrated into the APDM independently, remaining separate from existing
+correlator configurations, and without altering or removing any components of the original APDM.
+This design decision is detailed in Section 3.1 of the “WSU APDM TSI Report” [RD6].
+Section 3.2 of the same report presents a proposal for APDM modifications necessary to support
+the WSU SpectralSpec for ATAC and TPGS. As this represents preliminary exploratory work, further
+refinement will be required to align with the finalized design decisions for ATAC and TPGS. A func-
+tional prototype of the APDM with the WSU SpectralSpec was developed as part of the APDM TSI
+in 2024, and the APDMEntities generated from this effort may serve as a foundation for initial WSU
+OT development.
+6 Spectral Setup
+The below sub-sections detail the current status of the OT Spectral Setup, summaries of the ATAC
+and TPGS technical details (full details can be found in Appendix A and Appendix B), the changes
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 19 of 53
+needed for the WSU era, and the high level requirements for the new WSU-OT spectral setup.
+6.1 Current Status
+ALMA has nine8 different receiver Bands (1, 3-10) that can cover various frequency ranges during
+an observation. While setting up a Proposal, per SG, a user can only define one frequency band for an
+observation. Based upon the capabilities of the BLC and receivers, only a sub-selection of the possible
+entire frequency range that constitutes as a ‘band’ can be observed at any one time.
+The current Spectral Setup node in the OT consists of the Spectral Visualizer (see Figure 1) and
+the Spectral Setup interface to aid a user in producing a scientifically useful set of SPWs.
+Figure 1: Current OT Spectral Setup Visualizer before any SPWs are defined. The receiver bands
+are labeled on the top-most axis numerically (1, 3 to 10). Each band comprises two “boxes”, referring
+to the LO1 range (bottom box) and the full band coverage (upper box). The continuous plotted line
+is the atmospheric transmission profile, indicating how ‘transparent’ the atmosphere is at different
+frequencies. The Rest and Observed (Sky) frequencies (top and bottom axes) are equal as there is no
+field (and thus velocity/redshift) specified.
+The Spectral Visualizer automatically updates to show the user-defined spectral setup as new
+SPWs are added (Figure 2 shows a Band 6 example). Overlaid is the transmission profile, based
+upon the water vapour column density, either automatically or manually chosen between 1st and 7th
+octile (1st being the best weather conditions with highest transmission). In addition, the user can
+select spectral lines with the spectral line picker and overlay their positions in frequency. The Spectral
+Visualizer allows zooming into the chosen band as well as further into the defined SPWs, along with
+scrolling left and right, thus moving ‘down’ and ‘up’ the frequency range.
+8Band 2 forms the 10th receiver to be commissioned - occurring before the TWO.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 20 of 53
+Figure 2: Current OT Spectral Setup Visualizer with SPWs defined (blue horizontal lines) covering
+molecular lines of interest (blue vertical lines and labels show the SPWs’ central frequency and adopted
+naming). Multiple spectral lines of possible interest within the same band are over-plotted and labeled
+(red lines), while the regions the SPWs can be defined within are indicated by the yellow regions - these
+being predefined based on the IF range of the receiver band (IF = 4.5 - 10GHz in Band 6) from the
+LO1 (central yellow line). The suitable observing conditions for Band 6 are the 5th Octile.
+The concept of rest frequency is by-definition measured when a target is at rest, i.e., not moving.
+With respect to spectral lines, this would be a lab measured frequency for a given molecular or atomic
+compound, for example, selectable from the spectral line picker. Sky (observed) frequencies are what
+ALMA needs to be configured to observe due to the motion of the target sources with respect to
+the motion of the Earth. Rest/sky frequencies are adjusted depending on the line-of-sight velocity or
+redshift of the source as entered by the User in the Field Setup node. Currently, there is no attempt
+to predict the Doppler correction at the possible date (range) of observation to further validate the
+requested tuning.
+6.1.1 Basic description of the Phase 1 spectral setup
+Within the frequency range of interest there are four so-called Basebands within which SPWs
+are defined (these are not plotted in the Visualizer but are rather related to correlator resources).
+Basebands, and the SPWs within, can be positioned in regions related to the Intermediate Frequency
+(IF)oftheselectedreceiverbandLocalOscillator(LO)frequency. Forexample, Band6canhaveanLO
+between 221 and 265 GHz, and has a usable IF of 4.5-10 GHz. Thus, with an LO of 221 GHz, spectral
+windows can be placed in frequency ranges, 211-216.5 GHz and 225.5-231 GHz. The lower and upper
+ranges are defined as Lower- (LSB) and Upper- (USB) Sidebands. For Bands 3 to 8, it is not possible
+to put three basebands in one sideband and the fourth one in the other9; only two per sideband, or
+all four in one sideband, are allowed. Each baseband can be filled with between one and four SPW
+selections where available correlator resources must be shared. Considering the architecture of the
+BLC, SPWs may only be assigned specific combinations of bandwidth and spectral resolution - i.e.,
+9You can have three basebands in one sideband but the fourth cannot be defined in the other sideband.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 21 of 53
+there are a limited number of ‘channel’ resources, the divisions of a SPW into resolution elements, and
+thus the widest bandwidth SPWs have a low to mid-spectral resolution compared to narrow bandwidth
+SPWs that can have the highest (finest) spectral resolution.
+A selected SPW has properties that define entirely the spectral frequency range (start, end, cen-
+ter), bandwidth, and spectral resolution (channelization) for the correlator to use. The exact restric-
+tions/limitations of these selections follow rules due to the BLC architecture. For further details see
+ALMA Technical Handbook ([RD1]) Sections 4 and 6.
+AUsercanchoosefromthreedifferentspectralobservationtypes: SpectralLine, SingleContinuum
+and Spectral Scan. The selection of these types tailors the editable options for the spectral window
+setup.
+Spectral Line: The user can choose between single (XX), dual (XX, YY), and full polarization (XX,
+XY, YX, YY) - in Bands 1, 3-7 (and only single and dual polarization in Bands 9/10). The SPWs can
+be added to basebands by entering the rest or sky frequency or via the spectral line picker (centralizing
+the SPW on a selected spectral line - as Figure 2). Whenever a SPW is added, a correlator resource
+has to be explicitly selected from a range of predefined bandwidth/resolution combinations available.
+Further spectral averaging of a selected spectral resolution is possible by factors 2, 4, 8, and 16, if
+the full spectral resolution is not required for the user’s science case or to reduce data rates within
+pre-defined ALMA limits. To increase sensitivity, the user can choose to use the 4-bit correlator mode
+for a given SPW; this option indicates that the correlator resources should be reallocated to use more
+‘bits’ at the cost of spectral resolution at a given bandwidth. The OT will sort the SPWs in increasing
+frequency, except for VLBI cases when specific frequencies need to be placed in BB1, which will not
+necessarily be the lowest ones.
+ThecentralfrequencyoftherepresentativeSPW10 (whichcanbemanuallyselectedbythePI/user)
+is used for the time estimate displayed in the Control and Performance node, and subsequently used
+for scan lengths of the generated SB in Phase 2. Users are able to only select and position the Spectral
+Windows, but they have no access to the LO parameter that is optimally calculated by the OT.
+Single Continuum: For each band, one setup is pre-defined. The predefined default option offers
+the best sensitivity range available in the band. The sky frequency of the continuum setup can be
+adjusted but the relative placing of the SPWs is fixed. The user can choose between low and high
+spectral resolution observations (two options only for the correlator resources) and can adjust the
+spectral averaging of the high resolution setup. As for spectral line observations, the user can choose
+between single, dual, and full polarization (Bands 1, 3-7; single or dual for Bands 9/10) and can select
+10The concept of a Representative Spectral Window is used in Quality Assurance stages (see also [RD1]) after data
+acquisition where the quality to be met is checked in that specific ‘representative’ SPW.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 22 of 53
+the representative SPW. By definition, a continuum setup always offers the maximal possible total
+aggregate bandwidth (7.5GHz for Bands 1, 3-8, and 15GHz for Bands 9 and 10).
+SpectralScan: Theusermustspecifyacontiguousfrequencycoverage, definedinskyfrequency, that
+they want to observe. Up to five spectral setup tunings are chosen automatically by the OT to cover
+the requested frequency range. Larger frequency ranges that cannot be achieved in a single SG must
+be split over multiple SGs. The user can choose from six combinations of bandwidth/resolution, which
+influences the achieved scan frequency range - higher spectral resolution means a reduced aggregate
+bandwidth and, thus, more spectral tunings (possibly within additional SGs) are required to cover a
+given frequency range. The user can only choose between single and dual polarization.
+For all spectral types, the user can set the representative frequency freely within the defined SPWs. In
+addition, the user can define rest frequencies of spectral lines that will be covered. This information is
+used during data reduction but does not alter the spectral window setup.
+6.2 ATAC
+6.2.1 Overview of capabilities for users
+The Advanced Technology ALMA Correlator (ATAC) will dramatically increase the science output
+possible for ALMA users in the WSU era. It will:
+1. provide 16GHz per polarization of total correlated bandwidth, or up to twice the bandwidth
+capability of the current BLC,
+2. be readily upgradable to 4x bandwidth (32 GHz per polarization) with additional funding, per
+WSU Milestone 5,
+3. provide a 17% improvement compared to the BLC in the digital sensitivity of the WSU signal
+chain, even before connecting to upgraded front end receivers,
+4. be built to handle up to 80 independent SPWs in the initial 2x bandwidth deployment, with
+flexible options for SPW bandwidth (in increments of 200 MHz) and spectral resolution (with no
+reduction in bandwidth) using channel averaging factors,
+5. provide a total of up to 1.2 million 13.5 kHz wide spectral channels, summed over all SPWs, with
+a resulting resolution of 0.1 km/s at a frequency of 35GHz (Band 1),
+6. provide Zoom windows for user science cases that require better than 13.5 kHz resolution, which
+trade bandwidth for spectral resolution in 200 MHz increments and use Zoom factors of 2, 4, or
+8, and
+7. support up to 8 concurrent correlator subarrays, enabling correlation of up to 8 separate concur-
+rent 7-m and 12-m antenna arrays.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 23 of 53
+6.2.2 ATAC functionality
+This subsection briefly summarizes the functionality of ATAC. A more detailed description, to-
+gether with explanatory figures, can be found in Appendix A.
+ATAC will operate in three stages (Appendix A.1):
+1. Coarse channelization: ATAC will create 201 Frequency Slices (FS), each 200MHz wide,
+to cover the IF=0 to 20GHz range for each sideband and polarization, regardless of the IF
+bandwidth being used. The FS will be set in a fixed frequency grid which is defined solely by
+the LO1 frequency chosen. The FS available for selection for processing in the following stages
+depend on the anti-aliasing baseband filter and the selected receiver IF bandwidth (Figure 3,
+and see Appendix A.2). The filter shapes drawn are merely representative approximations of
+the WIFP baseband filter (which is not yet known in detail) and receiver bandwidths; they are
+meant to show conceptually how the different filters and performance interact to constrain the
+usable bandwidth, though the true shapes of the filters are more complicated.
+2. Frequencysliceprocessing: EachselectedFSispassedtoanALMAFrequencySliceProcessor
+(AFSP). ATAC will deliver 80 AFSPs for the initial 2x bandwidth deployment, and it is being
+built to run with 160 AFSPs in the eventual upgrade to 4x bandwidth.
+3. Spectral Window creation: ATAC can stitch together any selected FSs that are contiguous
+in frequency and share a selected spectral resolution to create a SPW; the entire SPW can be
+assigned a single integer channel averaging factor (CAF) to achieve that spectral resolution. In
+practice, a range of possible SPW bandwidth and CAF combinations has been proposed to limit
+complexity in the system and minimize data rates (see Appendix A.3).
+ATACwillprovidehighfrequencyresolutionacrossthefull16GHz(2x)bandwidth, andeventually
+32GHz(4x)bandwidth, withafinestchannelwidthof13.5kHzandtimeresolutionof∼1second. Both
+higher time cadence observations, and higher spectral resolution observations (i.e., “zoom" mode), will
+also be possible at a cost of correlator resources along another axis. For example, high time cadence (16
+ms)observationscanbeperformedwithalimitationinspectralresolution, andzoommodeobservations
+can be performed with a reduction in aggregate bandwidth (see Appendix A.4).
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 24 of 53
+Figure 3: First panel: An IF = 0 to 20GHz range is displayed with visual approximations of the
+anti-aliasing baseband filter (blue trace) and IF = 4.5 to 10 GHz receiver range of Band 6v1 (orange
+box and trace), where the LO1 has been set to 225.0 GHz. These traces define the usable frequency
+range for science observations in current Band 6, which ATAC can cover with 56 FS (second panel).
+The dark gray shaded FS indicate the 56 usable FS in both the upper and lower sidebands, indicating
+a total of 11 GHz/polarization. The pink trace (in all panels) indicates the atmospheric transmission
+for Band 6. Third and fourth panels: The same information is shown for the upgraded Band 6v2.
+LO1 has been set to 235.0 GHz, and ATAC can cover the IF = 4 to 18 GHz range with 140 usable FS
+(a total of 28 GHz/polarization).
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 25 of 53
+6.3 TPGS
+The Total Power GPU Spectrometer (TPGS) subsystem is designed to process data from up
+to four Total Power antennas, supporting a single subarray at a time. It will handle a total science
+bandwidth of up to 32 GHz per polarization (4x WSU bandwidth). TPGS can create up to 160 spectral
+windows with up to 80,000 spectral channels per spectral window per polarization in dual-polarization
+mode, or 40,000 channels per polarization in full-polarization mode. Since TPGS also adopts the FFX
+architecture used in ATAC, spectral windows can be formed by stitching together multiple frequency
+slices.
+The basic spectral resolution of TPGS is 13.5kHz as ATAC. TPGS needs to support channel
+averagingcapabilitiestomeetthevelocityresolutionrequirementsspecifictothegivenspectralwindows
+corresponding to the receiver band. It also supports a zoom mode that enhances spectral resolution
+smaller than the base 13.5 kHz by applying a configurable zoom factor of 2, 4, or 8 to each spectral
+window independently. For example, a zoom factor of 8 provides a resolution of approximately 1.6875
+kHz and reduces the science bandwidth accordingly. The center frequency of each zoom window can
+be tuned within its parent frequency slice with a granularity of at least 0.01 MHz.
+TPGSsupportsshortintegrationdurationsforlow-resolutionobservations. Theshortestsupported
+duration is 16 milliseconds, which applies at coarse frequency resolutions of 5.184 MHz (for 16 GHz
+sidebands; Band 2-10) or 2.592 MHz (for 8 GHz sidebands; Band 1). At the finest frequency resolution
+of 13.5 kHz, the minimum integration duration increases to 96 milliseconds. Integration durations must
+be integer multiples of 16 ms or 96 ms, and frequency resolutions must align with defined step sizes of
+13.5 kHz for non-zoom modes and either 5.184 or 2.592 MHz for high-time cadence configurations.
+TPGS’s signal chain (for a more detailed description see Appendix B) combines an oversampled
+coarsechannelizationwithacriticallysampledfinechannelization, bridgedbycarefullydesignedresam-
+plingandfilteringstages, todeliverhigh-resolution, flexiblespectralprocessingacrosswidebandwidths,
+with up to 3720 high-quality channels per frequency slice (see Appendix B).
+6.4 WSU Spectral Setup Overview
+Due to the much more flexible capabilities of the ATAC and TPGS systems, the way to define the
+spectral setup of a science goal will have to change fundamentally. This change is necessary in order to
+support the observations of the broad range of WSU science cases laid out in ALMA Memo 621 [AD2].
+Although both ATAC and TPGS offer significantly more flexibility in the correlator options, i.e.,
+various spectral resolutions for the full available bandwidth, and zoom modes with higher spectral res-
+olution, the logical rules for the spectral setups are simplified in the typical setup. The full-bandwidth
+(16GHz in the initial 2× bandwidth deployment) spectral resolution is 13.5kHz, substantially finer
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 26 of 53
+than the 488kHz provided by the BLC and sufficient for the vast majority of science cases. Zoom
+modes, which trade bandwidth for even higher spectral resolution, remain available for specific appli-
+cations (see Appendix A.4).
+In the basic sense, within the WSU OT, once a user has selected an observing Band, the spectral
+setup (or rather the SPW positioning) is driven by:
+1. the LO frequency - this defines the allowed locations/grid of all available FSs (Appendix A.1)
+2. the selection of which FS to use - in the 2x bandwidth WSU, 80 FS resources can be selected to
+create observable SPW(s) (Appendix A.3)
+3. the desired spectral resolution(s) of the SPW(s)
+By default, a manual setup/selection of the SPWs, or individual FSs making up SPWs (see Section
+A.3) should be avoided. Rather the WSU-OT shall take an active role in producing the spectral setup
+based on user scientific context information and their science case (see Section 6.5.1). A ‘correlator
+setup editor’ (see Figure 4) could be made available for experienced PIs as well as ALMA-internal staff
+for commissioning or P2G work.
+This TSI also identifies that a Spectral Visualizer is an absolute requirement for a clear visual
+display of all defined SPWs. The visualizer could also be interactive (e.g., drag and drop, or select and
+position SPWs) as a means to adjust/fine tune the WSU-OT derived spectral setup parameters, or to
+manually build a spectral setup from scratch.
+6.5 Requirements
+We have identified the following requirements as necessary (shall) or beneficial (should) for the new
+SpectralSetupnodeintheWSU-OT.Therequirementsarebrokendowninto1)highlevelrequirements,
+2)specificrequirementsrelatedtothecaptureofuserscienceintent, and3)specificrequirementsrelated
+to the visualization and direct editing of the correlator setup.
+6.5.1 High level requirements
+1. The WSU-OT shall allow users to create spectral setups that utilize the fully commissioned
+capabilities of ATAC/TPGS and the available receiver bands for a given cycle.
+(a) The WSU-OT shall continue to provide support for the specification of continuum, spectral
+line, and spectral scan projects.
+(b) The Observatory should additionally design spectral setups for different science cases that
+maximize the capabilities of ATAC and offer them as templates to the users (see Section 7-
+Table 3).
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 27 of 53
+2. The WSU-OT shall translate user science requirements / intents into spectral setups without
+required manual intervention by the user.
+(a) The WSU-OT should attempt to resolve user input to setups that are as standardized as
+possible for optimal pipeline processing and archival value.
+3. To achieve valid spectral setups that meet user science requirements, the WSU-OT shall provide
+both an interface to best capture user science intent, and an interface to visualize and directly
+edit the correlator setup.
+(a) These may be the same interface, but are not required to be. The degree of granularity for
+interface branching is an implementation decision.
+(b) Capturing the science intent may depend on user input across multiple nodes (e.g., Field
+Setup and Science Category).
+(c) Editing could include selection of FSs, and/or SPWs made up of FSs, and the spectral
+resolution of those FS/SPWs.
+4. The WSU-OT shall capture and record user science requirements in the APDM (e.g., in a dic-
+tionary) for downstream subsystem usage (e.g., by Pipeline or Archive), even for aspects that do
+not strictly map into tangible differences in a generated SB.
+(a) PI specified content such as spectral lines of interest should be recorded, despite not directly
+playing a role in the observed spectral setup in the SB.
+5. The WSU-OT shall ensure that spectral setups and calibration setups are well aligned.
+(a) The WSU-OT should use user input from the Spectral Setup node to inform calibration
+decisions where applicable. This may take the form of modifying options within the Cal-
+ibration and Performance node, or feeding into the heuristics for calibration scan setup
+during SB creation.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 28 of 53
+Figure 4: A flowchart of the necessary components, user interaction, and information transfer for the
+spectral setup node of the WSU-OT. The colors of the boxes are chosen to highlight different steps in the
+spectral setup build where one color highlights the continuum, spectral line and spectral scan workflows,
+respectively.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 29 of 53
+6.5.2 Capture of user science intent requirements
+This TSI has identified the following specific requirements for the capture of user science intent.
+The general flow of information envisioned is illustrated in Figure 4, but this should not be considered
+to be an implementation specification.
+6. Users shall be required to select a receiver band (from the available receiver bands for that cycle)
+early in the flow of science intent capture (see Figure 4).
+(a) During the TWO depending on the receiver band, either ATAC/TPGS or the receiver band
+(e.g., Band 6 v1 with a narrow IF) will limit the maximal available bandwidth. These
+restrictions will evolve over time. The intended receiver band for the science goal must thus
+be specified early on in a workflow to display the correct capabilities/options to the user.
+7. The interface to capture the user’s science intent should be adaptive to a selected user science
+category/case.
+(a) Points of science case separation shall include at minimum spectral scan vs. spectral line
+vs. continuum spectral types, which may be captured prior to other user spectral setup
+requirements.
+(b) Withinspectrallineandspectralscancases, extra-galacticandGalacticscience(andspecific
+fieldsofstudytherein)wereadditionallyrecognizedbythisTSItohavesignificantlydifferent
+needs (e.g., linewidths of interest are quite different).
+8. The WSU-OT shall allow the user to select spectral setup templates for different science use
+cases, tailored upon the general scientific contextual information.
+(a) A strong emphasis on template usage shall be made within the new Spectral Setup node
+interface.
+(b) The WSU-OT should (continue to) strongly encourage the users to provide a realistic source
+velocity.
+(c) The Observatory shall define default continuum setups for each band.
+(d) The Observatory shall define scientific templates for spectral line observations of various
+scientific intent for each band.
+(e) These templates shall be delivered to the OT along with the guiding principles behind them,
+such that the templates can be refined as receiver and correlator capabilities continue to
+evolve over time. These templates should be designed to maximize compatibility between
+observations for archival combination.
+(f) The OT shall tailor the templates displayed to users based upon already specified informa-
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 30 of 53
+tion about the user’s science intent.
+9. The WSU-OT shall prompt the user to provide a Representative Frequency for any spectral
+setup.
+(a) A representative frequency shall be defined by default for a given template setup, but shall
+be changeable by the user.
+10. For continuum setups, the WSU-OT shall provide the user at minimum with the ability to set a
+desired frequency resolution.
+(a) The user should additionally be able to specify where the continuum setup is located within
+aband. Thismaytaketheformofmultipletemplateoptions, orafreeformcentralfrequency
+around which a continuum setup is optimized on the fly.
+11. For spectral scan setups, the WSU-OT shall at minimum prompt the user to select a frequency
+range and spectral resolution for the scan.
+(a) The user shall be shown the available bandwidths that can be covered for a given frequency
+resolution, based on data rate limitations for that cycle.
+12. For spectral line setups, the WSU-OT shall at minimum provide the user the ability to specify
+specific spectral lines of interest.
+(a) The WSU-OT shall provide an interface for the selection of spectral lines that contains
+information from a well-maintained and curated spectroscopy database.
+(b) This interface should be performant (i.e., updates in real-time) and streamlined for the user
+when multiple lines need to be selected.
+(c) The OT should adaptively provide suggestions of other lines of interest to a user, based on
+gathered science intent and already specified lines.
+(d) The user shall be prompted to specify linewidths/bandwidths and spectral resolutions as
+well as a prioritization for all selected lines (e.g., grouping into ‘tiers’).
+(e) This interface shall provide a visualization of where the selected lines of interest are located
+within the band and relative to a resolved LO and the associated valid FSs, which may
+update as the user continues to add lines.
+(f) This interface should provide a visualization of the user specified linewidth for each line.
+(g) The WSU-OT shall provide a mechanism for automated selection of spectral lines and their
+properties (central frequencies, line widths, spectral resolution, prioritization, ...), such as
+ingestion of a user supplied file (simple text and/or structured data - e.g., JSON) in a
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 31 of 53
+specified file format, and an API.
+13. Wheneverauserispromptedtospecifyfrequencyresolutions, theWSU-OTshalldisplaytheclos-
+est applicable options based on the capabilities of ATAC/TPGS and the user’s input, including
+allowable zoom and non-zoom resolutions with a clear distinction.
+(a) Corresponding velocity resolutions shall be displayed along with frequency resolution.
+14. The WSU-OT shall attempt to resolve user specified lines of interest into an optimal and valid
+spectral setup.
+(a) When data rate limitations prevent all lines of interest from being covered at the desired
+frequency resolution, the WSU-OT shall favor prioritized lines of interest and the user shall
+be notified, allowing them to modify their specifications.
+(b) If an existing spectral template covers all requested lines, this template shall be suggested
+to the user.
+(c) If the user-requested science intent results in unallocated correlator resources, the WSU-OT
+should optimize the setup by further allocating resources, such as additional continuum
+coverage or borrowing spectral lines from the most similar template. Accepting these sug-
+gestions shall be optional for the user.
+(d) A set of guidelines for the optimal translation of user science intent into spectral setups
+shall be delivered to the OT by the Observatory (see Section 7).
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 32 of 53
+6.5.3 Correlator setup and visualization requirements
+Figure 5: A mockup of an example visualizer once a user has selected a Band (Band 6 in this case,
+where the Band 6v2 receiver will cover roughly 209 to 281GHz), and some lines of interest. Bold font
+with boxed names indicate priority lines, black indicates lines that are useful for science but not
+priority, while Orange indicates WSU-OT suggested lines that could aid science based on the user’s
+priority selection. This is not intended to directly guide design specification, but rather to visually
+convey the general intent of the listed requirements.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 33 of 53
+Figure 6: Mockup of an example visualizer once a user has asked the WSU-OT to “create” the SPWs.
+Here an additional (connected or separate visualizer display) shows the ATAC range and the FS setup
+and the combination of FS to SPWs. This example shows Band 6v2, with a ×2 bandwidth (i.e., 80 FS
+resources). Only three hypothetical spectral resolutions were used in this case, and SPWs conform to
+the allowed sum of FS (e.g., blue has 15, 5, 10, 5, and 5 FSs for five SPWs, making bandwidths of 3, 1,
+2, 1, and 1GHz respectively.) This is not intended to directly guide design specification, but rather to
+visually convey the general intent of specific requirements; frequency ranges are not necessarily 100%
+accurate. If in an ‘editable’ mode, the FS could be clicked, dragged or SPW blocks overlaid to select
+FSs.
+This TSI has identified the following specific requirements for the visualization and direct editing of
+the correlator setup. A mockup of the general concepts of these requirements is shown in Figures 5
+and 6, but this is only for illustration purposes and should not be considered to be an implementation
+specification.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 34 of 53
+16. 15. There shall be an interface for interactively selecting frequency slices to include in a SPW.
+(a) See ATAC/TPGS description section for rules/bounds (Section 6.2, Section 6.3, Appendix
+A, and Appendix B).
+(b) Importantly, it is possible to allocate multiple AFSPs to the same FS (e.g., for a zoom mode
+or overlapping spectral windows).
+(c) This interface should be intuitive to use and allow for on-the-fly modification (e.g., a selec-
+tion is not permanent once made). “When-to-meet” (https://www.when2meet.com/) was
+mentioned as an example of a similar commercial interface.
+(d) TheOTshalltranslatetheselectedfrequencyslicesintodefinedspectralwindowsandrecord
+these in the APDM.
+The interface shall graphically illustrate where each spectral tuning (including LO and sidebands)
+is located within the band frequency coverage.
+(a) There shall be a mechanism to switch between spectral tunings when there are multiple
+tunings for a spectral scan (e.g., possibly a clickable ‘tab’ interface similar to a web browser).
+17. The interface shall graphically illustrate the frequency slice grid and highlight the selected
+FS/AFSPs in frequency space.
+(a) This illustration shall provide an overlay of spectral lines of interest when known.
+(b) This illustration shall provide an overlay of atmospheric transmission as a function of fre-
+quency.
+(c) There shall be a graphical representation of frequency resolution chosen for each selected
+FS (e.g., potentially via color coding).
+18. The interface shall display the number of remaining allocatable AFSPs and the total data rate
+and aggregate bandwidth associated with currently allocated AFSPs.
+19. The interface shall allow for the allocation and editing of zoom mode AFSPs:
+(a) There are various possible designs, including:
+• A given FS (of 200MHz) selected to be used in zoom mode will entirely be converted
+into a zoom window (e.g., a selection 2× spectral resolution will use two AFSPs, or 8×
+spectral resolution will use 8 AFSPs)11
+.
+11In this scenario the minimal zoom window bandwidth will be 200MHz and is foreseen to alleviate a number of
+calibration issues associated with very narrow bandwidths.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 35 of 53
+• The user specifies the resolution, central frequency and bandwidth, that are free pa-
+rameters within ATAC/TPGS constraints. More AFSPs are used for multiple zoom
+windows within one 200MHz FS, each of which can have independently tunable cen-
+ter frequencies (e.g. an 8× spectral resolution using one ASFP will have 8× lower
+bandwidth).
+(b) As with any contiguous AFSPs, contiguous zoom mode AFSPs will resolve to a single
+spectral window (up to the SPW definition constraints imposed for a given cycle, including
+those in ATAC Memo 24).
+(c) The interface shall allow for zoom windows to overlap the same frequency range as any
+standard (non-zoom) FS selected.
+6.5.4 Updates for future milestone
+It is worth noting that edits to requirements and later implementations and specifications will
+be needed when the bandwidth of the system is changed from 2× WSU to 4× WSU, especially in
+considering rules about where FS (or SPWs) can be set up (see Section 6.2.2 and Appendix A). Such
+changes may affect the proposed templates and logic that the WSU-OT is required to have, as well as
+their interactions with available IF ranges on new receiver bands when these are delivered.
+It may be worth considering (beyond this TSI) the workflow requirements for given milestones
+dependent on various scenarios where new hardware is delivered (i.e., receiver bands with respect to
+4× WSU bandwidth).
+7 Deliverables
+Below details the deliverables for the design of the WSU-OT and the SB Builder while also iden-
+tifying the responsible stakeholders. In some cases preferred timescales are noted. The information
+is tabulated with grouping for: external teams, ALMA stakeholders, and ALMA staff with respect to
+deliverables that require additional investigation. If not specifically listed the OT SSS will naturally
+be the contact point.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 36 of 53
+7.1 ALMA Internal and External Stakeholders
+Table 1: Deliverables from teams external to ALMA Science Operations
+Deliverable Stakeholder Comments Timeline
+D.1: Define the transla-
+tion/conversion library for
+the ATAC spectral config-
+uration to the WSU-OT
+spectral setup
+ATAC Team The library is required as to con-
+vert the FS and/or SPW setups that
+the WSU-OT will generate into the
+correct spectral specifications that
+ATAC require to be written in the
+APDM. The library, or rather the
+format rules it contains could also
+steer how the WSU-OT deals with
+FSs/SPWs in the spectral setup node
+and what is presented to users.
+Expected October
+2025
+D.2: Define the transla-
+tion/conversion library for
+the TPGS spectral config-
+uration to the WSU-OT
+spectral setup
+TPGS Team The library is required as to con-
+vert the FS and/or SPW setups that
+the WSU-OT will generate into the
+correct spectral specifications that
+TPGS require to be written in the
+APDM. The TPSG team plans to
+reuseATAC’sconfigurationlibraryas
+much as possible, not only to min-
+imize the development effort of the
+TPGS team, but also to minimize the
+impact on the WSU-OT development
+team by reusing the same (or almost
+the same) library interface as ATAC.
+Timeline to be
+confirmed after
+TPGS-PDR
+(scheduled in
+January 2026).
+Table 2: Deliverables from ALMA stakeholders
+Deliverable Stakeholder Comments Timeline
+D.3: Endorsement of fur-
+ther studies
+ISOpT Based on this TSI, it was realized
+considerable work pertaining to the
+spectral specification details - the
+majorityoftheitemslistedinSection
+7.2 - were not possible to accomplish
+in the timeline (or within the scope)
+of this TSI.
+With 1 month
+of the delivery
+of this TSI
+D.4: Define the rules for al-
+lowedbandcoverageandFS
+positions (based on allowed
+LO1 ranges) for the WSU-
+OT spectral setup
+OT SSS and
+ATAC/TPGS
+Teams
+This work blocks further studies re-
+lated to creating SPWs
+From Q3 2025
+Continued on next page
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 37 of 53
+Table 2: Deliverables from ALMA stakeholders (Continued)
+Deliverable Stakeholder Comments Timeline
+D.5: Update the sensitiv-
+ity calculation equation and
+parameter space
+OT SSS,
+ATAC/TPGS
+Team, v2 Re-
+ceiver/Development
+teams
+Define the parameters for the sensi-
+tivity calculation based on new ef-
+ficiencies, bandwidths and spectral
+resolution options. Will depend on
+new Tsys and Trec values.
+Begin early 2026
+(and continually
+with new receiver
+development)
+D.6: Update the beam size
+calculation
+OT SSS, ATAC
+Scientists (in-
+cluding Pipeline,
+CASA, Schedul-
+ing, DMG,
+ISOpT)
+Recalculate the effective beam-size
+giventhebandwidthandfrequencyof
+the Representative Spectral Window
+- that can be larger than the current
+SPW options
+Begin early 2026
+(and continually
+with new receiver
+development).
+Policy input
+required as this
+relates to QA.
+D.7: Define the list of
+allowed/valid observing
+modes and contingencies
+for WSU operation
+IST,ISOpT,Com-
+missioning
+By definition all modes should be in-
+cluded in the WSU-OT, however, de-
+pending on the progress of commis-
+sioning, at the start of WSU oper-
+ations some of the currently offered
+modes may, or may not have been
+(re)-commissioned. A maintained list
+built from current milestones (similar
+to [RD4], but likely a detailed roll-
+out plan considering commissioning
+progress) needs to be available to the
+WSU-OT and SB Builder.
+InitiateinQ42025
+-activelymaintain
+D.8: Define data rate vol-
+umes and limitations with
+an expected timeline
+ICT, IDT, IST,
+ISOpT (Pipeline
+if processing
+limited)
+The WSU-OT needs to include lim-
+iters into the spectral setup and al-
+lowed combinations based upon tech-
+nical aspects of the signal chain, pro-
+cessingoroperationalreasonsforlim-
+iting spectral and/or observing se-
+tups.
+Discussion to be-
+gin as soon as
+known - need first
+implementation 1
+year before WSU
+milestone 1
+D.9: Detail the specifica-
+tionoftheIVCandIVZoom
+modes in ATAC and the im-
+pact on the WSU-OT
+ATAC Team, OT
+SSS
+In this TSI, the ATAC representative
+provided some details on correlator
+‘modes’ IVC and IVZoom and their
+useandrulesfordifferentALMAsub-
+arrays. Exchange should take place
+between the stakeholders to under-
+stand the requirements for WSU-OT
+and information it provides down-
+stream within the APDM.
+Complete by Q1
+2026
+Continued on next page
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 38 of 53
+Table 2: Deliverables from ALMA stakeholders (Continued)
+Deliverable Stakeholder Comments Timeline
+D.10: Review
+SB/MOUS/GOUS re-
+quirements in SB Builder
+Led by OT-
+SSS (including
+Pipeline)
+For envisaged future GOUS process-
+ing in the WSU-era, the WSU-OT
+should include all required informa-
+tion/parameters into the APDM to
+be used downstream or by the state
+system, and processing software -
+that will be the ALMA Pipeline dur-
+ing the TWO.
+Begin early 2026
+D.11: Refine the require-
+ment details and specifica-
+tions into implementation
+tickets
+Led by OT-
+SSS/WG and
+OT-developers
+As a result of this TSI, the fi-
+nal ‘implementation-like’ detailed re-
+quirements need to be written along
+with specifications. This will allow
+for a better priorities list to be drawn
+up.
+Mid-2026
+D.12: Define any updates
+to the Band-to-Band mode
+observing strategy
+OT-SSS, EOC
+High Frequency
+Experts, ATAC
+scientist
+Band-to-Band is a specific calibra-
+tion technique where the calibrator
+fields/sources have a different spec-
+tralspecificationthatcanalsobetied
+to the user’s scientific spectral setup
+(in the current operations). This
+needs to be reviewed when the WSU-
+OT spectral setup is more defined
+and both the ATAC and the new re-
+ceiver configuration (e.g. LO, IF) are
+confirmed.
+Late 2026 -
+blocked by un-
+derstanding first
+WSU-OT spectral
+setups
+D.13: Investigate the cal-
+ibrator spectral setup and
+calibration best practices in
+preparation for WSU obser-
+vations
+OT-SSS, Cali-
+bration Experts,
+ATAC scientist,
+Pipeline, Telcal
+It is possible that a different spec-
+tral setup, i.e., with channel av-
+eraging, could be used for calibra-
+tor scans, while calibrator sequenc-
+ing and scan times could/may need
+refinement. Investigation is needed
+to confirm how the WSU data will
+be calibrated. Spectral setup changes
+will need to be known by the WSU-
+OT.
+Begin early 2026
+D.14: Detail the require-
+ments of VLBI and Phased-
+array setups
+VLBI experts (in-
+cluding external)
+The specific spectral setup(s) re-
+quired for VLBI and phase array
+modes should be reviewed for WSU
+operations.
+Begin early 2026
+Continued on next page
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 39 of 53
+Table 2: Deliverables from ALMA stakeholders (Continued)
+Deliverable Stakeholder Comments Timeline
+D.15: Detail the require-
+ments for Solar mode
+Solar Experts,
+ATAC scientist
+(for input)
+Solar observations use a limited
+spectral setup but also have ad-
+ditional high-cadence timing which
+could limit the selection of spectral
+options.
+Begin early 2026
+D.16: Implement a
+knowledge exchange sys-
+tem/meeting between
+ALMA scientists and OT
+developers
+ICT EU lead and
+OT SSS
+Within the context of the science
+background it was identified that OT
+developers could benefit from more
+context and/or rules/understanding
+of the OT (function, use cases, nu-
+ances), specifically on the variability
+of spectral setups and receivers used
+by ALMA.
+Begin Q3 2025
+D.17: Produce the APDM
+specification/final version
+ICT The APDM and edit-ability thereof
+is directly required for the WSU-OT.
+Deliver Dec 2025
+D.18: Detail and report
+on the design/separation of
+Phase 1 and Phase 2 into
+‘Proposal’ and ‘Program’
+(users facing WSU-OT and
+SB Builder)
+OT SSS, OT de-
+velopers, P2G
+The intention is that the lat-
+ter, ‘Program’ interface (also web-
+based) would only be accessible
+to ALMA staff, and only provide
+GOUS/MOUS/SB based informa-
+tion
+Beginning dis-
+cussions from Q4
+2025
+7.2 Further Studies
+Table 3: Deliverables pertaining to further technical work/investigation on the Spectral Setup
+Deliverable Stakeholder Comments Timeline
+D.19: Identify scientific use
+cases / scientific context in-
+formation inputs required
+for intelligent spectral setup
+choices
+OT-WG, IST (ad-
+ditional scientists)
+Prior to building automated algo-
+rithms for developing the possible in-
+telligent spectral setups (see below),
+the requirements for the input infor-
+mation a user will provide is required
+From Q3 2025
+D.20: Investigate and De-
+velop a logic (prototype) for
+SPW optimization based on
+user science case / scientific
+context input
+OT-WG (addi-
+tional scientists)
+The WSU-OT should create SPWs
+based on user science cases, however
+this logical intelligence, and require-
+ments of how to begin building it,
+do not exist. An investigation is
+required as to prototype the inter-
+action/translation from user request
+into SPWs.
+Begin late 2025,
+early 2026 - re-
+quires input from
+"Scientific context
+information"
+study
+Continued on next page
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 40 of 53
+Table 3: Deliverables pertaining to further technical work/investigation on the Spectral Setup
+(Continued)
+Deliverable Stakeholder Comments Timeline
+D.21: Development of an
+unbiased suggestive logic on
+‘other’ science lines of in-
+terest based on user science
+case / scientific context in-
+put
+OT-WG (addi-
+tional scientists)
+A user may specify coverage of only
+a few spectral lines, while perhaps
+not knowing other possible serendip-
+itous discoveries could be made with
+other spectral lines within the range
+of their basic spectral setup. It is en-
+visaged that the WSU-OT provides
+options on how to ‘fill’ the remaining
+bandwidth (i.e. FS resources).
+Begin early 2026,
+align with related
+work D.19 and
+D.20.
+D.22: Create a Spectral
+Setup Visualizer Mock-up
+OT-WG (addi-
+tional scientists),
+ATAC/TPGS
+expert input
+Creation of a prototype to begin
+definition of detailed requirements
+with a transition to specifications for
+the WSU-OT visualizer and func-
+tionality. Furthermore, such a tool
+is required to begin building tem-
+plates conforming to those required
+for FS/SPW definition and transla-
+tion to ATAC configuration. Re-
+quires FS/SPW rules knowledge.
+Begin when
+libraries re-
+ceived from
+ATAC/TPGS
+respectively
+D.23: Develop the User
+facing spectral setup tem-
+plates
+OT-WG / Scien-
+tists
+Section 6.5 indicates that spectral
+setup templates are a requirement.
+Archival data can be leveraged for
+common use cases and how to com-
+binewhatwasaccomplishedovervar-
+ious projects into single spectral se-
+tups as to understand and develop a
+base set of requirements. Requires
+FS/SPW rules knowledge for final
+‘coding’.
+Begin Q3-Q4 2025
+D.24: Develop templates
+for the (re) commissioning
+of the WSU
+OT-WG and
+commissioning
+team member(s)
+This will be a specific set of op-
+tions for (re)-commissioning all ex-
+isting ALMA observations. There
+shouldbeenoughtowellexercisevar-
+ious cases at different bands along
+with varied spectral resolution and
+mix modes including zoom selection.
+Requires FS/SPW rules knowledge
+before final ‘coding’. Use of template
+directlyintheSBBuilderoratWSU-
+OT level interface to be decided.
+Begin in 2026
+Continued on next page
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 41 of 53
+Table 3: Deliverables pertaining to further technical work/investigation on the Spectral Setup
+(Continued)
+Deliverable Stakeholder Comments Timeline
+D.25: Investigation of the
+calibration scenario for the
+bandpass in the cases using
+narrow Zoom SPWs down
+to 25MHz
+Calibration ex-
+perts (additionally
+ATAC scientist
+and SSR/Control
+for requested
+input), Pipeline,
+MDR
+Calibration has proven diffi-
+cult/technically impossible for some
+BLC SPW setups with narrow
+bandwidths (<128MHz bandwidth,
+frequency dependent), this could be
+problematic for ATAC ‘zoom’ SPWs
+(<200MHz bandwidth)
+Begin early 2026
+8 Priorities and Timeline
+In this section, we will detail the priorities regarding the requirements for the development of the
+WSU-OT as well as the SB Builder.
+The TWO [RD5] timeline (version as of May 2025) foresees the beginning of commissioning in
+June 2028, when a first version of the SB builder tool will absolutely be required to generate SBs. A
+final version would be needed by mid-2029, that additionally checks for the SB validity and correctness,
+while the PI-facing WSU-OT used to ‘Propose’ for ALMA observation would be needed by the first
+Call for Proposals in February 2030.
+8.1 WSU Timelines
+In chronological order, the Commissioning team will be the first user of the WSU-OT and SB
+Builder tools as to (re)-commission existing observing modes with the new WSU system, signal chain,
+and receivers. Figure 7 indicates the latest ‘tentative’ Gantt chart for the AIVC timeline (May 2025
+version). Specifically for relevance to the WSU-OT and SB Builder, Stage-4 will be the period where
+WSU Array Elements are available for on-sky observations and indicate when the WSU-OT and SB
+Builder with a commissioning functionality will be required (Mid-2028). That said, the AIVC WG
+report [RD7] indicates that preparation and generation of testing SBs should already be established
+before getting to the on-sky stage 12 as preparation and planning is required.
+12Stage 3 onward could already desire the use of WSU-OT made SBs. In reality stages will not start and stop but
+likely have overlap. We need to be prepared to run end-to-end-like SBs as soon as possible.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 42 of 53
+Figure 7: Tentative WSU (commissioning AIVC Gantt chart (May 2025 version). The final dates
+will still depend on several factors including, but not exclusively, the advancement of WSU-related
+development projects and the readiness of software and computing. The hashed cells indicate contingent
+time - associated with stage 5 which relates to on sky E2E-like observations.
+The WSU-TWO-WG [RD5] (see Figure 8) show a more detailed timeline inclusive of ALMA
+Cycle, retrofitted antennas, stages of the ATAC and TPGS, AIV schedule along with the separate
+(re)-Commissioning, and the science operations transition milestones and phases. Moreover, the Go-
+noGo and Gate reviews are indicated (brown vertical boxes), which are markers as to when ALMA will
+decide whether all conditions are met to begin Operations with WSU. At the time of the go-noGO and
+Gate reviews, all required components (software, hardware, system operation) need to be effectively
+ready.
+Figure 8: TWO current timeline indicating the details of the various phases/stages/milestones. Specif-
+ically, the Go-noGo is mid-2029 where ideally all components (software, hardware, system operation)
+are effectively ready, or close to finalized and indicate WSU operation can go ahead on schedule.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 43 of 53
+8.2 Timeline for proposal and program tools
+In Table 4, tentative timelines are listed for the required software components related to the OT
+and this TSI. The Go-noGo decision, as described in Section 8.1, is assumed to be Q2 2029 for the
+purposes of this table.
+Table 4: Timelines for required software
+Software Tentative Timeline Comments
+APDM for WSU Q4 2025 Code generation obsolescence
+needs to be solved and a general
+WSU-APDM needs to be provided
+to OT.
+Prototype spectral visualizer (out-
+side WSU-OT)
+Q3 2025 - Q1 2026 Developed by ISOpT members in
+close collaboration with ICT
+OT back-end logic for ATAC Q2 2026 - Q2 2027 All spectral setup rules need to be
+clearly defined and agreed upon by
+the start date.
+OT back-end logic for TPGS Q1 2027 - Q2 2027 TPGS logic implementation, rules
+should already be in place.
+WSU-OT:Spectralsetupwithtem-
+plates - Frontend
+Q3 2026 - Q4 2027 Templates will be endorsed by
+ISOpT.
+SB builder for commissioning
+(ATAC)
+Q1 2026 - Q3 2027 Needs to be fully tested by Q4
+2027.
+SB builder for commissioning
+(TPGS)
+Q3 2026 - Q1 2028 Needs to be fully tested by Q2
+2028.
+WSU-OT: Full spectral setup (incl.
+spectral visualizer)
+Q1 2027 - Q2 2029 Needs to be fully tested by Q4
+2029.
+SB builder full capability Q2 2028 - Q2 2029 Needs to be fully tested by Q4
+2029.
+SB editor full capability Q2 2028 - Q2 2029 Needs to be fully tested by Q4
+2029.
+WSU-OT: other requirements Q1 2029 - Q1 2030 Theseincludethe"wants"fromthe
+use case section.
+SnooPI: Implementation of SB info Q1 2030 - Q3 2030 If display of SB parameters in
+SnooPI is agreed upon.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 44 of 53
+8.3 Key Priorities
+At this stage, the timeline (Table 4) states chronologically what must occur for the WSU-OT and
+SB Builder to be functional, but it is not grouped into the requirements for each software package. In
+Section 7, it is noted that the high level requirements from this TSI need to be refined into detailed
+requirements and specifications by the OT working group and developers (D.11), and that will form a
+clear list of priorities. The success and functionality of the WSU as a whole is fundamentally tied to
+the WSU-OT and the SB Builder.
+The top 5 priorities (unordered) for the Use Cases (Section 4.2) and the Spectral Setup (Section
+6.5)13, respectively, are listed in short-format below. These lists are not an indication that other
+requirements are not needed, but rather to highlight those most urgent to implement. Independent of
+these priorities, the work on all deliverables (see Section 7) - which include detailed investigations -
+shall be completed, even if a given deliverable is not directly connected to one of these top priorities.
+Use Cases
+• 3 - An investigator needs an interface to configure and visualize the complex spectral setup.
+• 17 - OT needs to estimate the time for each SG.
+• 19 - The observatory needs SBs to be prepared for all submitted projects for project assessment
+and selection.
+• 23 - The P2G needs to manually manipulate several fields in one or more SBs.
+• 33 - The commissioning team needs to make standard and non standard SBs to test different
+setups.
+Spectral Setup:
+• 1(a, c) WSU-OT spectral setup design provides functionality to meet the current range of science
+cases and must support continuum, spectral line and spectral scan projects.
+• 3 (overall) To achieve valid spectral setups the WSU-OT shall provide an interface to capture
+science intent, and an interface to visualize and edit the correlator setup.
+• 10 (overall) The continuum mode allows the desired frequency resolution to be set and where the
+spectral setup is located within a band.
+• 11 (overall) The WSU-OT prompts for (and reads) a frequency range for the spectral scan setup.
+• 12(a, d, e, g) WSU-OT provides an interface to select spectral lines. The user is required to
+13The requirements are layered, in that some after Section 6.5.1 can be more descriptive parts of the higher level
+requirements.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 45 of 53
+specify the parameters for the lines of interest. The interface should provide a visualization of
+the selected lines of interest.
+9 Next Steps
+Considerable work is still remaining, some of which, as indicated in Sections 7 and 8, needs to
+start as soon as possible. Based on this TSI, and Deliverable D.3, it is imperative that ISOpT endorse
+the (other) deliverables such that work on the next steps can begin.
+For deliverables (e.g., D.4 through D.18 - Table 2) the standard process will be that the ALMA
+OT-WG takes the lead from here and continues as "normal" via SCIREQ tickets where other stake-
+holders provide input. This is identified as a high risk process given a situation of under-staffing/staff-
+overload and may lead to protracted timescales with only spurts of back and forth discussion. Thus,
+efforts need to be made to have better communications and regular input from all stakeholders.
+There are also a number of deliverables where the required efforts and functional work are more
+extensive than envisaged possible by the current OT-WG alone. These include D.19 through D.25
+(Table 3) and will benefit from expert/stakeholder work efforts. In these cases we suggest that the
+ALMA OT-WG leads a small group where the relevant stakeholders (e.g., P2G, ATAC, TPGS, PLWG)
+temporarily assign one person (or partial efforts thereof) towards the deliverable task so that there is
+better coordination and functional person power. There should be draft plans for the workload/efforts
+and a timeline as to allow resource planning. Another alternative is that a further TSI(s) is required
+for a very specific study and/or deliverable. It is already thought that aggressive TSI timelines would
+not be suited to the detailed level that some of the investigations/deliverables may require, although the
+OT-SSS in coordination with, and with support of, ISOpT should be able to define which approach to
+take.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 46 of 53
+In these Appendices, we describe ATAC and TPGS in further detail.
+A ATAC
+A.1 Processing Flow
+Under the hood, ATAC will operate in three stages to process the 40 GS/s per sideband per
+polarization that it receives from each antenna.
+1. Thefirststageiscoarsechannelization: ATACwillcreate201FrequencySlices(FS),eachofwhich
+is 200MHz wide, to cover the IF=0 to 20GHz range for each (2SB) sideband and polarization,
+regardless of the IF bandwidth being used. The frequency grid on which the FS are based is set
+by the chosen LO1 frequency. An example of the 201 FS grid overlaid on the Band 2 IF coverage
+can be seen in the upper panel of Figure 9.
+• While ATAC will ingest and channelize the full (4x) bandwidth from the upstream sig-
+nal chain, the bandwidth which is usable for science depends on the WSU milestone (i.e.,
+whether we are capable of processing 2x bandwidth [up to 80 FS] or 4x bandwidth [up to
+160 FS]) and the input receiver IF bandwidth.
+• Once the usable bandwidth is determined, and from the usable bandwidth FS that have
+been selected based on the input from the PI in the OT14, the selected FS are passed along
+to the next stage. Usable FS are discussed further in Section A.2.
+2. The second stage is frequency slice processing: each selected FS is passed to an ALMA Frequency
+Slice Processor (AFSP). Each AFSP can process a single FS from all 66 ALMA antennas. In
+this stage, the delay and phase tracking, LO offset removal, fine channelization, corner turn, and
+correlation are performed, and full polarization visibilities are created.
+3. The third stage is SPW creation: after the application of quantization corrections and normaliza-
+tion by the autocorrelations, adjacent FS with the same specified spectral resolution are stitched
+together in the Correlator Data Processor (CDP) to cover the contiguous bandwidth of each
+SPW requested by the user. Up to 80 SPWs can be created in the initial 2x bandwidth deploy-
+ment (in the limit of one SPW per selected FS). For each SPW, the CDP does the channel and
+time averaging to achieve the required spectral resolution and integration time, applies all online
+corrections, and generates the BDFs to transmit to TelCal and Archive.
+14From a WSU-OT user perspective SPWs can be identified but would be passed to ATAC as FSs selected.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 47 of 53
+Figure 9: First panel: 201 FS are created in ATAC Stage 1, with each FS being 200MHz wide in
+a fixed grid centered on the chosen LO1 frequency. Here, an example of this grid is overlaid on the
+Band 2 IF (2-18GHz), and the LO1 has been set to 86.0 GHz. As discussed further in Section A.2,
+the dark gray shaded FS indicate the 160 usable FS in the upper and lower sidebands, indicating a total
+of 32GHz/polarization. The magenta trace indicates the atmospheric transmission for Band 2 (c.f.,
+Figure 1). Second panel: The same Band 2 IF range is displayed with representative approximations
+of the anti-aliasing baseband filter (blue trace) and IF = 2 to 18GHz receiver range (orange boxed
+frequency ranges and trace). These traces define the usable frequency range for science observations in
+Band 2, which ATAC can cover in its entirety with 160 FS in 4× bandwidth WSU.
+A.2 Usable FS in the WSU signal chain
+Though the Wideband IF Processor (WIFP) can digitize – and ATAC can process – each sideband
+withIF=0to20GHz, asshowninFigure9, theactualbandwidththatisusableforscienceisreducedby
+an anti-aliasing baseband filter and the selected receiver IF bandwidth. The baseband filter is required
+by Sys-Req-271 [AD1] to and IF range from 2GHz to IFmax GHz, where IFmax will be 19.5-20GHz.
+The individual receiver output IF bandwidths vary from 4 to 8GHz (current Bands 3, 4, 5, 7, and 8),
+4.5 to 10GHz (current Band 6v1), and 4 to 12GHz (current Bands 1, 9, and 10). The WIFP baseband
+filter has yet to be finalized, but a representative approximation of the system technical requirement
+and some example receiver bandwidths are shown in Figure 9 (bottom, Band 2) and Figure 3 (Bands
+6v1 and 6v2). These plots are meant to show conceptually how the different filters and performance
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 48 of 53
+interact to constrain the usable bandwidth, though the true shapes of the filters are more complicated.
+The combined effect of the filters produces the restriction on which FS can be selected for processing
+(by the AFSPs).
+Regardless of the number of usable FS in a given observation, the number of FS that can be
+processed in the initial 2x bandwidth deployment is up to 80. After the expansion of ATAC and the
+WSU signal chain to 4x bandwidth (per Milestone 5), up to 160 FS can be processed for a given
+observation.
+A.3 Spectral window setups
+To create SPWs, ATAC can stitch together any selected FS that are contiguous in frequency and
+share a selected spectral resolution, up to 16 GHz in bandwidth, with any integer channel averaging
+factor (CAF) required by the user. In practice, a variety of setups can be produced to accommodate
+PI-requested SPW bandwidths and frequency resolutions, but not every combination of bandwidth
+and CAF is equally desirable. In ATAC Memo #24 [RD3], a suggested, finite list of SPW bandwidth
+and CAF options is presented. The ranges of options in SPW bandwidths and CAFs are necessary to
+cover the large range in science velocity resolutions required over the large frequency range of ALMA
+(35 to 950 GHz); these combinations minimize the data rate required to cover a given set of spectral
+lines at a particular velocity resolution and frequency bandwidth.
+Limiting the options for SPW bandwidth and CAF options to a finite list is seen to be beneficial
+to the ALMA WSU since it limits complexity in the system that does not immediately result in science
+value. Further, it limits the scope of commissioning, promotes a degree of self-similarity to WSU
+datasets in the Archive, and ensures a consistent bandwidth as a function of spectral resolution (to
+the extent that this is possible).
+Currently, the ATAC team has proposed 18 options for nominal SPW bandwidths, as follows:
+• Narrow SPWs: 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0 GHz per polarization (as currently
+offered with the BLC)
+• Wide SPWs: 3, 4, 6, 8, 10, 12, 14, 16 GHz per polarization (not currently offered with the BLC)
+The actual, exact bandwidths per polarization differ slightly from the nominal values since the
+width of a FS is precisely 200.88 MHz (not 200 MHz), as detailed in Memo #24, but this additional
+complexity is likely not necessary to show to users.
+There are accordingly 23 proposed options for CAFs, as follows (relative to the native 13.5 kHz
+channel width):
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 49 of 53
+• High resolution CAFs: 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 16, 20, 24, 30, 40, 48, 60, 80, 120, 240
+• Low resolution CAFs: “6 MHz" (∼ 400), “12 MHz" (∼ 800), “20 MHz" (∼ 1600)
+Bandwidth smearing concerns should prevent users from selecting the “12 MHz" option in Band 1
+(configurations 9-10) and the “20 MHz" option in Band 1 (configurations 8-10), Band 2 (configurations
+9-10), and Band 3 (configuration 10). Detailed tables showing the channel widths in km/s in each
+Band for all high resolution CAFs and low resolution CAFs will appear in Memo #24 [RD3] and are
+reproduced here in Figures 10 and 11. Not all CAFs can be used for all 18 SPW bandwidths due to
+the maximum channel limit (80k) in a single SPW; Table 7 in Memo #24 provides a further visual
+representation of the low CAFs which are excluded for SPW bandwidths larger than 1 GHz as a result
+of this limitation.
+Figure 10: High resolution options for CAFs (from ATAC Memo #24). Each row corresponds to a
+single CAF with the entries in the table indicating the channel width in km/s at the nominal frequency
+of each ALMA Band. Highlighted values have additional meanings: yellow cells are integer multiples
+of 8 and can be used with high time cadence observations (< 1.024 seconds), as described in Section
+A.4, and blue/pink/green cells show the closest match in each Band to 0.1/1.0/10.0 km/s channels.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 50 of 53
+Figure 11: Low resolution options for CAFs (from ATAC Memo #24). Each row corresponds to a
+single CAF with the entries in the table indicating the channel width in km/s at the nominal frequency
+of each ALMA Band. Highlighted values should be disallowed in the longest baseline configurations due
+to bandwidth smearing at those CAFs and observing frequencies, as described in the text.
+Finally, the specific SPW properties proposed for system calibration observations, which will also
+need to be supported specifically by the OT, are described in ATAC Memo #24 (Table 5 in that Memo
+lists the properties as a function of observing intent).
+A.4 Frequency resolution, time resolution, and observing modes
+In standard observations, ATAC will provide high frequency resolution across the full 16 GHz
+(2x) bandwidth, and eventually 32 GHz (4x) bandwidth, with a finest channel width of 13.5 kHz and
+time resolution of 1 second. Both higher time cadence observations, and higher spectral resolution
+observations (i.e., “zoom" mode), will also be possible at a cost of correlator resources along another
+axis. For example, high time cadence (16 ms) observations can be performed with a limitation in
+spectral resolution, and zoom mode observations can be performed with a reduction in aggregate
+bandwidth. The 11 proposed ATAC CAF options which are compatible with high time resolution
+observations are highlighted in Figure 10. The relationship between the finest possible time and
+spectral resolutions provided by ATAC is shown in Table 5.
+Table 5: Finest time and spectral resolutions provided by ATAC
+Correlation Mode Minimum
+channel
+bandwidth
+Minimum integration time
+at corresponding channel
+bandwidth
+Aggregate science band-
+width per polarization
+(GHz)
+2x BW / 4x BW
+Finest channel width,
+at full bandwidth
+13.5 kHz 1024 ms 16 / 32
+Highest time cadence,
+at full bandwidth
+1.08 MHz 16 ms 16 / 32
+Continued on next page
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 51 of 53
+Table 5: Finest time and spectral resolutions provided by ATAC (Continued)
+Correlation Mode Minimum
+channel
+bandwidth
+Minimum integration time
+at corresponding channel
+bandwidth
+Aggregate science band-
+width per polarization
+(GHz)
+2x BW / 4x BW
+Zoom = 8 (finest chan-
+nel width)
+1.6875 kHz 1024 ms 2 / 4
+The vast majority of ALMA observations will require ATAC to perform standard interferometry,
+in which it will produce Imaging Correlation (IC) visibilities. In addition to IC visibilities, ATAC can
+optionally produce other types of visibilities on a per-AFSP basis: zoom windows (ICZoom mode)
+or VLBI beams (ICV mode). A single AFSP can handle a single FS on up to 66 antennas, but that
+AFSP can run in only one mode at a time; this means that concurrent correlator subarrays using
+the same AFSP cannot run both ICZoom and ICV mode observations at the same time. See ATAC
+Memo #23 [RD2] for examples of how to run concurrent correlator subarrays (and their corresponding
+antenna arrays) in the two ATAC modes. It is important to note that the bandwidth available to a
+200 MHz FS is reduced by its zoom factor when running in ICZoom; for instance, with zoom = 8,
+the finest channel width is 13.5/8 = 1.6875 kHz and aggregate FS bandwidth is 200/8 = 25 MHz.
+Standard interferometric IC visibilities can be produced (identically, in the context of downstream
+data processing) in either mode of ATAC operation (ICZoom or ICV).
+B TPGS
+B.1 TPGS signal chain
+Although TPGS is still in the preliminary design phase and some design details in this section are
+subject to change (the PDR is planned for January 2026), as ATAC, the TPGS signal chain is designed
+with a hierarchical two-stage channelization structure (FFX-type architecture) to efficiently process
+wideband input signals with high spectral resolution. The structure comprises coarse channelization
+followed by fine channelization, with each stage optimized for flexibility, performance, and spectral
+fidelity. Since TPGS is built on commercial off-the-shelf (COTS) computer components, including
+high-performance GPUs, the signal chain design offers a degree of flexibility. The full signal chain for
+one polarization of a sideband is processed within a single GPU server, although the final overall server
+configuration is still under discussion. Figure 12 provides an overview of the TPGS signal chain, which
+is described in more detail below.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 52 of 53
+Figure 12: Total Power GPU Spectrometer (TPGS) Signal Chain: Two-Stage Channelization Pipeline
+Featuring Oversampled Coarse and Fine Polyphase Filter Banks with Resampling, Filtering, and Spec-
+tral Multiplication
+Coarse Channelization In the current design phase of TPGS, the most significant difference from
+ATAC is the number of frequency slices. The input stream, sampled at 40 GS/s per sideband per
+polarization, is first divided into 800 coarse frequency slices using an oversampled polyphase filter
+bank (OSPFB) with an oversampling ratio of 800/375. This results in 2.133x larger bandwidth than
+the desired usable bandwidth of each frequency slice which will be tailored later by the half-band
+filtering. The number of coarse channels of TPGS is different from that of ATAC since the TPGS
+signal chain is designed to be utilized with cuFFTDx for better performance, where cuFFTDx has the
+limitation of the number of FFT-points.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+Wideband Sensitivity Upgrade:
+TSI Report: Obsprep
+Doc.: ALMA-05.15.00.00-3072-A-REP
+Date: September 23, 2025
+Page: 53 of 53
+This filter stage provides a flat passband of approximately 50.22 MHz per frequency slice, with
+a guard region for transition bands to minimize aliasing. The OSPFB also preserves complex-valued
+output, enabling subsequent frequency-domain operations without violating the Nyquist constraint.
+Following OSPFB, a rational resampler adjusts the output rate to match the fine channelizer’s
+required sampling rate to introduce the 13.5kHz frequency resolution of fine channels. This stage
+applies a low-pass filter and decimates the signal at 110.592 MHz, carefully aligning the frequency
+resolution target.
+To further suppress spectral image artifacts, a half-band filter (HBF) is applied, halving the sam-
+pling rate while maintaining passband quality and reducing overall computational complexity through
+symmetric coefficient reuse.
+Zoom mode is implemented by applying low-pass filtering followed by 2×, 4×, or 8× decimation.
+To reduce computational load, the zoom filtering is performed before the halfband filtering. This
+ordering allows the zoom filter to have a wider transition band, resulting in fewer taps. The decimated
+signal is then processed by the same fine channelizer, yielding the same number of channels but with
+reduced bandwidth and improved spectral resolution.
+Fine Channelization: Each resampled and filtered FS is then processed by a critically sampled
+polyphase filter bank (PFB) fine channelizer with 4096 branches, yielding a spectral resolution of 13.5
+kHz. Among these, 3720 channels per frequency slice are usable, corresponding to the flat portion
+of the 50.22MHz passband that meets the required spectral shape and attenuation performance. In
+zoom mode, the effective bandwidth and spectral resolution are further reduced according to the zoom
+factor.
+Spectral windows creation: After fine channelization, the selected frequency slices are stitched
+together to create spectral windows as defined by the user, ensuring 13.5 kHz-continuous alignment
+across frequency slices. The frequency slices for TPGS differ from those of ATAC - for example, the
+bandwidth is four times smaller — so TPGS will mimic ATAC-like FSs by stitching together multiple
+frequency slices. Frequency shifting modules are used for stitching, LO offsetting, and zoom-band
+alignment.
+Input signals from the digitizer are quantized at 6 bits, and the system maintains a high digital
+efficiency of 0.995 or better. For its output products, TPGS uses 32-bit floating-point representation
+for both auto-correlation data and the real and imaginary components of cross-correlation. The system
+is able to transmit these outputs to the archive at a maximum data rate of 0.595 GB/sec, although
+the actual rate depends on the chosen spectral configuration and integration duration.
+Printed versions of this document are For Reference Only. The latest released electronic version is located
+in the ALMA Electronic Document Management (EDM) system accessible at: http://aedm.alma.cl
+
