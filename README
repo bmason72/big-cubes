@@ -3,6 +3,18 @@
 
   - rewrite (with claude code + codex) to be script-oriented, cleanly reconfigurable in assumptions, and testable
 
+To Do:
+-basic run test
+-make cy11 outputs in a sane place
+-make tables and plots have what i want - sdd summary format, m1/4/5
+-start draft memo
+-clean numbers for impact of
+ -more targeted SPW setups
+ -impact of 3sec integ time
+ -1km/s cap for calibrator visibilities
+ -3 pix/bm
+ -'smart mitigation'
+
   Main pipeline
 
   - config.py
