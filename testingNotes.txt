@@ -1,0 +1,49 @@
+==========
+
+ Quick state check:                                                                                           
+  - build/validation/ already has stats.json, tables, plots, realizations from a prior run.             
+  - The full DB ecsv is present.                                                                               
+                                                            
+  Here's the lay of the land for your hands-on smoke test, in the order you outlined:                          
+                                                                                                               
+  1. Smoke check (drive it yourself)                                                                           
+                                                                                                               
+  cd /Users/briantest/Code/alma/big-cubes                                                                      
+  make help                  # full target list                                                                
+  make test-fast             # ~1 sec — formulas, sample DB, parser
+  make test                  # ~6 min — full regression including memo-table reproduction                      
+  make clean-validation && make validation   # regenerates build/validation/                                   
+  make list-artifacts        # see what landed                                                                 
+                                                                                                               
+  What to look at after make validation:                                                                       
+  - build/validation/stats.json — single-file dump of every computed median / TWA / max / total
+  - build/validation/tables/*.tex — generated LaTeX; diff against                                              
+  WSU_Estimated_Data_Properties_Update/tables/*.tex and wsu-sdd-excerpts/tables/*.tex to find drift
+  - build/validation/plots/* — visual sanity check of CCDFs vs SDD figures                                     
+  - build/validation/realizations/*.ecsv — the Band 1/2 realization files (default N_REAL=10 matches the memo)
+                                                                                                               
+  For test failures, make test-keep preserves intermediate artifacts under build/test_artifacts/ for forensic  
+  inspection.                                                                                                  
+                                                                                                               
+  2. Reference-value review                                                                                    
+                                                            
+  The validation targets are in reference_values.py — every memo + SDD cell with value, unit, source,          
+  tolerance. The full-DB tier of test_pipeline.py should already be checking the pipeline against every entry.
+  After make test, any failure in that tier is exactly the discrepancy you're hunting for. Worth opening       
+  reference_values.py first to see what's been transcribed and at what tolerance.
+
+  For cross-document hunting (memo vs SDD), PLAN.md Phase 4 lists the known-suspect cells (DR median, vis rate 
+  median, sysperf TWA/max). If consistency_report.py exists, run it; if not (Phase 4 may be unfinished), ping
+  me and we'll check.                                                                                          
+                                                            
+  3. Scenario run
+
+  For the scenario step you mentioned: REFACTOR_PLAN.md describes a recompute.py layer driven by dataclass     
+  scenario configs. The MEMO_CONFIG should reproduce the ecsv's existing derived columns within tolerance —
+  that's the natural calibration check before you start tweaking. When you're ready, point me at the scenario  
+  knobs you want to vary and the expected scaling, and I'll help you set it up and interpret the output.
+
+  I'll stay out of your way until you've poked at it. When you hit something surprising or want a second pair  
+  of eyes on a discrepancy, just paste the output or the line from stats.json and I'll dig in.
+
+===================

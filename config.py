@@ -10,7 +10,7 @@ traced back to the code path they came from.
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Tuple
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import astropy.units as u
 
@@ -304,6 +304,193 @@ REALIZATIONS = RealizationParams()
 
 
 # ---------------------------------------------------------------------------
+# 12m configuration classifier (Cy13 Technical Handbook, Table 7.3)
+# ---------------------------------------------------------------------------
+# Given a 12m MOUS's L80 baseline length, classify into a configuration
+# label (C43-1 through C43-10).  Classification is by log-nearest neighbor
+# so one MOUS always maps to exactly one configuration.  7m MOUSes bypass
+# this classifier entirely and use the single "7-m" label.
+@dataclass(frozen=True)
+class ConfigClassifier:
+    """L80 (m) -> configuration label.  7m MOUSes get '7-m' directly."""
+
+    def classify(self, array: str, L80_m: float) -> str:
+        import math
+        if array == "7m":
+            return "7-m"
+        # Local import to avoid circular dep when config.py is imported
+        # before the data package is fully resolved.
+        from data.cycle13_configurations import CONFIG_LABELS_12M, L80_VALUES_12M
+        if not math.isfinite(L80_m) or L80_m <= 0:
+            # Safe fallback: treat as shortest 12m config.
+            return CONFIG_LABELS_12M[0]
+        log_l80 = math.log(L80_m)
+        best_idx = min(
+            range(len(L80_VALUES_12M)),
+            key=lambda i: abs(math.log(L80_VALUES_12M[i]) - log_l80),
+        )
+        return CONFIG_LABELS_12M[best_idx]
+
+
+# ---------------------------------------------------------------------------
+# Tint lookup (Stage 2)
+# ---------------------------------------------------------------------------
+# Integration time lookup, keyed by (array, config_id, milestone).
+# When ``use_db_stored`` is True (the MEMO default), the recompute path
+# reads tint directly from the per-MOUS DB columns (blc_tint, wsu_tint,
+# wsu_tint_initial) -- BLC historical tint values are heterogeneous per
+# MOUS and cannot be captured by a simple table.  Scenarios that want
+# to impose a tint rule set ``use_db_stored=False``; the fallback rule
+# is given by ``default_tint_s`` below.
+#
+# ``elevation_factor`` scales whichever tint is used (default 1.0 =
+# zenith); useful for modeling lower-elevation targets.
+
+def default_tint_s(array: str, config_id: str, milestone: str) -> float:
+    """Default rule per user directive: 12m in C-8 or longer
+    configurations uses the short (~3s) integration time.  Shorter
+    baseline 12m configs use the ~6s tint.  7m is fixed per milestone.
+    """
+    if array == "7m":
+        return 10.1 if milestone == "BLC" else 9.984
+    # 12m
+    long = {"C43-8", "C43-9", "C43-10"}
+    if config_id in long:
+        return {"BLC": 3.024, "M1": 3.072, "M4": 3.072, "M5": 3.072}[milestone]
+    return {"BLC": 6.05, "M1": 6.144, "M4": 3.072, "M5": 3.072}[milestone]
+
+
+@dataclass(frozen=True)
+class TintLookup:
+    use_db_stored: bool = True
+    elevation_factor: float = 1.0
+    # Optional per-(array, config, milestone) overrides; falls back to
+    # default_tint_s when absent.
+    overrides: Dict[Tuple[str, str, str], float] = field(default_factory=dict)
+
+    def tint_s(self, array: str, config_id: str, milestone: str,
+               db_tint_s: Optional[float] = None) -> float:
+        if self.use_db_stored and db_tint_s is not None:
+            return self.elevation_factor * db_tint_s
+        key = (array, config_id, milestone)
+        base = self.overrides.get(key)
+        if base is None:
+            base = default_tint_s(array, config_id, milestone)
+        return self.elevation_factor * base
+
+
+# ---------------------------------------------------------------------------
+# Antenna selection (Stage 2)
+# ---------------------------------------------------------------------------
+# Per-(array, milestone), which ArrayParams flavor to use for Nant.
+# Valid flavors: 'typical', 'array', 'all', 'initial'.  Memo uses
+# 'typical' everywhere; scenarios can push 'array' (peak) or 'all'
+# (12m+7m+TP) for bounding estimates.
+_DEFAULT_ANT_FLAVORS: Dict[Tuple[str, str], str] = {
+    (a, m): "typical" for a in ("12m", "7m") for m in ("BLC", "M1", "M4", "M5")
+}
+
+
+@dataclass(frozen=True)
+class AntennaSelection:
+    flavors: Dict[Tuple[str, str], str] = field(
+        default_factory=lambda: dict(_DEFAULT_ANT_FLAVORS))
+
+    def nant(self, base_cfg: "PipelineConfig", array: str,
+             milestone: str) -> int:
+        flavor = self.flavors.get((array, milestone), "typical")
+        return getattr(base_cfg.arrays[array], f"nant_{flavor}")
+
+
+# ---------------------------------------------------------------------------
+# Calibrator spectral-resolution correction (Stage 3)
+# ---------------------------------------------------------------------------
+# Calibrators don't need the same spectral resolution as the science target.
+# When enabled, the recompute path records cal visibilities at a coarser
+# channel width (``v_cap_kms``) than the target, shrinking cal volume by
+# R_s = v_cap / velres_target.  Product / cube sizes are unaffected because
+# imaging is target-only.
+#
+# The DB verifies the identity ``datavol_target_tot + datavol_cal ==
+# datavol_total`` exactly (round-off at 1e-16), and ``_cal`` is computed as
+# ``datarate * cal_time`` at target resolution in the memo build -- so we
+# apply the 1/R_s reduction only to the cal contribution and rebuild total
+# via target + cal/R_s.  The rate columns (datarate, visrate) become
+# time-weighted averages via ``M = 1 - f_c + f_c/R_s``.
+#
+# ``v_cap_kms`` accepts either a scalar (applied uniformly) or a callable
+# ``(array, config_id, milestone, velres_target_kms) -> Optional[float]``.
+# Returning None disables the correction for that row.
+
+@dataclass(frozen=True)
+class CalibratorCorrection:
+    enabled: bool = False
+    v_cap_kms: Union[float, Callable[..., Optional[float]]] = 1.0
+
+    def cap_kms(self, array: str, config_id: str, milestone: str,
+                velres_target_kms: float) -> Optional[float]:
+        if not self.enabled:
+            return None
+        if callable(self.v_cap_kms):
+            return self.v_cap_kms(array, config_id, milestone,
+                                  velres_target_kms)
+        return float(self.v_cap_kms)
+
+
+@dataclass(frozen=True)
+class NchanProjection:
+    """Optional override for the stored per-MOUS WSU nchan projection.
+
+    ``stored`` preserves the database exactly and underpins MEMO_CONFIG.
+    ``distributed_binned`` recomputes ``wsu_nchan_agg_*`` from a MOUS/SPW
+    sidecar that preserves the current within-MOUS SPW resolution mix while
+    still mapping each SPW through the stepped2 binning.
+    """
+
+    mode: str = "stored"  # or "distributed_binned"
+    sidecar_path: Optional[str] = None
+    mous_id_column: str = "mous"
+
+
+# ---------------------------------------------------------------------------
+# Scenario knobs (Stage 1: productsize only; other knobs added per REFACTOR_PLAN.md)
+# ---------------------------------------------------------------------------
+# MitigationCaps encodes the imaging-side knobs (pixels per beam, cube /
+# nchan caps) plus a mode flag controlling whether to honor the DB's
+# existing mitigation logic or impose scenario caps.  Stage 1 only wires
+# up mode="existing" + pixels_per_beam.  Per-SPW / per-MOUS nchan caps
+# and cube-size cap are plumbed as Optional fields for Stage 2+ and are
+# ignored by the current recompute code.
+@dataclass(frozen=True)
+class MitigationCaps:
+    mode: str = "existing"                       # or "caps" (Stage 2+)
+    pixels_per_beam: int = 5                     # DB baseline is 5
+    nchan_per_spw_cap: Optional[int] = None      # Stage 2+
+    nchan_mous_cap: Optional[int] = None         # Stage 2+
+    preserve_fraction: float = 0.25              # Stage 2+ (top 25% SPWs kept at requested res)
+    cubesize_cap_GB: Optional[float] = None      # Stage 2+
+
+
+# ScenarioConfig is the object consumed by the recompute path.  It
+# composes the existing PipelineConfig (unchanged) with the new
+# scenario-level knobs.  Keeping them separate preserves the validation
+# story: the memo scenario just points at DEFAULT_CONFIG + memo
+# mitigation caps, and the recompute layer is the only thing that reads
+# the scenario fields.
+@dataclass(frozen=True)
+class ScenarioConfig:
+    name: str
+    base: "PipelineConfig"
+    mitigation: MitigationCaps = field(default_factory=MitigationCaps)
+    classifier: ConfigClassifier = field(default_factory=ConfigClassifier)
+    tint: TintLookup = field(default_factory=TintLookup)
+    antennas: AntennaSelection = field(default_factory=AntennaSelection)
+    cal_correction: CalibratorCorrection = field(
+        default_factory=CalibratorCorrection)
+    nchan_projection: NchanProjection = field(default_factory=NchanProjection)
+
+
+# ---------------------------------------------------------------------------
 # Full bundled config
 # ---------------------------------------------------------------------------
 @dataclass(frozen=True)
@@ -331,3 +518,17 @@ class PipelineConfig:
 
 
 DEFAULT_CONFIG = PipelineConfig()
+
+
+# ---------------------------------------------------------------------------
+# Canonical scenarios
+# ---------------------------------------------------------------------------
+# MEMO_CONFIG anchors the validation story: recomputing with it must
+# reproduce the per-MOUS ecsv columns.  Other scenarios live in
+# scenarios.py (added in later stages) and share this base.
+
+MEMO_CONFIG = ScenarioConfig(
+    name="memo",
+    base=DEFAULT_CONFIG,
+    mitigation=MitigationCaps(mode="existing", pixels_per_beam=5),
+)

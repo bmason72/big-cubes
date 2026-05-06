@@ -703,6 +703,7 @@ def verify_tables(generated_dir: str | os.PathLike,
                    reference_dir: str | os.PathLike,
                    pairs: Iterable[Tuple[str, float]],
                    abs_floor: float = 0.001,
+                   skip_columns: Optional[Dict[str, Iterable[int]]] = None,
                    ) -> List[CellMismatch]:
     """Compare generated vs reference .tex files cell by cell.
 
@@ -712,19 +713,27 @@ def verify_tables(generated_dir: str | os.PathLike,
     equal regardless of the relative difference (protects against the
     25% relative error that appears between ``0.004`` and ``0.005``
     simply because the memo rounds tiny values to 3 decimals).
+
+    ``skip_columns`` maps filename to cell indices to skip (both in the
+    generated and reference file).  Used to ignore archival columns in
+    the committed memo tables that reflect superseded aggregation rules.
     """
     gen = Path(generated_dir)
     ref = Path(reference_dir)
     mismatches: List[CellMismatch] = []
+    skip_map = {k: set(v) for k, v in (skip_columns or {}).items()}
 
     for filename, tol in pairs:
         gen_cells = parse_numeric_cells(gen / filename)
         ref_cells = parse_numeric_cells(ref / filename)
+        skip_cols = skip_map.get(filename, set())
 
         for r_idx in range(max(len(gen_cells), len(ref_cells))):
             g_row = gen_cells[r_idx] if r_idx < len(gen_cells) else []
             r_row = ref_cells[r_idx] if r_idx < len(ref_cells) else []
             for c_idx in range(max(len(g_row), len(r_row))):
+                if c_idx in skip_cols:
+                    continue
                 g_val = g_row[c_idx] if c_idx < len(g_row) else None
                 r_val = r_row[c_idx] if c_idx < len(r_row) else None
                 if r_val is None:

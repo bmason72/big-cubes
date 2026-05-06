@@ -241,6 +241,59 @@ class TestFullPipeline:
         ok, msg = self._matches(bucket[quantity], ref, stat, array)
         assert ok, f"[{source}] {milestone}/{array}/{stat}/{quantity}: {msg}\n  source: {ref.source}"
 
+    @pytest.mark.parametrize("milestone", ["M1", "M4", "M5", "BLC"])
+    @pytest.mark.parametrize("stat", ["median", "twa", "max", "total"])
+    def test_both_is_sum_of_per_array_stats(self, stats, milestone, stat):
+        """'both' aggregates as per-array-stat sum (concurrent operation),
+        not pooled weighted average.  Hold this invariant tight — summing
+        two known values is exact up to floating-point roundoff.
+        """
+        ms = stats.get(milestone)
+        if ms is None:
+            pytest.skip(f"milestone {milestone} not produced by pipeline")
+        per_12m = ms["12m"].get(stat, {})
+        per_7m = ms["7m"].get(stat, {})
+        per_both = ms["both"].get(stat, {})
+        quantities = set(per_12m) | set(per_7m)
+        assert quantities, f"no quantities for {milestone}/{stat}"
+        for q in quantities:
+            a = per_12m.get(q)
+            b = per_7m.get(q)
+            c = per_both.get(q)
+            if a is None or b is None or c is None:
+                pytest.skip(f"{milestone}/{stat}/{q}: partial coverage")
+            if not (math.isfinite(a) and math.isfinite(b)
+                    and math.isfinite(c)):
+                continue
+            expected = a + b
+            scale = max(abs(expected), abs(c), 1e-12)
+            assert abs(c - expected) / scale < 1e-9, (
+                f"{milestone}/both/{stat}/{q}: {c:g} != "
+                f"12m({a:g}) + 7m({b:g}) = {expected:g}"
+            )
+
+    def test_both_total_per_cycle_is_sum(self, stats):
+        """total_per_cycle 'both' equals sum of 12m and 7m across quantities
+        and milestones that produce it.
+        """
+        for ms, per_arr in stats.items():
+            if ms == "_metadata":
+                continue
+            tpc_12m = per_arr["12m"].get("total_per_cycle", {})
+            tpc_7m = per_arr["7m"].get("total_per_cycle", {})
+            tpc_both = per_arr["both"].get("total_per_cycle", {})
+            for q in set(tpc_12m) | set(tpc_7m):
+                a = tpc_12m.get(q)
+                b = tpc_7m.get(q)
+                c = tpc_both.get(q)
+                if a is None or b is None or c is None:
+                    continue
+                scale = max(abs(a + b), abs(c), 1e-12)
+                assert abs(c - (a + b)) / scale < 1e-9, (
+                    f"{ms}/both/total_per_cycle/{q}: {c:g} != "
+                    f"{a:g} + {b:g} = {a+b:g}"
+                )
+
 
 # =============================================================================
 # Tier 4: LaTeX-table reproduction (Phase 2)
@@ -340,23 +393,39 @@ class TestTableReproduction:
             shutil.copy(MEMO_REF_DIR / ref_name, out / gen_name)
         return out
 
+    # The committed memo reference tables were authored with a pooled-
+    # aggregation "both" column (M1/M4/M5 both = cell indices 4/7/10 in
+    # every data row).  The pipeline now reports "both" = 12m + 7m under
+    # the concurrent-operation rule, so we skip those columns here and
+    # cover them via per-array-sum unit tests instead.
+    _MEMO_BOTH_COLS = [4, 7, 10]
+
     def test_memo_datarate_matches(self, gen_dir, ref_dir):
         from tables import verify_tables
-        mismatches = verify_tables(gen_dir, ref_dir,
-                                    [("wsu_datarate_summary.tex", 0.20)])
+        mismatches = verify_tables(
+            gen_dir, ref_dir,
+            [("wsu_datarate_summary.tex", 0.20)],
+            skip_columns={"wsu_datarate_summary.tex": self._MEMO_BOTH_COLS},
+        )
         assert not mismatches, "memo datarate cells disagree: " + str(mismatches[:5])
 
     def test_memo_datavol_matches(self, gen_dir, ref_dir):
         from tables import verify_tables
         # Max-of-max is inherently noisy; total_per_cycle tight.
-        mismatches = verify_tables(gen_dir, ref_dir,
-                                    [("wsu_datavol_summary.tex", 0.25)])
+        mismatches = verify_tables(
+            gen_dir, ref_dir,
+            [("wsu_datavol_summary.tex", 0.25)],
+            skip_columns={"wsu_datavol_summary.tex": self._MEMO_BOTH_COLS},
+        )
         assert not mismatches, "memo datavol cells disagree: " + str(mismatches[:5])
 
     def test_memo_sysperf_matches(self, gen_dir, ref_dir):
         from tables import verify_tables
-        mismatches = verify_tables(gen_dir, ref_dir,
-                                    [("wsu_sysperf_summary.tex", 0.20)])
+        mismatches = verify_tables(
+            gen_dir, ref_dir,
+            [("wsu_sysperf_summary.tex", 0.20)],
+            skip_columns={"wsu_sysperf_summary.tex": self._MEMO_BOTH_COLS},
+        )
         assert not mismatches, "memo sysperf cells disagree: " + str(mismatches[:5])
 
     def test_all_sdd_tables_generated(self, gen_dir):

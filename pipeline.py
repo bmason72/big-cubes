@@ -162,11 +162,13 @@ QUANTITY_SPEC: Dict[str, Dict[str, str]] = {
 
 
 _ARRAY_MASKS = ("12m", "7m", "both")
+# Physical arrays actually present in the database.  "both" is synthesized
+# downstream as the per-stat sum of the two, reflecting concurrent operation
+# of the 12m and 7m arrays — infrastructure must absorb the combined load.
+_REAL_ARRAYS = ("12m", "7m")
 
 
 def _array_mask(db: Table, array: str) -> np.ndarray:
-    if array == "both":
-        return (db["array"] == "12m") | (db["array"] == "7m")
     return db["array"] == array
 
 
@@ -200,7 +202,11 @@ def _as_value(col, unit: str):
 
 def _compute_per_sample_stats(db: Table, col_name: str, unit: str
                               ) -> Dict[str, Dict[str, float]]:
-    """Compute median/twa/max/total for each array mask on one realization.
+    """Compute median/twa/max/total for each array on one realization.
+
+    "both" is the per-stat sum of 12m and 7m stats (concurrent-operation
+    aggregation), not a pooled-population statistic.  See the data-rate bug
+    discussion in project memory for context.
 
     Returns: { array: { "median", "twa", "max", "total" } }
     """
@@ -208,32 +214,40 @@ def _compute_per_sample_stats(db: Table, col_name: str, unit: str
     weights_all = np.asarray(db["weights_all"], dtype=float)
     values_full = _as_value(db[col_name], unit)
 
-    for arr in _ARRAY_MASKS:
+    for arr in _REAL_ARRAYS:
         mask = _array_mask(db, arr)
         values = values_full[mask]
         wts = weights_all[mask]
-        # guard against empty / all-nan
         finite = np.isfinite(values)
         v_f = values[finite]
         w_f = wts[finite]
-        stats = {}
         if len(v_f) == 0:
-            stats = {"median": np.nan, "twa": np.nan,
-                     "max": np.nan, "total": np.nan}
-        else:
-            stats["median"] = float(np.nanmedian(v_f))
-            # Weighted average using the per-array weights (unnormalized over
-            # the full database, so effectively a time-weighted average
-            # restricted to the subset of rows).  Matches wsu_db code.
-            w_sum = float(np.nansum(w_f))
-            if w_sum > 0:
-                stats["twa"] = float(np.nansum(v_f * w_f) / w_sum)
-            else:
-                stats["twa"] = float(np.nanmean(v_f))
-            stats["max"] = float(np.nanmax(v_f))
-            stats["total"] = float(np.nansum(v_f))
-        results[arr] = stats
+            results[arr] = {"median": np.nan, "twa": np.nan,
+                            "max": np.nan, "total": np.nan}
+            continue
+        w_sum = float(np.nansum(w_f))
+        twa = (float(np.nansum(v_f * w_f) / w_sum) if w_sum > 0
+               else float(np.nanmean(v_f)))
+        results[arr] = {
+            "median": float(np.nanmedian(v_f)),
+            "twa":    twa,
+            "max":    float(np.nanmax(v_f)),
+            "total":  float(np.nansum(v_f)),
+        }
+
+    results["both"] = {
+        stat: _nan_sum(results["12m"][stat], results["7m"][stat])
+        for stat in ("median", "twa", "max", "total")
+    }
     return results
+
+
+def _nan_sum(a: float, b: float) -> float:
+    """Sum two floats, treating NaN as missing (so 7m-only or 12m-only
+    databases still yield a finite 'both')."""
+    if not np.isfinite(a) and not np.isfinite(b):
+        return float("nan")
+    return float(np.nansum([a, b]))
 
 
 def compute_stats(paths: Iterable[str], cfg: PipelineConfig = DEFAULT_CONFIG

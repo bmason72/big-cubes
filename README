@@ -239,4 +239,86 @@ wsu_data_rates* file columns:
      'mit_hm_cell', # cell size mitigation information
      'mit_field', # number of fields mitigation information
      'mit_spw', # number of spws mitigation information
+
+
+Ryan Cy11 WSU projection analysis
+---------------------------------
+
+The repo includes a sample-driven WSU projection script,
+`ryan_cy11_wsu_projection.py`, that operates on the EB/SPW tabulation from
+`spw_tabulate.py`.  It evaluates four projection methods:
+
+- `memo_uniform_binned`: current memo procedure using the finest current SPW
+  per MOUS and the 5 stepped2 velocity bins.
+- `memo_uniform_exact`: same, but keep the current finest requested
+  resolution instead of snapping it to the bin floor.
+- `distributed_binned`: preserve the current within-MOUS SPW resolution
+  distribution, but map each SPW into the 5 stepped2 bins.
+- `distributed_exact`: preserve the current within-MOUS SPW resolution
+  distribution using the current requested resolution directly.
+
+Typical run sequence:
+
+```bash
+python spw_tabulate.py ryanCy11 /tmp/ryanCy11_spw_tabulation
+python ryan_cy11_wsu_projection.py \
+  /tmp/ryanCy11_spw_tabulation \
+  /tmp/ryanCy11_wsu_projection
+```
+
+The projection outputs include:
+
+- `eb_projection_factors.csv`: per-EB current rates and projected M1/M4/M5
+  rates/factors for each method.
+- `mous_spw_templates.csv`: MOUS/SPW sidecar capturing the current
+  within-MOUS SPW resolution distribution. This is the file the main
+  recompute path can consume for `distributed_binned` WSU channel
+  projections.
+- `summary_overall.csv`: aggregate factors over the full sample.
+- `summary_by_array.csv`: the same split by `12m` and `7m`.
+- `summary.md`: human-readable summary with the method definitions and
+  headline factors.
+
+
+Distributed-binned recompute path
+---------------------------------
+
+The main config-driven recompute layer in `recompute.py` now supports an
+optional sidecar-driven WSU aggregate-channel projection:
+
+- `stored`: default behavior; use the DB's stored `wsu_nchan_agg_*` values.
+- `distributed_binned`: recompute `wsu_nchan_agg_*` from a MOUS/SPW sidecar
+  that preserves the current within-MOUS SPW resolution mix while still
+  mapping each SPW through the existing stepped2 binning.
+
+This is exposed via `ScenarioConfig.nchan_projection`. Example:
+
+```python
+from dataclasses import replace
+
+from config import MEMO_CONFIG, NchanProjection
+from pipeline import load_database
+from recompute import recompute_db
+
+db = load_database("data/wsu_datarates_mit_per_mous_initial_goal_20250423.ecsv")
+scenario = replace(
+    MEMO_CONFIG,
+    name="distributed_binned",
+    nchan_projection=NchanProjection(
+        mode="distributed_binned",
+        sidecar_path="/path/to/mous_spw_templates.csv",
+    ),
+)
+out = recompute_db(db, scenario)
+```
+
+Notes:
+
+- The base per-MOUS DB does not store the current within-MOUS SPW
+  resolution distribution, so `distributed_binned` requires a sidecar.
+- The override rewrites the WSU aggregate `nchan_agg_*` columns for
+  `M1`, `M4`, and `M5`; downstream productsize, datarate, visrate,
+  datavol, and sysperf then follow automatically.
+- `distributed_binned` is currently not supported together with
+  `mitigation.mode="caps"` or calibrator spectral-resolution correction.
     
