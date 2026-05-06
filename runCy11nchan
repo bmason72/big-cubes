@@ -1,0 +1,20 @@
+
+#setup-
+#python3 -m venv venv
+#source venv/bin/activate
+#pip install -U pip
+#pip install -r requirements.txt
+# mkdir -p out/nchanCy11_6may26/{setup_summary,tabulation,wsu_projection}
+
+python3 spw_tabulate.py \
+    ryanCy11 \
+    out/nchanCy11_6may26/tabulation
+
+python3 spw_setup_summary.py \
+    out/nchanCy11_6may26/tabulation \
+    out/nchanCy11_6may26/setup_summary
+
+python3 ryan_cy11_wsu_projection.py \ 
+  out/nchanCy11_6may26/tabulation \
+  out/nchanCy11_6may26/wsu_projection 
+

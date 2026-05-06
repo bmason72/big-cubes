@@ -5,11 +5,14 @@
 
 To Do:
 -basic run test
--make cy11 outputs in a sane place
+-make cy11 outputs in a sane place:  out/{pipe,nchan}_uniqID/
 -make tables and plots have what i want - sdd summary format, m1/4/5
 -start draft memo
 -standardize output dirs as out/pl_uniqID
+-make tint 6sec for non long bl at M4,5 (is currently 3sec for all after M1; 6sec for all at M1 - consistent with current)
+   -6sec for all (M1); 3sec for longBL at M4+ 6 sec otherwise
 -include config specifiers in there or links thereto
+-fix brokenness of --skip-realizations in pipeline.py ; also -v doesn't work?
 -make recompute have a CLI, and write by default to data/(sensible, unique, not too long filename)
 -clean numbers for impact of
  -more targeted SPW setups
@@ -33,6 +36,8 @@ To Do:
   - tables.py, plots.py
       - generate tables and plots from the pipeline/recompute outputs
 
+  --> setup and usage is demonstrated in runCy7Cy8pl
+
   ryanCy11 nchan analysis
 
   - spw_tabulate.py
@@ -53,6 +58,7 @@ To Do:
           - distributed_binned - preserve the current mix of SPW resolutions, but map each SPW into the stepped2 bins
           - distributed_exact - preserve the current mix of SPW resolutions using the exact current resolutions
 
+  --> setup and usage is demonstrated in runCy11nchan script
 
 -------------------------------------------
 

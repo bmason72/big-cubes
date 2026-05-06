@@ -1,0 +1,8 @@
+
+File wsu_datarates_mit_per_mous_initial_goal_20250423.ecsv
+has the metadata for the Cy7+Cy8 interferometric data from the ALMA Science Archive 
+plus extrapolations to various WSU milestones/project stages using assumptions and
+methodology explained in the WSU Estimated Data Properties memo(s).
+
+The first 980 lines are header. Data starts on line 981
+
