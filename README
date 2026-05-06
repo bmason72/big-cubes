@@ -1,3 +1,48 @@
+  v2 WSU data properties pipeline
+  Brian Mason (NRAO)
+
+  - rewrite (with claude code + codex) to be script-oriented, cleanly reconfigurable in assumptions, and testable
+
+  Main pipeline
+
+  - config.py
+      - central configuration for WSU assumptions, milestone definitions, antenna/tint rules, and scenario knobs
+      - also used by the ryanCy11 nchan analysis, though that workflow is otherwise separate
+  - pipeline.py
+      - main entry point for the Cy7/Cy8 data-properties statistics workflow
+      - loads the per-MOUS ECSV database in data/, generates Band 1/2 realizations as needed, and computes projected M1/M4/M5 summary statistics
+  - recompute.py
+      - recomputes alternate WSU scenarios from an existing per-MOUS database
+      - operates in memory on a loaded table, but the result can be written back out if desired
+      - includes optional support for per-SPW nchan projection via wsu_projection.py, but the current Cy7/Cy8 DB does not itself contain per-SPW setup inputs
+  - tables.py, plots.py
+      - generate tables and plots from the pipeline/recompute outputs
+
+  ryanCy11 nchan analysis
+
+  - spw_tabulate.py
+      - tabulates individual SPW characteristics (nchan, frequency, bandwidth, resolution, line-free fraction) from listobs and cont.dat
+  - spw_setup_summary.py
+      - summarizes the distribution of spectral setups and their characteristics
+  - data directories:
+      - ryanCy11 - raw input data
+      - ryanCy11out - tabulated/intermediate products
+      - ryanCy11wsu - WSU projection outputs from the ryanCy11 analysis
+  - ryan_cy11_wsu_projection.py
+      - runs the WSU projection comparison for the ryanCy11 sample
+  - wsu_projection.py
+      - shared helper code for projecting aggregate MOUS nchan from a current per-SPW setup under selectable projection logic
+      - current supported modes:
+          - memo_uniform_binned - original memo logic: all projected SPWs at one stepped2-binned resolution, based on the finest current SPW
+          - memo_uniform_exact - same uniform-per-MOUS logic, but keep the exact finest current resolution instead of binning it
+          - distributed_binned - preserve the current mix of SPW resolutions, but map each SPW into the stepped2 bins
+          - distributed_exact - preserve the current mix of SPW resolutions using the exact current resolutions
+
+
+-------------------------------------------
+
+OLD README (for jupyter notebook paradigm)
+
 Order for excecuting these files:
 
 Jupyter notebooks:
@@ -23,6 +68,8 @@ Associated data:
 Version history: 
 -- v1.0 -- original release of data base
 -- v1.1 -- improved blc & aca integration times, improved table join with pipeline weblog info, estimates of "maximum" mitigation
+-- v2.0 -- major refactor of pipeline (Brian Mason + claude code); add cycle 11 sidecar NCHAN analysis based on Ryan Loomis's
+            asssembled set of Cy11 products.
 
 -------
 
