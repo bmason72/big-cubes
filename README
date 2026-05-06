@@ -30,6 +30,11 @@ To Do:
   - tables.py, plots.py
       - generate tables and plots from the pipeline/recompute outputs
 
+  Run as
+  source venv/bin/activate
+  python3 pipeline.py ...
+
+
   ryanCy11 nchan analysis
 
   - spw_tabulate.py
