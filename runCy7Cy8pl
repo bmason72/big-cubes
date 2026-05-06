@@ -1,15 +1,5 @@
 
-#setup-
-#python3 -m venv venv
-#source venv/bin/activate
-#pip install -U pip
-#pip install -r requirements.txt
-#mkdir -p out/cy7cy8_6may26/{realizations,tables,plots}
+#!/usr/bin/env bash
+set -euo pipefail
 
-python3 pipeline.py \
- --db-path data/wsu_datarates_mit_per_mous_initial_goal_20250423.ecsv \
- --outdir out/cy7cy8_6may26/realizations \
- --stats-out out/cy7cy8_6may26/stats.json \
- --generate-tables out/cy7cy8_6may26/tables \
- --generate-plots out/cy7cy8_6may26/plots 
-
+python3 drrup_pipeline.py "$@"

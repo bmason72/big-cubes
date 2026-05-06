@@ -656,8 +656,8 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main() -> int:
-    args = build_parser().parse_args()
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     spw_level_rows = read_csv_rows(args.tabulation_dir / "spw_level_table.csv")

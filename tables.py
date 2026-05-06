@@ -199,7 +199,6 @@ def write_datarate_summary(stats: Dict, path: str | os.PathLike) -> str:
         + _MEMO_COLSPEC
         + _MEMO_TOP
         + body
-        + "\n" + r"\hline[2pt]" + "\n"
         + r"\end{tblr}" + "\n"
         + r"\end{sidewaystable}" + "\n"
     )
@@ -248,7 +247,6 @@ def write_datavol_summary(stats: Dict, path: str | os.PathLike) -> str:
         + _MEMO_COLSPEC
         + _MEMO_TOP
         + rows[0] + rows[1] + rows[2]
-        + "\n" + r"\hline[2pt]" + "\n"
         + r"\end{tblr}" + "\n"
         + r"\end{sidewaystable}" + "\n"
     )
@@ -296,7 +294,6 @@ def write_sysperf_summary(stats: Dict, path: str | os.PathLike) -> str:
         + _MEMO_COLSPEC
         + _MEMO_TOP
         + body
-        + "\n" + r"\hline[2pt]" + "\n"
         + r"\end{tblr}" + "\n"
         + r"\end{sidewaystable}" + "\n"
     )
@@ -597,6 +594,44 @@ def generate_sdd_tables(stats: Dict, out_dir: str | os.PathLike,
         write_sdd_system_performance(stats, out / "table_system_performance_wsu.tex"),
         write_sdd_summary(stats,            out / "data_prop_summ.tex", factors),
     ]
+
+
+def write_all_tables_document(
+    table_paths: Sequence[str | os.PathLike],
+    out_path: str | os.PathLike,
+    template_path: Optional[str | os.PathLike] = None,
+) -> str:
+    """Write a single LaTeX document that inputs all generated tables."""
+    out = Path(out_path)
+    if template_path is None:
+        template_path = Path(__file__).resolve().parent / "exampleAll.tex"
+    template_file = Path(template_path)
+    if template_file.exists():
+        template = template_file.read_text(encoding="utf-8")
+    else:
+        template = (
+            "\\documentclass{article}\n"
+            "\\usepackage{graphicx}\n"
+            "\\usepackage{rotating}\n"
+            "\\usepackage{tabularray}\n"
+            "\\usepackage[table]{xcolor}\n"
+            "\\UseTblrLibrary{booktabs}\n"
+            "\\begin{document}\n"
+            "% input all the individual tables here\n"
+            "\\end{document}\n"
+        )
+
+    input_lines = "\n".join(
+        f"\\input{{{Path(path).name}}}" for path in table_paths
+    )
+    marker = "% input all the individual tables here"
+    if marker in template:
+        content = template.replace(marker, input_lines)
+    else:
+        content = template.rstrip() + "\n" + input_lines + "\n"
+
+    out.write_text(content, encoding="utf-8")
+    return str(out)
 
 
 # ---------------------------------------------------------------------------

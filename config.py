@@ -9,7 +9,7 @@ Sources for each block are called out in comments so future updates can be
 traced back to the code path they came from.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import astropy.units as u
@@ -531,4 +531,32 @@ MEMO_CONFIG = ScenarioConfig(
     name="memo",
     base=DEFAULT_CONFIG,
     mitigation=MitigationCaps(mode="existing", pixels_per_beam=5),
+)
+
+
+_SHORT_12M_CONFIGS = (
+    "C43-1", "C43-2", "C43-3", "C43-4", "C43-5", "C43-6", "C43-7",
+)
+
+VALIDATION_TWEAKED_CONFIG = replace(
+    MEMO_CONFIG,
+    name="validation_tweaked",
+    mitigation=replace(MEMO_CONFIG.mitigation, pixels_per_beam=3),
+    tint=TintLookup(
+        use_db_stored=False,
+        overrides={
+            **{
+                ("12m", cfg, "M1"): 6.144
+                for cfg in _SHORT_12M_CONFIGS + ("C43-8", "C43-9", "C43-10")
+            },
+            **{
+                ("12m", cfg, "M4"): 6.144
+                for cfg in _SHORT_12M_CONFIGS
+            },
+            **{
+                ("12m", cfg, "M5"): 6.144
+                for cfg in _SHORT_12M_CONFIGS
+            },
+        },
+    ),
 )

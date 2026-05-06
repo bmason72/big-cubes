@@ -294,6 +294,45 @@ wsu_data_rates* file columns:
 Ryan Cy11 WSU projection analysis
 ---------------------------------
 
+Top-level workflow drivers
+--------------------------
+
+Two top-level CLI drivers now provide default rooted output directories under
+`out/` and write a `config.json` file describing each run:
+
+- `drrup_pipeline.py`
+  - main Cy7/Cy8 projection workflow
+  - default run dir: `out/drrupPl_<date><suffix>/`
+  - validation run dir: `out/valid_drrupPl_<date><suffix>/`
+- `nchan_pipeline.py`
+  - `ryanCy11` SPW / setup / WSU `nchan` workflow
+  - default run dir: `out/nchanEst_<date><suffix>/`
+  - validation run dir: `out/valid_nchanEst_<date><suffix>/`
+
+The bundled helper scripts `runCy7Cy8pl` and `runCy11nchan` are thin wrappers
+around those Python drivers.
+
+Typical main-pipeline run:
+
+```bash
+python drrup_pipeline.py
+```
+
+Typical `ryanCy11` run:
+
+```bash
+python nchan_pipeline.py
+```
+
+For the main pipeline, a run directory contains:
+
+- `realizations/`
+- `stats.json`
+- `tables/`
+- `tables/all_tables.tex`
+- `plots/`
+- `config.json`
+
 The repo includes a sample-driven WSU projection script,
 `ryan_cy11_wsu_projection.py`, that operates on the EB/SPW tabulation from
 `spw_tabulate.py`.  It evaluates four projection methods:
@@ -310,10 +349,7 @@ The repo includes a sample-driven WSU projection script,
 Typical run sequence:
 
 ```bash
-python spw_tabulate.py ryanCy11 /tmp/ryanCy11_spw_tabulation
-python ryan_cy11_wsu_projection.py \
-  /tmp/ryanCy11_spw_tabulation \
-  /tmp/ryanCy11_wsu_projection
+python nchan_pipeline.py
 ```
 
 The projection outputs include:
@@ -361,6 +397,25 @@ scenario = replace(
 )
 out = recompute_db(db, scenario)
 ```
+
+
+Recompute CLI
+-------------
+
+`recompute.py` now has a CLI for saving recomputed scenario databases, and
+optionally recomputing an existing realization directory as well.
+
+Example:
+
+```bash
+python recompute.py \
+  --db-path data/wsu_datarates_mit_per_mous_initial_goal_20250423.ecsv \
+  --scenario VALIDATION_TWEAKED_CONFIG
+```
+
+That writes a recomputed ECSV plus `config.json` into a new default
+`out/drrupPl_<date><suffix>/` run directory unless `--run-dir` or
+`--out-path` is provided.
 
 Notes:
 

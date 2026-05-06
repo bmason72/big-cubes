@@ -33,16 +33,22 @@ by this layer.
 
 from __future__ import annotations
 
+import argparse
 import logging
 import math
+import sys
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict
 
 import astropy.units as u
 import numpy as np
 from astropy.table import QTable, Table
 
+import config as config_module
 from config import MEMO_CONFIG, MitigationCaps, ScenarioConfig
+from pipeline import load_database
+from run_layout import next_run_dir, write_config_json
 from wsu_projection import load_mous_spw_templates_csv, normalize_mous_uid
 from wsu_projection import project_nchan_agg_for_templates
 
@@ -714,3 +720,133 @@ def recompute_db(db: Table, scenario: ScenarioConfig = MEMO_CONFIG) -> Table:
     out = recompute_datavol(out, scenario)
     out = recompute_sysperf(out, scenario)
     return out
+
+
+def recompute_realization_dir(
+    in_dir: str,
+    out_dir: str,
+    scenario: ScenarioConfig,
+) -> list[str]:
+    """Recompute an existing realization directory into a new one."""
+    pattern = f"{scenario.base.realizations.filename}_*.ecsv"
+    paths = [str(path) for path in sorted(Path(in_dir).glob(pattern))]
+    if not paths:
+        raise FileNotFoundError(
+            f"found 0 realization(s) matching {pattern} in {in_dir}"
+        )
+    out_root = Path(out_dir)
+    out_root.mkdir(parents=True, exist_ok=True)
+    written: list[str] = []
+    for path in paths:
+        db = load_database(path)
+        out = recompute_db(db, scenario)
+        out_path = out_root / Path(path).name
+        out.write(out_path, format="ascii.ecsv", overwrite=True)
+        written.append(str(out_path))
+    return written
+
+
+def _load_named_scenario(name: str) -> ScenarioConfig:
+    scenario = getattr(config_module, name, None)
+    if scenario is None:
+        raise KeyError(f"scenario {name!r} not found in config.py")
+    if not isinstance(scenario, ScenarioConfig):
+        raise TypeError(f"{name!r} is not a ScenarioConfig")
+    return scenario
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--db-path",
+        default="data/wsu_datarates_mit_per_mous_initial_goal_20250423.ecsv",
+        help="Input per-MOUS ECSV database",
+    )
+    parser.add_argument(
+        "--scenario",
+        default="VALIDATION_TWEAKED_CONFIG",
+        help="ScenarioConfig object name defined in config.py",
+    )
+    parser.add_argument(
+        "--out-path",
+        default=None,
+        help="Output path for recomputed ECSV (default: under auto-created run dir)",
+    )
+    parser.add_argument(
+        "--realization-in-dir",
+        default=None,
+        help="Optional existing realization dir to recompute",
+    )
+    parser.add_argument(
+        "--realization-out-dir",
+        default=None,
+        help="Where to write recomputed realization ECSV files",
+    )
+    parser.add_argument(
+        "--run-dir",
+        default=None,
+        help="Optional root output directory for config metadata and default outputs",
+    )
+    parser.add_argument(
+        "--validation-run",
+        action="store_true",
+        help="Use out/valid_drrupPl_<date><suffix>/ for default outputs",
+    )
+    parser.add_argument("-v", "--verbose", action="store_true")
+    args = parser.parse_args(argv)
+
+    logging.basicConfig(
+        level=logging.INFO if args.verbose else logging.WARNING,
+        format="%(asctime)s %(levelname)s %(message)s",
+    )
+
+    try:
+        scenario = _load_named_scenario(args.scenario)
+    except (KeyError, TypeError) as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
+
+    run_dir = Path(args.run_dir) if args.run_dir else next_run_dir(
+        "drrupPl", validation=args.validation_run
+    )
+    run_dir.mkdir(parents=True, exist_ok=True)
+    out_path = Path(args.out_path) if args.out_path else run_dir / f"recomputed_{scenario.name}.ecsv"
+
+    db = load_database(args.db_path)
+    out = recompute_db(db, scenario)
+    out.write(out_path, format="ascii.ecsv", overwrite=True)
+
+    written_realizations: list[str] = []
+    if args.realization_in_dir:
+        real_out = (
+            Path(args.realization_out_dir)
+            if args.realization_out_dir
+            else run_dir / "recomputed_realizations"
+        )
+        written_realizations = recompute_realization_dir(
+            args.realization_in_dir, str(real_out), scenario
+        )
+
+    write_config_json(
+        run_dir / "config.json",
+        {
+            "tool": "recompute",
+            "db_path": args.db_path,
+            "scenario_name": args.scenario,
+            "scenario": scenario,
+            "run_dir": run_dir,
+            "out_path": out_path,
+            "realization_in_dir": args.realization_in_dir,
+            "realization_out_dir": args.realization_out_dir,
+            "written_realizations": written_realizations,
+            "validation_run": args.validation_run,
+        },
+    )
+    print(f"Wrote recomputed database to {out_path}")
+    if written_realizations:
+        print(f"Wrote {len(written_realizations)} recomputed realizations to {Path(written_realizations[0]).parent}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -143,6 +143,18 @@ def generate_realizations(db: Table, cfg: PipelineConfig,
     return [str(p) for p in written]
 
 
+def find_realizations(cfg: PipelineConfig, outdir: str | os.PathLike) -> List[str]:
+    """Return an existing realization list, erroring if incomplete."""
+    found = sorted(Path(outdir).glob(f"{cfg.realizations.filename}_*.ecsv"))
+    paths = [str(p) for p in found[: cfg.realizations.n_realizations]]
+    if len(paths) < cfg.realizations.n_realizations:
+        raise FileNotFoundError(
+            f"found {len(paths)} realization(s) in {outdir}, "
+            f"expected at least {cfg.realizations.n_realizations}"
+        )
+    return paths
+
+
 # ---------------------------------------------------------------------------
 # Stats computation
 # ---------------------------------------------------------------------------
@@ -373,16 +385,17 @@ def main(argv: Optional[List[str]] = None) -> int:
         cfg = replace(cfg, realizations=replace(cfg.realizations,
                                                 n_realizations=args.n_realizations))
 
+    realization_dir = args.outdir or cfg.realizations.outdir
+
     if args.skip_realizations:
-        outdir = args.outdir or cfg.realizations.outdir
-        paths = sorted(Path(outdir).glob(f"{cfg.realizations.filename}_*.ecsv"))
-        paths = [str(p) for p in paths[: cfg.realizations.n_realizations]]
-        if not paths:
-            print(f"No realizations found in {outdir}", file=sys.stderr)
+        try:
+            paths = find_realizations(cfg, realization_dir)
+        except FileNotFoundError as exc:
+            print(str(exc), file=sys.stderr)
             return 2
     else:
         db = load_database(args.db_path)
-        paths = generate_realizations(db, cfg, outdir=args.outdir)
+        paths = generate_realizations(db, cfg, outdir=realization_dir)
 
     stats = compute_stats(paths, cfg)
 
@@ -391,13 +404,15 @@ def main(argv: Optional[List[str]] = None) -> int:
         # drop non-serializable metadata arrays, keep scalars
         ser = {k: v for k, v in stats.items() if k != "_metadata"}
         ser["_metadata"] = stats["_metadata"]
+        Path(args.stats_out).parent.mkdir(parents=True, exist_ok=True)
         with open(args.stats_out, "w") as fh:
             json.dump(ser, fh, indent=2)
 
     if args.generate_tables:
-        from tables import generate_memo_tables, generate_sdd_tables
+        from tables import generate_memo_tables, generate_sdd_tables, write_all_tables_document
         memo = generate_memo_tables(stats, args.generate_tables)
         sdd = generate_sdd_tables(stats, args.generate_tables)
+        write_all_tables_document(memo + sdd, Path(args.generate_tables) / "all_tables.tex")
         print(f"Wrote {len(memo) + len(sdd)} tables to {args.generate_tables}")
 
     if args.generate_plots:
@@ -407,7 +422,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             db_for_plots,
             output_dir=args.generate_plots,
             cfg=cfg,
-            realization_dir=args.outdir,
+            realization_dir=realization_dir,
             overlay_realizations=not args.no_plot_overlay,
         )
         print(f"Wrote {len(written)} plots to {args.generate_plots}")
