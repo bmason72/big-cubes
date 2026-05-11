@@ -53,6 +53,7 @@ CONTDAT_SPW_RE = re.compile(r"^SpectralWindow:\s*(?P<spw_id>\d+)\s+(?P<name>\S+)
 CONTDAT_RANGE_RE = re.compile(
     r"^\s*(?P<low>\d+(?:\.\d+)?)~(?P<high>\d+(?:\.\d+)?)GHz(?:\s+\S+)?\s*$"
 )
+TARGET_LISTOBS_SUFFIX = "_targets.ms__listobs.txt"
 
 
 @dataclass
@@ -160,6 +161,10 @@ def parse_token_list(text: str) -> list[str]:
     if not inner:
         return []
     return [item.strip() for item in inner.split(",") if item.strip()]
+
+
+def is_target_listobs_path(path: Path) -> bool:
+    return path.name.endswith(TARGET_LISTOBS_SUFFIX)
 
 
 def merge_intervals(intervals: Iterable[tuple[float, float]]) -> list[tuple[float, float]]:
@@ -813,7 +818,10 @@ def write_summary(
 
 def process_mous_dir(mous_dir: Path, issues: list[ParseIssue]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     mous_uid = parse_uid(mous_dir.name, MOUS_RE) or mous_dir.name
-    listobs_files = sorted((mous_dir / "listobs").glob("*.txt"))
+    listobs_files = sorted(
+        path for path in (mous_dir / "listobs").glob("*.txt")
+        if is_target_listobs_path(path)
+    )
     spw_rows: list[dict[str, Any]] = []
     for listobs_file in listobs_files:
         result = parse_listobs(listobs_file, mous_uid)

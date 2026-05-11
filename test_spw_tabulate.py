@@ -7,10 +7,12 @@ from spw_tabulate import (
     buffer_intervals,
     complement_intervals,
     extract_spw_level_rows,
+    is_target_listobs_path,
     interval_total_width,
     merge_intervals,
     parse_contdat,
     parse_listobs,
+    process_mous_dir,
     summarize_contdat_entry,
 )
 
@@ -126,3 +128,61 @@ def test_spwinfo_frequency_edges_and_velocity():
     assert spw.freq_max_hz > spw.freq_min_hz
     assert spw.abs_chan_width_hz == 3906.25 * 1e3
     assert spw.velocity_resolution_kms > 0
+
+
+def test_is_target_listobs_path_only_accepts_targets_ms():
+    from pathlib import Path
+
+    assert is_target_listobs_path(Path("sessionsession_1__uid___A002_X1_X2_targets.ms__listobs.txt"))
+    assert not is_target_listobs_path(Path("sessionsession_1__uid___A002_X1_X2_targets_line.ms__listobs.txt"))
+    assert not is_target_listobs_path(Path("sessionsession_1__uid___A002_X1_X2.ms__listobs.txt"))
+
+
+def test_process_mous_dir_ignores_full_and_targets_line_listobs(tmp_path):
+    mous_dir = tmp_path / "uid___A001_X1_X2"
+    listobs_dir = mous_dir / "listobs"
+    listobs_dir.mkdir(parents=True)
+
+    target_text = "\n".join(
+        [
+            "  Date        Timerange (UTC)          Scan  FldId FieldName             nRows     SpwIds   Average Interval(s)    ScanIntent",
+            "  04-Jan-2025/14:07:55.2 - 14:17:31.9     6      2 science                100  [5]  [6.05] [OBSERVE_TARGET#ON_SOURCE]",
+            "           (nRows = Total number of rows per scan)",
+            "Fields: 1",
+            "  ID   Code Name                RA               Decl           Epoch   SrcId      nRows",
+            "  2    none science             15:47:48.990000 +22.03.03.20000 ICRS    2        1737120",
+            "Spectral Windows:  (1 unique spectral windows and 1 unique polarization setups)",
+            "  SpwID  Name                                       #Chans   Frame   Ch0(MHz)  ChanWid(kHz)  TotBW(kHz) CtrFreq(MHz) BBC Num  Corrs",
+            "  5      X#BB_1#SW-01#FULL_RES    128   TOPO   99038.315    -15625.000   2000000.0  98046.1280        1  XX  YY",
+            "Sources: 1",
+        ]
+    )
+    full_text = "\n".join(
+        [
+            "  Date        Timerange (UTC)          Scan  FldId FieldName             nRows     SpwIds   Average Interval(s)    ScanIntent",
+            "  04-Jan-2025/14:07:55.2 - 14:17:31.9     6      2 fullscience            100  [9]  [6.05] [OBSERVE_TARGET#ON_SOURCE]",
+            "           (nRows = Total number of rows per scan)",
+            "Fields: 1",
+            "  ID   Code Name                RA               Decl           Epoch   SrcId      nRows",
+            "  2    none fullscience         15:47:48.990000 +22.03.03.20000 ICRS    2        1737120",
+            "Spectral Windows:  (1 unique spectral windows and 1 unique polarization setups)",
+            "  SpwID  Name                                       #Chans   Frame   Ch0(MHz)  ChanWid(kHz)  TotBW(kHz) CtrFreq(MHz) BBC Num  Corrs",
+            "  9      X#BB_3#SW-01#FULL_RES    128   TOPO  109053.940     15625.000   2000000.0 110046.1280        3  XX  YY",
+            "Sources: 1",
+        ]
+    )
+    line_text = full_text.replace("fullscience", "linetarget").replace("[9]", "[16]").replace("  9      ", "  16     ")
+
+    (listobs_dir / "sessionsession_1__uid___A002_X1_X2_targets.ms__listobs.txt").write_text(target_text, encoding="utf-8")
+    (listobs_dir / "sessionsession_1__uid___A002_X1_X2.ms__listobs.txt").write_text(full_text, encoding="utf-8")
+    (listobs_dir / "sessionsession_1__uid___A002_X1_X2_targets_line.ms__listobs.txt").write_text(line_text, encoding="utf-8")
+
+    (mous_dir / "cont.dat").write_text("", encoding="utf-8")
+
+    issues = []
+    spw_rows, cont_rows = process_mous_dir(mous_dir, issues)
+
+    assert len(spw_rows) == 1
+    assert spw_rows[0]["spw_id"] == 5
+    assert spw_rows[0]["target_name"] == "science"
+    assert cont_rows == []

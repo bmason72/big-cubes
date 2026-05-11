@@ -6,8 +6,10 @@ Version history:
             asssembled set of Cy11 products. make it script oriented, cleanly reconfigurable in terms of assumptions; add tests.
             Assisted by Claude Code
 
-Main pipeline
-
+Main pipeline - run as
+  python3 drrup_pipeline.py [options]
+  -> output goes to out/(unique name) by default
+  
   - config.py
       - central configuration for WSU assumptions, milestone definitions, antenna/tint rules, and scenario knobs
       - also used by the ryanCy11 sidecar analysis, though that workflow is otherwise separate
@@ -23,8 +25,10 @@ Main pipeline
 
   --> setup and usage is demonstrated in runCy7Cy8pl
 
-  ryanCy11 nchan analysis
-
+  ryanCy11 nchan/intents 'sidecar' analysis. run as
+  python3 nchan_pipeline.py  [options]
+  -> output goes to out/(unique name) by default
+  
   - spw_tabulate.py
       - tabulates individual SPW characteristics (nchan, frequency, bandwidth, resolution, line-free fraction) from listobs and cont.dat
   - spw_setup_summary.py
