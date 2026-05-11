@@ -325,13 +325,17 @@ def retained_scan_templates(scan, full_eb) -> tuple[list[MousSpwTemplate], list[
         spw = full_eb.spws.get(spw_id)
         if spw is None or spw.is_sqld or spw.is_ch_avg:
             continue
+        try:
+            band = alma_band_from_freq_hz(spw.center_freq_hz)
+        except ValueError:
+            continue
         templates.append(
             MousSpwTemplate(
                 mous_uid="scan",
                 spw_id=spw.spw_id,
                 center_freq_hz=spw.center_freq_hz,
                 velocity_resolution_kms=spw.velocity_resolution_kms,
-                band=alma_band_from_freq_hz(spw.center_freq_hz),
+                band=band,
             )
         )
         corr_counts.append(count_corr_products(spw.corrs))
@@ -439,7 +443,11 @@ def build_intent_aware_rows(
                     "retained_signature": metrics["retained_signature"],
                 }
             )
-            if current_volume <= 0.0 or bucket not in CALIBRATOR_CAP_BUCKETS:
+            if (
+                not apply_calibrator_cap
+                or current_volume <= 0.0
+                or bucket not in CALIBRATOR_CAP_BUCKETS
+            ):
                 continue
             for milestone in MILESTONES:
                 for method in METHODS:

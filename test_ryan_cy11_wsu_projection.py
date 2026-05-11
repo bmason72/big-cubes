@@ -322,3 +322,79 @@ def test_intent_aware_projection_writes_cap_outputs_and_reduces_selected_volume(
 
     summary_text = (out / "summary.md").read_text(encoding="utf-8")
     assert "Intent-Aware Projection" in summary_text
+
+
+def test_intent_aware_without_cap_skips_out_of_band_calibrator_spws(tmp_path):
+    tab = tmp_path / "tab"
+    tab.mkdir()
+    target_listobs = tmp_path / "sessionsession_1__uid___A002_X1_X2_targets.ms__listobs.txt"
+    full_listobs = tmp_path / "sessionsession_1__uid___A002_X1_X2.ms__listobs.txt"
+    target_listobs.write_text(
+        "\n".join(
+            [
+                "Observation: ALMA",
+                "Antennas: 47:",
+                "  Date        Timerange (UTC)          Scan  FldId FieldName             nRows     SpwIds   Average Interval(s)    ScanIntent",
+                "  01-Jan-2025/00:00:00.0 - 00:01:00.0     1      2 target                 100  [1]  [6.0] [OBSERVE_TARGET#ON_SOURCE]",
+                "           (nRows = Total number of rows per scan)",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    full_listobs.write_text(
+        "\n".join(
+            [
+                "Observation: ALMA",
+                "Antennas: 47:",
+                "  Date        Timerange (UTC)          Scan  FldId FieldName             nRows     SpwIds   Average Interval(s)    ScanIntent",
+                "  01-Jan-2025/00:00:00.0 - 00:01:00.0     1      2 target                 100  [1]  [6.0] [OBSERVE_TARGET#ON_SOURCE]",
+                "  01-Jan-2025/00:01:00.0 - 00:01:30.0     2      3 bpcal                  100  [2]  [6.0] [CALIBRATE_BANDPASS#ON_SOURCE]",
+                "           (nRows = Total number of rows per scan)",
+                "Spectral Windows:",
+                "SpwID  Name                                  #Chans Frame Ch0(MHz) ChanWid(kHz) TotBW(kHz) CtrFreq(MHz) BBC Num  Corrs",
+                "1      BB_1#FULL_RES                          128 TOPO 100000.0 83.4 10675.2 100500.0 1 XX YY",
+                "2      BAD#FULL_RES                           128 TOPO 118300.0 83.4 10675.2 118345.0 2 XX YY",
+                "Sources:",
+            ]
+        ),
+        encoding="utf-8",
+    )
+    rows = [
+        {
+            "mous_uid": "m1",
+            "eb_uid": "e1",
+            "listobs_path": str(target_listobs),
+            "spw_id": "1",
+            "center_freq_hz": str(100.5e9),
+            "nchan": "128",
+            "velocity_resolution_kms": "0.25",
+            "corr_products": "XX YY",
+        },
+    ]
+    with (tab / "spw_level_table.csv").open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=[
+                "mous_uid",
+                "eb_uid",
+                "listobs_path",
+                "spw_id",
+                "center_freq_hz",
+                "nchan",
+                "velocity_resolution_kms",
+                "corr_products",
+            ],
+        )
+        writer.writeheader()
+        writer.writerows(rows)
+
+    out = tmp_path / "out"
+    rc = main(
+        [
+            str(tab),
+            str(out),
+            "--intent-aware",
+        ]
+    )
+    assert rc == 0
+    assert (out / "summary_overall_intent_aware.csv").exists()
