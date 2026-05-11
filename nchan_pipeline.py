@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+import ryan_cy11_current_data_intents_summary
 import ryan_cy11_wsu_projection
 import spw_setup_summary
 import spw_tabulate
@@ -36,6 +37,22 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--bandwidth-low-cut-mhz", type=float, default=90.0)
     parser.add_argument("--bandwidth-high-cut-mhz", type=float, default=1200.0)
+    parser.add_argument(
+        "--intent-aware",
+        action="store_true",
+        help="Add the intent-aware EB-level WSU projection outputs",
+    )
+    parser.add_argument(
+        "--apply-calibrator-cap",
+        action="store_true",
+        help="Apply the intent-aware calibrator spectral-resolution cap",
+    )
+    parser.add_argument(
+        "--calibrator-cap-kms",
+        type=float,
+        default=1.0,
+        help="Velocity-resolution cap in km/s for calibrator scans when enabled",
+    )
     return parser
 
 
@@ -47,8 +64,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     tab_dir = run_dir / "tabulation"
     setup_dir = run_dir / "setup_summary"
+    current_dir = run_dir / "current_data_properties"
     wsu_dir = run_dir / "wsu_projection"
-    for directory in (run_dir, tab_dir, setup_dir, wsu_dir):
+    for directory in (run_dir, tab_dir, setup_dir, current_dir, wsu_dir):
         directory.mkdir(parents=True, exist_ok=True)
 
     tab_args = [args.input_dir, str(tab_dir)]
@@ -68,7 +86,17 @@ def main(argv: list[str] | None = None) -> int:
     ]
     spw_setup_summary.main(setup_args)
 
-    ryan_cy11_wsu_projection.main([str(tab_dir), str(wsu_dir)])
+    current_args = [str(tab_dir), str(current_dir)]
+    ryan_cy11_current_data_intents_summary.main(current_args)
+
+    wsu_args = [str(tab_dir), str(wsu_dir)]
+    if args.intent_aware:
+        wsu_args.append("--intent-aware")
+    if args.apply_calibrator_cap:
+        wsu_args.append("--apply-calibrator-cap")
+    if args.calibrator_cap_kms != 1.0:
+        wsu_args.extend(["--calibrator-cap-kms", str(args.calibrator_cap_kms)])
+    ryan_cy11_wsu_projection.main(wsu_args)
 
     write_config_json(
         run_dir / "config.json",
@@ -78,11 +106,16 @@ def main(argv: list[str] | None = None) -> int:
             "run_dir": run_dir,
             "tabulation_dir": tab_dir,
             "setup_summary_dir": setup_dir,
+            "current_data_properties_dir": current_dir,
             "wsu_projection_dir": wsu_dir,
             "validation_run": args.validation_run,
             "tabulation_args": tab_args,
             "setup_summary_args": setup_args,
-            "wsu_projection_args": [str(tab_dir), str(wsu_dir)],
+            "current_data_properties_args": current_args,
+            "wsu_projection_args": wsu_args,
+            "intent_aware": args.intent_aware,
+            "apply_calibrator_cap": args.apply_calibrator_cap,
+            "calibrator_cap_kms": args.calibrator_cap_kms,
             "effective_config": DEFAULT_CONFIG,
             "argv": argv,
         },

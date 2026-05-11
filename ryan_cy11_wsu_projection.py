@@ -37,12 +37,16 @@ from statistics import median
 from typing import Any
 
 from config import DEFAULT_CONFIG
+from ryan_cy11_current_data_intents_summary import matched_full_listobs_path, parse_full_listobs, scan_metrics
 from wsu_projection import (
+    MousSpwTemplate,
     alma_band_from_freq_hz,
     build_templates_from_rows,
     normalize_mous_uid,
     project_nchan_agg_for_templates,
+    projected_nchan_per_spw,
     projected_spw_equivalents,
+    stepped2_floor_velocity,
 )
 
 
@@ -68,6 +72,8 @@ METHODS = (
     "distributed_exact",
 )
 MILESTONES = ("M1", "M4", "M5")
+INTENT_PROJECTION_BUCKETS = ("science", "bandpass", "phase", "check_source")
+CALIBRATOR_CAP_BUCKETS = ("bandpass", "phase", "check_source")
 
 
 @dataclass
@@ -260,6 +266,108 @@ def projected_channel_pol_per_spw(
     return projected_nchan_agg * mean_corr / len(templates)
 
 
+def projected_channel_pol_agg_for_templates(
+    method: str,
+    milestone: str,
+    templates: list[MousSpwTemplate],
+    corr_counts: list[int],
+    projected_nspw: float,
+    velocity_cap_kms: float | None = None,
+) -> float:
+    if not templates:
+        return math.nan
+    if len(templates) != len(corr_counts):
+        raise ValueError("templates and corr_counts length mismatch")
+
+    if method.startswith("memo_uniform"):
+        finest = min(template.velocity_resolution_kms for template in templates)
+        target = finest if method.endswith("exact") else stepped2_floor_velocity(finest)
+        if velocity_cap_kms is not None:
+            target = max(target, velocity_cap_kms)
+        mean_freq = sum(template.center_freq_hz for template in templates) / len(templates)
+        band = alma_band_from_freq_hz(mean_freq)
+        nchan = projected_nchan_per_spw(
+            requested_vel_kms=target,
+            original_vel_kms=finest,
+            center_freq_hz=mean_freq,
+            band=band,
+            milestone=milestone,
+        )
+        mean_corr = sum(corr_counts) / len(corr_counts)
+        return projected_nspw * nchan * mean_corr
+
+    projected_channel_pol = []
+    for template, corr_count in zip(templates, corr_counts):
+        target = (
+            template.velocity_resolution_kms
+            if method.endswith("exact")
+            else stepped2_floor_velocity(template.velocity_resolution_kms)
+        )
+        if velocity_cap_kms is not None:
+            target = max(target, velocity_cap_kms)
+        projected_channel_pol.append(
+            projected_nchan_per_spw(
+                requested_vel_kms=target,
+                original_vel_kms=template.velocity_resolution_kms,
+                center_freq_hz=template.center_freq_hz,
+                band=template.band,
+                milestone=milestone,
+            )
+            * corr_count
+        )
+    return projected_nspw * (sum(projected_channel_pol) / len(projected_channel_pol))
+
+
+def retained_scan_templates(scan, full_eb) -> tuple[list[MousSpwTemplate], list[int]]:
+    templates: list[MousSpwTemplate] = []
+    corr_counts: list[int] = []
+    for spw_id in scan.spw_ids:
+        spw = full_eb.spws.get(spw_id)
+        if spw is None or spw.is_sqld or spw.is_ch_avg:
+            continue
+        templates.append(
+            MousSpwTemplate(
+                mous_uid="scan",
+                spw_id=spw.spw_id,
+                center_freq_hz=spw.center_freq_hz,
+                velocity_resolution_kms=spw.velocity_resolution_kms,
+                band=alma_band_from_freq_hz(spw.center_freq_hz),
+            )
+        )
+        corr_counts.append(count_corr_products(spw.corrs))
+    return templates, corr_counts
+
+
+def cap_ratio_for_scan(
+    method: str,
+    milestone: str,
+    scan,
+    full_eb,
+    velocity_cap_kms: float,
+) -> float:
+    templates, corr_counts = retained_scan_templates(scan, full_eb)
+    if not templates:
+        return 1.0
+    uncapped = projected_channel_pol_agg_for_templates(
+        method=method,
+        milestone=milestone,
+        templates=templates,
+        corr_counts=corr_counts,
+        projected_nspw=1.0,
+    )
+    capped = projected_channel_pol_agg_for_templates(
+        method=method,
+        milestone=milestone,
+        templates=templates,
+        corr_counts=corr_counts,
+        projected_nspw=1.0,
+        velocity_cap_kms=velocity_cap_kms,
+    )
+    if not math.isfinite(uncapped) or uncapped <= 0.0 or not math.isfinite(capped):
+        return 1.0
+    return capped / uncapped
+
+
 def summarize(values: list[float]) -> dict[str, float]:
     clean = finite(values)
     if not clean:
@@ -271,16 +379,236 @@ def format_factor(value: float) -> str:
     return "nan" if not math.isfinite(value) else f"{value:.3f}x"
 
 
+def build_intent_aware_rows(
+    eb_rows: list[dict[str, Any]],
+    eb_groups: dict[tuple[str, str], list[dict[str, str]]],
+    search_roots: list[Path],
+    calibrator_cap_kms: float,
+    apply_calibrator_cap: bool,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    full_cache: dict[str, Any] = {}
+    detail_rows: list[dict[str, Any]] = []
+    eb_intent_rows: list[dict[str, Any]] = []
+    missing_rows: list[dict[str, Any]] = []
+    base_by_eb = {(row["mous_uid"], row["eb_uid"]): row for row in eb_rows}
+
+    for (mous_uid, eb_uid), science_rows in sorted(eb_groups.items()):
+        base_row = base_by_eb[(mous_uid, eb_uid)]
+        full_path = matched_full_listobs_path(science_rows[0]["listobs_path"], search_roots)
+        if not full_path.exists():
+            missing_rows.append(
+                {"mous_uid": mous_uid, "eb_uid": eb_uid, "expected_full_listobs_path": str(full_path)}
+            )
+            continue
+        cache_key = str(full_path)
+        if cache_key not in full_cache:
+            full_cache[cache_key] = parse_full_listobs(full_path)
+        full_eb = full_cache[cache_key]
+
+        current_volume_by_bucket = defaultdict(float)
+        current_time_by_bucket = defaultdict(float)
+        scan_count_by_bucket = defaultdict(int)
+        cap_ratio_weight_sums = defaultdict(float)
+        cap_ratio_weighted = defaultdict(float)
+
+        for scan in full_eb.scans:
+            metrics = scan_metrics(scan, full_eb)
+            current_volume = float(metrics["volume_gb"])
+            current_time = float(scan.duration_s)
+            if not math.isfinite(current_volume):
+                current_volume = 0.0
+            if not math.isfinite(current_time):
+                current_time = 0.0
+            bucket = scan.bucket
+            current_volume_by_bucket[bucket] += current_volume
+            current_time_by_bucket[bucket] += current_time
+            scan_count_by_bucket[bucket] += 1
+            detail_rows.append(
+                {
+                    "mous_uid": mous_uid,
+                    "eb_uid": eb_uid,
+                    "array_type": full_eb.array_type,
+                    "full_listobs_path": str(full_path),
+                    "scan_id": scan.scan_id,
+                    "bucket": bucket,
+                    "duration_s": current_time,
+                    "current_volume_gb": current_volume,
+                    "retained_spw_count": metrics["retained_spw_count"],
+                    "median_retained_velocity_resolution_kms": metrics["median_retained_velocity_resolution_kms"],
+                    "raw_intent_signature": scan.raw_intent_signature,
+                    "retained_signature": metrics["retained_signature"],
+                }
+            )
+            if current_volume <= 0.0 or bucket not in CALIBRATOR_CAP_BUCKETS:
+                continue
+            for milestone in MILESTONES:
+                for method in METHODS:
+                    ratio = cap_ratio_for_scan(
+                        method=method,
+                        milestone=milestone,
+                        scan=scan,
+                        full_eb=full_eb,
+                        velocity_cap_kms=calibrator_cap_kms,
+                    )
+                    cap_ratio_weight_sums[(milestone, method, bucket)] += current_volume
+                    cap_ratio_weighted[(milestone, method, bucket)] += current_volume * ratio
+
+        record: dict[str, Any] = {
+            "mous_uid": mous_uid,
+            "eb_uid": eb_uid,
+            "array_type": full_eb.array_type,
+            "full_listobs_path": str(full_path),
+        }
+        total_current_all = sum(current_volume_by_bucket.values())
+        selected_current = sum(current_volume_by_bucket[bucket] for bucket in INTENT_PROJECTION_BUCKETS)
+        record["current_total_volume_all_buckets_gb"] = total_current_all
+        record["current_selected_volume_gb"] = selected_current
+        record["current_excluded_volume_gb"] = total_current_all - selected_current
+        for bucket in INTENT_PROJECTION_BUCKETS + ("atmosphere", "other", "pointing", "polarization", "diffgain_reference", "diffgain_on_source"):
+            record[f"current_{bucket}_volume_gb"] = current_volume_by_bucket[bucket]
+            record[f"current_{bucket}_time_s"] = current_time_by_bucket[bucket]
+            record[f"current_{bucket}_scan_count"] = scan_count_by_bucket[bucket]
+
+        for milestone in MILESTONES:
+            for method in METHODS:
+                prefix = f"{milestone.lower()}_{method}"
+                science_factor = float(base_row[f"{prefix}_factor"])
+                uncapped_total = 0.0
+                capped_total = 0.0
+                for bucket in INTENT_PROJECTION_BUCKETS:
+                    current_bucket_volume = current_volume_by_bucket[bucket]
+                    projected_uncapped = current_bucket_volume * science_factor if math.isfinite(science_factor) else math.nan
+                    ratio = 1.0
+                    if bucket in CALIBRATOR_CAP_BUCKETS:
+                        weight_sum = cap_ratio_weight_sums[(milestone, method, bucket)]
+                        if weight_sum > 0.0:
+                            ratio = cap_ratio_weighted[(milestone, method, bucket)] / weight_sum
+                    projected_capped = projected_uncapped
+                    if apply_calibrator_cap and bucket in CALIBRATOR_CAP_BUCKETS and math.isfinite(projected_uncapped):
+                        projected_capped = projected_uncapped * ratio
+                    record[f"{prefix}_{bucket}_projected_uncapped_volume_gb"] = projected_uncapped
+                    record[f"{prefix}_{bucket}_projected_volume_gb"] = projected_capped
+                    record[f"{prefix}_{bucket}_cap_ratio"] = ratio
+                    if math.isfinite(projected_uncapped):
+                        uncapped_total += projected_uncapped
+                    else:
+                        uncapped_total = math.nan
+                    if math.isfinite(projected_capped):
+                        capped_total += projected_capped
+                    else:
+                        capped_total = math.nan
+                record[f"{prefix}_selected_projected_uncapped_volume_gb"] = uncapped_total
+                record[f"{prefix}_selected_projected_volume_gb"] = capped_total
+                record[f"{prefix}_selected_factor_uncapped"] = (
+                    uncapped_total / selected_current
+                    if selected_current > 0.0 and math.isfinite(uncapped_total)
+                    else math.nan
+                )
+                record[f"{prefix}_selected_factor"] = (
+                    capped_total / selected_current
+                    if selected_current > 0.0 and math.isfinite(capped_total)
+                    else math.nan
+                )
+                record[f"{prefix}_cap_delta_volume_gb"] = capped_total - uncapped_total
+        eb_intent_rows.append(record)
+
+    return eb_intent_rows, detail_rows, missing_rows
+
+
+def build_intent_aware_summary_rows(eb_intent_rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    overall_rows: list[dict[str, Any]] = []
+    by_array_rows: list[dict[str, Any]] = []
+    for milestone in MILESTONES:
+        for method in METHODS:
+            prefix = f"{milestone.lower()}_{method}"
+            factors = [float(row[f"{prefix}_selected_factor"]) for row in eb_intent_rows]
+            factors_uncapped = [float(row[f"{prefix}_selected_factor_uncapped"]) for row in eb_intent_rows]
+            projected = [float(row[f"{prefix}_selected_projected_volume_gb"]) for row in eb_intent_rows]
+            projected_uncapped = [float(row[f"{prefix}_selected_projected_uncapped_volume_gb"]) for row in eb_intent_rows]
+            current = [float(row["current_selected_volume_gb"]) for row in eb_intent_rows]
+            total_current = sum(value for value in current if math.isfinite(value))
+            total_projected = sum(value for value in projected if math.isfinite(value))
+            total_projected_uncapped = sum(value for value in projected_uncapped if math.isfinite(value))
+            overall_rows.append(
+                {
+                    "milestone": milestone,
+                    "method": method,
+                    "n_eb": len(eb_intent_rows),
+                    "current_selected_total_volume_gb": total_current,
+                    "projected_selected_total_uncapped_volume_gb": total_projected_uncapped,
+                    "projected_selected_total_volume_gb": total_projected,
+                    "sample_total_factor_uncapped": total_projected_uncapped / total_current if total_current > 0.0 else math.nan,
+                    "sample_total_factor": total_projected / total_current if total_current > 0.0 else math.nan,
+                    "mean_eb_factor_uncapped": summarize(factors_uncapped)["mean"],
+                    "median_eb_factor_uncapped": summarize(factors_uncapped)["median"],
+                    "mean_eb_factor": summarize(factors)["mean"],
+                    "median_eb_factor": summarize(factors)["median"],
+                    "cap_delta_total_volume_gb": total_projected - total_projected_uncapped,
+                }
+            )
+            for array_type in ("12m", "7m"):
+                sub = [row for row in eb_intent_rows if row["array_type"] == array_type]
+                if not sub:
+                    continue
+                sub_factors = [float(row[f"{prefix}_selected_factor"]) for row in sub]
+                sub_factors_uncapped = [float(row[f"{prefix}_selected_factor_uncapped"]) for row in sub]
+                sub_projected = [float(row[f"{prefix}_selected_projected_volume_gb"]) for row in sub]
+                sub_projected_uncapped = [float(row[f"{prefix}_selected_projected_uncapped_volume_gb"]) for row in sub]
+                sub_current = [float(row["current_selected_volume_gb"]) for row in sub]
+                sub_total_current = sum(value for value in sub_current if math.isfinite(value))
+                sub_total_projected = sum(value for value in sub_projected if math.isfinite(value))
+                sub_total_projected_uncapped = sum(value for value in sub_projected_uncapped if math.isfinite(value))
+                by_array_rows.append(
+                    {
+                        "milestone": milestone,
+                        "method": method,
+                        "array_type": array_type,
+                        "n_eb": len(sub),
+                        "sample_total_factor_uncapped": (
+                            sub_total_projected_uncapped / sub_total_current if sub_total_current > 0.0 else math.nan
+                        ),
+                        "sample_total_factor": (
+                            sub_total_projected / sub_total_current if sub_total_current > 0.0 else math.nan
+                        ),
+                        "mean_eb_factor_uncapped": summarize(sub_factors_uncapped)["mean"],
+                        "median_eb_factor_uncapped": summarize(sub_factors_uncapped)["median"],
+                        "mean_eb_factor": summarize(sub_factors)["mean"],
+                        "median_eb_factor": summarize(sub_factors)["median"],
+                        "cap_delta_total_volume_gb": sub_total_projected - sub_total_projected_uncapped,
+                    }
+                )
+    return overall_rows, by_array_rows
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("tabulation_dir", type=Path, help="Directory containing spw_level_table.csv from spw_tabulate.py")
     parser.add_argument("output_dir", type=Path)
+    parser.add_argument(
+        "--intent-aware",
+        action="store_true",
+        help="Add an intent-aware EB-level projection for science, bandpass, phase, and check-source scans",
+    )
+    parser.add_argument(
+        "--apply-calibrator-cap",
+        action="store_true",
+        help="Apply a spectral-resolution cap to the intent-aware bandpass/phase/check-source buckets",
+    )
+    parser.add_argument(
+        "--calibrator-cap-kms",
+        type=float,
+        default=1.0,
+        help="Velocity-resolution cap in km/s for calibrator scans when --apply-calibrator-cap is set",
+    )
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.calibrator_cap_kms <= 0.0:
+        raise SystemExit("--calibrator-cap-kms must be > 0")
     args.output_dir.mkdir(parents=True, exist_ok=True)
+    intent_aware_requested = args.intent_aware or args.apply_calibrator_cap
 
     spw_rows_all = read_csv_rows(args.tabulation_dir / "spw_level_table.csv")
     eb_unique: dict[tuple[str, str, str], dict[str, str]] = {}
@@ -448,6 +776,108 @@ def main(argv: list[str] | None = None) -> int:
         ],
     )
 
+    intent_summary_lines: list[str] = []
+    intent_overall_rows: list[dict[str, Any]] = []
+    if intent_aware_requested:
+        eb_intent_rows, intent_detail_rows, intent_missing_rows = build_intent_aware_rows(
+            eb_rows=eb_rows,
+            eb_groups=eb_groups,
+            search_roots=search_roots,
+            calibrator_cap_kms=args.calibrator_cap_kms,
+            apply_calibrator_cap=args.apply_calibrator_cap,
+        )
+        write_csv(
+            args.output_dir / "eb_intent_projection_factors.csv",
+            eb_intent_rows,
+            list(eb_intent_rows[0].keys()) if eb_intent_rows else ["mous_uid", "eb_uid"],
+        )
+        write_csv(
+            args.output_dir / "intent_aware_scan_details.csv",
+            intent_detail_rows,
+            list(intent_detail_rows[0].keys()) if intent_detail_rows else [
+                "mous_uid",
+                "eb_uid",
+                "array_type",
+                "full_listobs_path",
+                "scan_id",
+                "bucket",
+                "duration_s",
+                "current_volume_gb",
+                "retained_spw_count",
+                "median_retained_velocity_resolution_kms",
+                "raw_intent_signature",
+                "retained_signature",
+            ],
+        )
+        write_csv(
+            args.output_dir / "intent_aware_missing_full_listobs.csv",
+            intent_missing_rows,
+            ["mous_uid", "eb_uid", "expected_full_listobs_path"],
+        )
+        intent_overall_rows, intent_by_array_rows = build_intent_aware_summary_rows(eb_intent_rows)
+        write_csv(
+            args.output_dir / "summary_overall_intent_aware.csv",
+            intent_overall_rows,
+            [
+                "milestone",
+                "method",
+                "n_eb",
+                "current_selected_total_volume_gb",
+                "projected_selected_total_uncapped_volume_gb",
+                "projected_selected_total_volume_gb",
+                "sample_total_factor_uncapped",
+                "sample_total_factor",
+                "mean_eb_factor_uncapped",
+                "median_eb_factor_uncapped",
+                "mean_eb_factor",
+                "median_eb_factor",
+                "cap_delta_total_volume_gb",
+            ],
+        )
+        write_csv(
+            args.output_dir / "summary_by_array_intent_aware.csv",
+            intent_by_array_rows,
+            [
+                "milestone",
+                "method",
+                "array_type",
+                "n_eb",
+                "sample_total_factor_uncapped",
+                "sample_total_factor",
+                "mean_eb_factor_uncapped",
+                "median_eb_factor_uncapped",
+                "mean_eb_factor",
+                "median_eb_factor",
+                "cap_delta_total_volume_gb",
+            ],
+        )
+        intent_rows_by_key = {(row["milestone"], row["method"]): row for row in intent_overall_rows}
+        intent_summary_lines.extend(
+            [
+                "## Intent-Aware Projection",
+                "",
+                "This optional analysis projects science, bandpass, phase, and check-source scans separately at the EB level.",
+                "It anchors the uncapped calibrator buckets to the same science growth factor as the legacy projection, then applies any requested calibrator-only spectral-resolution cap as an EB-level adjustment.",
+                "ATMOSPHERE and other buckets are tabulated in the current-data summary but excluded from this projection path for now.",
+                "",
+                f"- Calibrator cap enabled: `{args.apply_calibrator_cap}`",
+                f"- Calibrator cap value: `{args.calibrator_cap_kms:.3f}` km/s",
+                "",
+            ]
+        )
+        for milestone in MILESTONES:
+            intent_summary_lines.append(f"### {milestone}")
+            intent_summary_lines.append("")
+            for method in METHODS:
+                row = intent_rows_by_key[(milestone, method)]
+                intent_summary_lines.append(
+                    "- "
+                    + f"{method}: uncapped sample-total factor {format_factor(float(row['sample_total_factor_uncapped']))}, "
+                    + f"capped sample-total factor {format_factor(float(row['sample_total_factor']))}, "
+                    + f"cap delta {float(row['cap_delta_total_volume_gb']):.2f} GB"
+                )
+            intent_summary_lines.append("")
+
     rows_by_key = {(row["milestone"], row["method"]): row for row in summary_rows}
     summary_lines = [
         "# ryanCy11 WSU Projection Summary",
@@ -493,6 +923,9 @@ def main(argv: list[str] | None = None) -> int:
             ]
         )
 
+    if intent_summary_lines:
+        summary_lines.extend(intent_summary_lines)
+
     (args.output_dir / "summary.md").write_text("\n".join(summary_lines) + "\n", encoding="utf-8")
     (args.output_dir / "run_metadata.json").write_text(
         json.dumps(
@@ -502,6 +935,14 @@ def main(argv: list[str] | None = None) -> int:
                 "methods": list(METHODS),
                 "milestones": list(MILESTONES),
                 "mous_spw_sidecar": str(args.output_dir / "mous_spw_templates.csv"),
+                "intent_aware": intent_aware_requested,
+                "apply_calibrator_cap": args.apply_calibrator_cap,
+                "calibrator_cap_kms": args.calibrator_cap_kms,
+                "intent_projection_buckets": list(INTENT_PROJECTION_BUCKETS),
+                "calibrator_cap_buckets": list(CALIBRATOR_CAP_BUCKETS),
+                "intent_aware_summary": (
+                    str(args.output_dir / "summary_overall_intent_aware.csv") if intent_aware_requested else None
+                ),
             },
             indent=2,
         )

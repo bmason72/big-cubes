@@ -2,6 +2,20 @@
 Key files:
 *sum_m1_prod.py - python script to calculate WSU Milestone 1 product sizes/characteristics
 
+*nchan_pipeline.py - top-level driver for the ryanCy11 sidecar workflow.  It runs
+   SPW tabulation, setup summarization, the current-data intent summary, and the
+   sample-driven WSU projection.
+
+*ryan_cy11_current_data_intents_summary.py - intent-aware summary of current EB/MOUS
+   scan classes and their current data-volume fractions from the full-MS listobs.
+   This is the current-state tabulation used to understand science, bandpass,
+   phase, check-source, atmosphere, and related buckets without double counting.
+
+*ryan_cy11_wsu_projection.py - sample-driven WSU projection for the ryanCy11 sidecar
+   sample.  By default it reproduces the legacy science-only projection; with the
+   intent-aware option it also projects science/bandpass/phase/check-source buckets
+   separately and can apply a configurable calibrator-only spectral-resolution cap.
+
 *Example_notebook_MS1_MS5.ipynb- python notebook used (I think) to calculate the numbers and plots
    regarding data characteristics in the WSU System Design Description.
 
@@ -37,8 +51,10 @@ Key files:
 
 Secondary files:
 
+*ryanCy11wsu - working notes and outputs for the ryanCy11 sidecar analyses, including
+   the current-data-properties artifacts and the calibrator-cap planning note.
+
 *various, earlier version of sum_m1_prod.py
   -sum_m1_prodByProj.py
   -sum_m1_prodGood.py
   -sum_m1_prodBetter.py
-

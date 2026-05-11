@@ -1,20 +1,23 @@
-  v2 WSU data properties pipeline
-  Brian Mason (NRAO)
 
-  - rewrite (with claude code + codex) to be script-oriented, cleanly reconfigurable in assumptions, and testable
+Version history: 
+-- v1.0 -- original release of data base (Amanda Kepley)
+-- v1.1 -- improved blc & aca integration times, improved table join with pipeline weblog info, estimates of "maximum" mitigation (Amanda)
+-- v2.0 -- major refactor of pipeline (Brian Mason); add cycle 11 sidecar NCHAN analysis based on Ryan Loomis's
+            asssembled set of Cy11 products. make it script oriented, cleanly reconfigurable in terms of assumptions; add tests.
+            Assisted by Claude Code
 
-  Main pipeline
+Main pipeline
 
   - config.py
       - central configuration for WSU assumptions, milestone definitions, antenna/tint rules, and scenario knobs
-      - also used by the ryanCy11 nchan analysis, though that workflow is otherwise separate
+      - also used by the ryanCy11 sidecar analysis, though that workflow is otherwise separate
   - pipeline.py
       - main entry point for the Cy7/Cy8 data-properties statistics workflow
       - loads the per-MOUS ECSV database in data/, generates Band 1/2 realizations as needed, and computes projected M1/M4/M5 summary statistics
   - recompute.py
       - recomputes alternate WSU scenarios from an existing per-MOUS database
       - operates in memory on a loaded table, but the result can be written back out if desired
-      - includes optional support for per-SPW nchan projection via wsu_projection.py, but the current Cy7/Cy8 DB does not itself contain per-SPW setup inputs
+      - includes optional support for sidecar-driven per-SPW aggregate-nchan projection via wsu_projection.py, but the current Cy7/Cy8 DB does not itself contain per-SPW setup inputs
   - tables.py, plots.py
       - generate tables and plots from the pipeline/recompute outputs
 
@@ -26,14 +29,20 @@
       - tabulates individual SPW characteristics (nchan, frequency, bandwidth, resolution, line-free fraction) from listobs and cont.dat
   - spw_setup_summary.py
       - summarizes the distribution of spectral setups and their characteristics
+  - ryan_cy11_current_data_intents_summary.py
+      - tabulates current scan-level, intent-aware data properties from full-MS listobs
+      - reports EB- and MOUS-level time and current-volume fractions for science, bandpass, phase, check-source, atmosphere, and related buckets
   - data directories:
       - ryanCy11 - raw input data
       - ryanCy11out - tabulated/intermediate products
       - ryanCy11wsu - WSU projection outputs from the ryanCy11 analysis
   - ryan_cy11_wsu_projection.py
-      - runs the WSU projection comparison for the ryanCy11 sample
+      - runs the sample-driven WSU projection comparison for the ryanCy11 sample
+      - by default reproduces the legacy science-only sample projection
+      - optionally adds an intent-aware EB-level projection for science, bandpass, phase, and check-source scans, with an optional calibrator-only spectral-resolution cap
   - wsu_projection.py
       - shared helper code for projecting aggregate MOUS nchan from a current per-SPW setup under selectable projection logic
+      - this is the only part of the current sidecar workflow that already feeds into the main recompute path
       - current supported modes:
           - memo_uniform_binned - original memo logic: all projected SPWs at one stepped2-binned resolution, based on the finest current SPW
           - memo_uniform_exact - same uniform-per-MOUS logic, but keep the exact finest current resolution instead of binning it
@@ -41,6 +50,178 @@
           - distributed_exact - preserve the current mix of SPW resolutions using the exact current resolutions
 
   --> setup and usage is demonstrated in runCy11nchan script
+
+---------------------------------------------------------------
+
+Ryan Cy11 WSU projection analysis
+---------------------------------
+
+Top-level workflow drivers
+--------------------------
+
+Two top-level CLI drivers now provide default rooted output directories under
+`out/` and write a `config.json` file describing each run:
+
+- `drrup_pipeline.py`
+  - main Cy7/Cy8 projection workflow
+  - default run dir: `out/drrupPl_<date><suffix>/`
+  - validation run dir: `out/valid_drrupPl_<date><suffix>/`
+- `nchan_pipeline.py`
+  - `ryanCy11` SPW / setup / current-data / WSU `nchan` workflow
+  - default run dir: `out/nchanEst_<date><suffix>/`
+  - validation run dir: `out/valid_nchanEst_<date><suffix>/`
+
+The bundled helper scripts `runCy7Cy8pl` and `runCy11nchan` are thin wrappers
+around those Python drivers.
+
+Typical main-pipeline run:
+
+```bash
+python drrup_pipeline.py
+```
+
+Typical `ryanCy11` run:
+
+```bash
+python nchan_pipeline.py
+```
+
+This writes four main rooted products:
+
+- `tabulation/`
+- `setup_summary/`
+- `current_data_properties/`
+- `wsu_projection/`
+
+For the main pipeline, a run directory contains:
+
+- `realizations/`
+- `stats.json`
+- `tables/`
+- `tables/all_tables.tex`
+- `plots/`
+- `config.json`
+
+The repo includes a sample-driven WSU projection script,
+`ryan_cy11_wsu_projection.py`, that operates on the EB/SPW tabulation from
+`spw_tabulate.py`.  It evaluates four projection methods:
+
+- `memo_uniform_binned`: current memo procedure using the finest current SPW
+  per MOUS and the 5 stepped2 velocity bins.
+- `memo_uniform_exact`: same, but keep the current finest requested
+  resolution instead of snapping it to the bin floor.
+- `distributed_binned`: preserve the current within-MOUS SPW resolution
+  distribution, but map each SPW into the 5 stepped2 bins.
+- `distributed_exact`: preserve the current within-MOUS SPW resolution
+  distribution using the current requested resolution directly.
+
+Typical run sequence:
+
+```bash
+python nchan_pipeline.py
+```
+
+The current-data intent summary is produced by
+`ryan_cy11_current_data_intents_summary.py`.  It uses the matched full-MS
+`listobs` files to classify scans by anchor intent without double counting and
+to estimate current time and volume fractions by bucket.
+
+The projection outputs include:
+
+- `eb_projection_factors.csv`: per-EB current rates and projected M1/M4/M5
+  rates/factors for each method.
+- `mous_spw_templates.csv`: MOUS/SPW sidecar capturing the current
+  within-MOUS SPW resolution distribution. This is the file the main
+  recompute path can consume for `distributed_binned` WSU channel
+  projections.
+- `summary_overall.csv`: aggregate factors over the full sample.
+- `summary_by_array.csv`: the same split by `12m` and `7m`.
+- `summary.md`: human-readable summary with the method definitions and
+  headline factors.
+
+When `--intent-aware` is used, `wsu_projection/` also includes:
+
+- `eb_intent_projection_factors.csv`: per-EB projected totals split across
+  science, bandpass, phase, and check-source buckets.
+- `intent_aware_scan_details.csv`: scan-level audit table derived from the
+  full-MS `listobs`.
+- `summary_overall_intent_aware.csv` and `summary_by_array_intent_aware.csv`:
+  aggregate summaries for the optional intent-aware projection path.
+
+When `--apply-calibrator-cap` is added, the intent-aware path applies a
+configurable calibrator-only spectral-resolution cap, currently to bandpass,
+phase, and check-source scans only.  Atmosphere scans are tabulated in the
+current-data summary but are explicitly excluded from the projection/cap path
+for now.
+
+
+Distributed-binned recompute path
+---------------------------------
+
+The main config-driven recompute layer in `recompute.py` now supports one
+optional sidecar-driven WSU aggregate-channel projection:
+
+- `stored`: default behavior; use the DB's stored `wsu_nchan_agg_*` values.
+- `distributed_binned`: recompute `wsu_nchan_agg_*` from a MOUS/SPW sidecar
+  that preserves the current within-MOUS SPW resolution mix while still
+  mapping each SPW through the existing stepped2 binning.
+
+At present, this MOUS/SPW sidecar is the only output from the `ryanCy11`
+workflow that feeds into the main `recompute.py` path.  The current-data
+intent summary and the EB-level intent-aware calibrator-capping analysis are
+parallel analyses only; they are not yet consumed by `pipeline.py` or
+`recompute.py`.
+
+This is exposed via `ScenarioConfig.nchan_projection`. Example:
+
+```python
+from dataclasses import replace
+
+from config import MEMO_CONFIG, NchanProjection
+from pipeline import load_database
+from recompute import recompute_db
+
+db = load_database("data/wsu_datarates_mit_per_mous_initial_goal_20250423.ecsv")
+scenario = replace(
+    MEMO_CONFIG,
+    name="distributed_binned",
+    nchan_projection=NchanProjection(
+        mode="distributed_binned",
+        sidecar_path="/path/to/mous_spw_templates.csv",
+    ),
+)
+out = recompute_db(db, scenario)
+```
+
+
+Recompute CLI
+-------------
+
+`recompute.py` now has a CLI for saving recomputed scenario databases, and
+optionally recomputing an existing realization directory as well.
+
+Example:
+
+```bash
+python recompute.py \
+  --db-path data/wsu_datarates_mit_per_mous_initial_goal_20250423.ecsv \
+  --scenario VALIDATION_TWEAKED_CONFIG
+```
+
+That writes a recomputed ECSV plus `config.json` into a new default
+`out/drrupPl_<date><suffix>/` run directory unless `--run-dir` or
+`--out-path` is provided.
+
+Notes:
+
+- The base per-MOUS DB does not store the current within-MOUS SPW
+  resolution distribution, so `distributed_binned` requires a sidecar.
+- The override rewrites the WSU aggregate `nchan_agg_*` columns for
+  `M1`, `M4`, and `M5`; downstream productsize, datarate, visrate,
+  datavol, and sysperf then follow automatically.
+- `distributed_binned` is currently not supported together with
+  `mitigation.mode="caps"` or calibrator spectral-resolution correction.
+    
 
 -------------------------------------------
 
@@ -67,12 +248,6 @@ Associated data:
 * wsu_datarates_per_moussrc_cycle* -- wsu estimates plus data rates per mous/src (no pipeline runtime information or mitigation information).
 
 ------
-
-Version history: 
--- v1.0 -- original release of data base
--- v1.1 -- improved blc & aca integration times, improved table join with pipeline weblog info, estimates of "maximum" mitigation
--- v2.0 -- major refactor of pipeline (Brian Mason + claude code); add cycle 11 sidecar NCHAN analysis based on Ryan Loomis's
-            asssembled set of Cy11 products.
 
 -------
 
@@ -291,139 +466,3 @@ wsu_data_rates* file columns:
      'mit_spw', # number of spws mitigation information
 
 
-Ryan Cy11 WSU projection analysis
----------------------------------
-
-Top-level workflow drivers
---------------------------
-
-Two top-level CLI drivers now provide default rooted output directories under
-`out/` and write a `config.json` file describing each run:
-
-- `drrup_pipeline.py`
-  - main Cy7/Cy8 projection workflow
-  - default run dir: `out/drrupPl_<date><suffix>/`
-  - validation run dir: `out/valid_drrupPl_<date><suffix>/`
-- `nchan_pipeline.py`
-  - `ryanCy11` SPW / setup / WSU `nchan` workflow
-  - default run dir: `out/nchanEst_<date><suffix>/`
-  - validation run dir: `out/valid_nchanEst_<date><suffix>/`
-
-The bundled helper scripts `runCy7Cy8pl` and `runCy11nchan` are thin wrappers
-around those Python drivers.
-
-Typical main-pipeline run:
-
-```bash
-python drrup_pipeline.py
-```
-
-Typical `ryanCy11` run:
-
-```bash
-python nchan_pipeline.py
-```
-
-For the main pipeline, a run directory contains:
-
-- `realizations/`
-- `stats.json`
-- `tables/`
-- `tables/all_tables.tex`
-- `plots/`
-- `config.json`
-
-The repo includes a sample-driven WSU projection script,
-`ryan_cy11_wsu_projection.py`, that operates on the EB/SPW tabulation from
-`spw_tabulate.py`.  It evaluates four projection methods:
-
-- `memo_uniform_binned`: current memo procedure using the finest current SPW
-  per MOUS and the 5 stepped2 velocity bins.
-- `memo_uniform_exact`: same, but keep the current finest requested
-  resolution instead of snapping it to the bin floor.
-- `distributed_binned`: preserve the current within-MOUS SPW resolution
-  distribution, but map each SPW into the 5 stepped2 bins.
-- `distributed_exact`: preserve the current within-MOUS SPW resolution
-  distribution using the current requested resolution directly.
-
-Typical run sequence:
-
-```bash
-python nchan_pipeline.py
-```
-
-The projection outputs include:
-
-- `eb_projection_factors.csv`: per-EB current rates and projected M1/M4/M5
-  rates/factors for each method.
-- `mous_spw_templates.csv`: MOUS/SPW sidecar capturing the current
-  within-MOUS SPW resolution distribution. This is the file the main
-  recompute path can consume for `distributed_binned` WSU channel
-  projections.
-- `summary_overall.csv`: aggregate factors over the full sample.
-- `summary_by_array.csv`: the same split by `12m` and `7m`.
-- `summary.md`: human-readable summary with the method definitions and
-  headline factors.
-
-
-Distributed-binned recompute path
----------------------------------
-
-The main config-driven recompute layer in `recompute.py` now supports an
-optional sidecar-driven WSU aggregate-channel projection:
-
-- `stored`: default behavior; use the DB's stored `wsu_nchan_agg_*` values.
-- `distributed_binned`: recompute `wsu_nchan_agg_*` from a MOUS/SPW sidecar
-  that preserves the current within-MOUS SPW resolution mix while still
-  mapping each SPW through the existing stepped2 binning.
-
-This is exposed via `ScenarioConfig.nchan_projection`. Example:
-
-```python
-from dataclasses import replace
-
-from config import MEMO_CONFIG, NchanProjection
-from pipeline import load_database
-from recompute import recompute_db
-
-db = load_database("data/wsu_datarates_mit_per_mous_initial_goal_20250423.ecsv")
-scenario = replace(
-    MEMO_CONFIG,
-    name="distributed_binned",
-    nchan_projection=NchanProjection(
-        mode="distributed_binned",
-        sidecar_path="/path/to/mous_spw_templates.csv",
-    ),
-)
-out = recompute_db(db, scenario)
-```
-
-
-Recompute CLI
--------------
-
-`recompute.py` now has a CLI for saving recomputed scenario databases, and
-optionally recomputing an existing realization directory as well.
-
-Example:
-
-```bash
-python recompute.py \
-  --db-path data/wsu_datarates_mit_per_mous_initial_goal_20250423.ecsv \
-  --scenario VALIDATION_TWEAKED_CONFIG
-```
-
-That writes a recomputed ECSV plus `config.json` into a new default
-`out/drrupPl_<date><suffix>/` run directory unless `--run-dir` or
-`--out-path` is provided.
-
-Notes:
-
-- The base per-MOUS DB does not store the current within-MOUS SPW
-  resolution distribution, so `distributed_binned` requires a sidecar.
-- The override rewrites the WSU aggregate `nchan_agg_*` columns for
-  `M1`, `M4`, and `M5`; downstream productsize, datarate, visrate,
-  datavol, and sysperf then follow automatically.
-- `distributed_binned` is currently not supported together with
-  `mitigation.mode="caps"` or calibrator spectral-resolution correction.
-    

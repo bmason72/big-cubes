@@ -125,15 +125,47 @@ def test_nchan_pipeline_driver_creates_root_outputs(tmp_path, monkeypatch):
     calls = []
     monkeypatch.setattr(nchan_pipeline.spw_tabulate, "main", lambda argv=None: calls.append(("tab", argv)) or 0)
     monkeypatch.setattr(nchan_pipeline.spw_setup_summary, "main", lambda argv=None: calls.append(("setup", argv)) or 0)
+    monkeypatch.setattr(nchan_pipeline.ryan_cy11_current_data_intents_summary, "main", lambda argv=None: calls.append(("current", argv)) or 0)
     monkeypatch.setattr(nchan_pipeline.ryan_cy11_wsu_projection, "main", lambda argv=None: calls.append(("wsu", argv)) or 0)
 
     rc = nchan_pipeline.main(["--run-dir", str(run_dir), "--input-dir", "ryanCy11"])
     assert rc == 0
     assert (run_dir / "tabulation").exists()
     assert (run_dir / "setup_summary").exists()
+    assert (run_dir / "current_data_properties").exists()
     assert (run_dir / "wsu_projection").exists()
     assert (run_dir / "config.json").exists()
-    assert [name for name, _ in calls] == ["tab", "setup", "wsu"]
+    assert [name for name, _ in calls] == ["tab", "setup", "current", "wsu"]
+
+
+def test_nchan_pipeline_passes_intent_aware_projection_flags(tmp_path, monkeypatch):
+    import nchan_pipeline
+
+    run_dir = tmp_path / "run"
+    calls = []
+    monkeypatch.setattr(nchan_pipeline.spw_tabulate, "main", lambda argv=None: 0)
+    monkeypatch.setattr(nchan_pipeline.spw_setup_summary, "main", lambda argv=None: 0)
+    monkeypatch.setattr(nchan_pipeline.ryan_cy11_current_data_intents_summary, "main", lambda argv=None: 0)
+    monkeypatch.setattr(nchan_pipeline.ryan_cy11_wsu_projection, "main", lambda argv=None: calls.append(argv) or 0)
+
+    rc = nchan_pipeline.main(
+        [
+            "--run-dir", str(run_dir),
+            "--input-dir", "ryanCy11",
+            "--intent-aware",
+            "--apply-calibrator-cap",
+            "--calibrator-cap-kms", "0.8",
+        ]
+    )
+    assert rc == 0
+    assert calls == [[
+        str(run_dir / "tabulation"),
+        str(run_dir / "wsu_projection"),
+        "--intent-aware",
+        "--apply-calibrator-cap",
+        "--calibrator-cap-kms",
+        "0.8",
+    ]]
 
 
 def test_recompute_cli_writes_db_and_config(tmp_path):
