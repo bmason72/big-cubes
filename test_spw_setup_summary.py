@@ -9,12 +9,15 @@ from spw_setup_summary import (
     EbRuntimeMetadata,
     build_eb_assignments,
     build_mous_assignments,
+    build_mous_spw_line_fraction_rows,
     choose_gap_cut,
     compute_eb_data_rate_gbps,
     dedupe_eb_spw_rows,
     derive_cut_metadata,
+    is_cont_spw,
     main,
     select_top_rows_by_coverage,
+    summarize_mixed_resolution_ebs,
     summarize_setups,
 )
 
@@ -42,11 +45,17 @@ def test_dedupe_eb_spw_rows_uses_eb_spw_not_target_spw():
     assert len(deduped) == 3
 
 
+def test_is_cont_spw_uses_nchan_and_bandwidth_thresholds():
+    assert is_cont_spw({"nchan": "128", "total_bw_hz": str(1.875e9)})
+    assert not is_cont_spw({"nchan": "240", "total_bw_hz": str(2.0e9)})
+    assert not is_cont_spw({"nchan": "128", "total_bw_hz": str(1.0e9)})
+
+
 def test_derive_cut_metadata_defaults_to_fixed_bandwidth_cuts():
     rows = [
-        {"total_bw_hz": str(58_593_800.0), "velocity_resolution_kms": "0.1"},
-        {"total_bw_hz": str(117_187_500.0), "velocity_resolution_kms": "1.0"},
-        {"total_bw_hz": str(2_000_000_000.0), "velocity_resolution_kms": "10.0"},
+        {"nchan": "240", "total_bw_hz": str(58_593_800.0), "velocity_resolution_kms": "0.1"},
+        {"nchan": "240", "total_bw_hz": str(117_187_500.0), "velocity_resolution_kms": "1.0"},
+        {"nchan": "128", "total_bw_hz": str(2_000_000_000.0), "velocity_resolution_kms": "10.0"},
     ]
 
     metadata = derive_cut_metadata(
@@ -60,14 +69,16 @@ def test_derive_cut_metadata_defaults_to_fixed_bandwidth_cuts():
     assert math.isclose(metadata["bandwidth"]["low_cut"], 0.09)
     assert math.isclose(metadata["bandwidth"]["high_cut"], 1.2)
     assert math.isnan(metadata["bandwidth"]["q33"])
+    assert metadata["n_cont_eb_spw"] == 1
+    assert metadata["n_non_cont_eb_spw"] == 2
 
 
 def test_derive_cut_metadata_keeps_percentile_bandwidth_mode_available():
     rows = [
-        {"total_bw_hz": str(58_593_800.0), "velocity_resolution_kms": "0.1"},
-        {"total_bw_hz": str(937_500_000.0), "velocity_resolution_kms": "1.0"},
-        {"total_bw_hz": str(1_875_000_000.0), "velocity_resolution_kms": "10.0"},
-        {"total_bw_hz": str(2_000_000_000.0), "velocity_resolution_kms": "20.0"},
+        {"nchan": "240", "total_bw_hz": str(58_593_800.0), "velocity_resolution_kms": "0.1"},
+        {"nchan": "240", "total_bw_hz": str(937_500_000.0), "velocity_resolution_kms": "1.0"},
+        {"nchan": "128", "total_bw_hz": str(1_875_000_000.0), "velocity_resolution_kms": "10.0"},
+        {"nchan": "128", "total_bw_hz": str(2_000_000_000.0), "velocity_resolution_kms": "20.0"},
     ]
 
     metadata = derive_cut_metadata(
@@ -79,7 +90,7 @@ def test_derive_cut_metadata_keeps_percentile_bandwidth_mode_available():
 
     assert metadata["bandwidth"]["mode"] == "percentile"
     assert metadata["bandwidth"]["low_cut"] > 0.09
-    assert metadata["bandwidth"]["high_cut"] > 1.2
+    assert metadata["bandwidth"]["high_cut"] < 1.875
 
 
 def test_compute_eb_data_rate_uses_fiducial_antennas_and_corr_count():
@@ -105,27 +116,54 @@ def test_compute_eb_data_rate_uses_fiducial_antennas_and_corr_count():
 
 def test_setup_summary_uses_eb_coverage_and_mean_data_rate():
     mous_assignments = [
-        {"mous_uid": "m1", "n_ebs": 2, "n_spws": 2, "setup_signature": "[WC,WC]", "setup_tokens": "WC WC", "line_fraction_percent": 20.0},
-        {"mous_uid": "m2", "n_ebs": 1, "n_spws": 1, "setup_signature": "[NF]", "setup_tokens": "NF", "line_fraction_percent": 10.0},
+        {"mous_uid": "m1", "n_ebs": 2, "n_spws": 2, "setup_signature": "[CONT,CONT]", "setup_tokens": "CONT CONT", "line_fraction_percent": 20.0, "is_fully_empty": False},
+        {"mous_uid": "m2", "n_ebs": 1, "n_spws": 1, "setup_signature": "[NF]", "setup_tokens": "NF", "line_fraction_percent": 0.0, "is_fully_empty": True},
     ]
     eb_assignments = [
-        {"mous_uid": "m1", "eb_uid": "e1", "setup_signature": "[WC,WC]", "actual_n_spws": 2, "data_rate_gbps": 0.30},
-        {"mous_uid": "m1", "eb_uid": "e2", "setup_signature": "[WC,WC]", "actual_n_spws": 2, "data_rate_gbps": 0.50},
+        {"mous_uid": "m1", "eb_uid": "e1", "setup_signature": "[CONT,CONT]", "actual_n_spws": 2, "data_rate_gbps": 0.30},
+        {"mous_uid": "m1", "eb_uid": "e2", "setup_signature": "[CONT,CONT]", "actual_n_spws": 2, "data_rate_gbps": 0.50},
         {"mous_uid": "m2", "eb_uid": "e3", "setup_signature": "[NF]", "actual_n_spws": 1, "data_rate_gbps": 0.05},
     ]
 
     summaries = summarize_setups(mous_assignments, eb_assignments)
     top = summaries[0]
 
-    assert top["setup_signature"] == "[WC,WC]"
+    assert top["setup_signature"] == "[CONT,CONT]"
     assert top["eb_count"] == 2
     assert top["eb_spw_count"] == 4
     assert math.isclose(top["eb_spw_percent"], 80.0)
     assert math.isclose(top["mean_eb_data_rate_gbps"], 0.40)
+    assert math.isclose(top["fully_empty_mous_fraction"], 0.0)
 
     selected = select_top_rows_by_coverage(summaries, 0.66)
     assert len(selected) == 1
-    assert selected[0]["setup_signature"] == "[WC,WC]"
+    assert selected[0]["setup_signature"] == "[CONT,CONT]"
+
+
+def test_mixed_resolution_summary_and_mous_spw_line_fractions():
+    eb_spw_rows = [
+        {"mous_uid": "m1", "eb_uid": "e1", "spw_id": "1", "nchan": "128", "total_bw_hz": str(2.0e9), "velocity_resolution_kms": "20.0"},
+        {"mous_uid": "m1", "eb_uid": "e2", "spw_id": "2", "nchan": "240", "total_bw_hz": str(0.1e9), "velocity_resolution_kms": "0.1"},
+        {"mous_uid": "m1", "eb_uid": "e2", "spw_id": "3", "nchan": "240", "total_bw_hz": str(0.1e9), "velocity_resolution_kms": "5.0"},
+    ]
+    metadata = derive_cut_metadata(
+        eb_spw_rows,
+        bandwidth_cut_mode="fixed",
+        bandwidth_low_cut_mhz=90.0,
+        bandwidth_high_cut_mhz=1200.0,
+    )
+    mixed_rows = summarize_mixed_resolution_ebs(eb_spw_rows, metadata["resolution"])
+    assert mixed_rows[0]["resolution_combo"] == "CONT"
+    assert mixed_rows[0]["eb_count"] == 1
+    assert any(row["resolution_combo"] == "FINE + COARSE" and row["is_mixed"] for row in mixed_rows)
+
+    mous_spw_rows = [
+        {"mous_uid": "m1", "spw_id": "1", "nchan": "128", "total_bw_hz": str(2.0e9), "velocity_resolution_kms": "20.0", "mean_summed_line_fraction_of_spw": "0.10"},
+        {"mous_uid": "m1", "spw_id": "2", "nchan": "240", "total_bw_hz": str(0.1e9), "velocity_resolution_kms": "0.1", "mean_summed_line_fraction_of_spw": "0.20"},
+    ]
+    line_rows = build_mous_spw_line_fraction_rows(mous_spw_rows, metadata["resolution"])
+    assert line_rows[0]["resolution_bucket"] == "CONT"
+    assert math.isclose(line_rows[1]["line_fraction_percent"], 20.0)
 
 
 def test_main_writes_summary_plots_and_eb_assignments(tmp_path):
@@ -230,6 +268,7 @@ def test_main_writes_summary_plots_and_eb_assignments(tmp_path):
             "mous_uid": "m1",
             "spw_id": "1",
             "center_freq_hz": "100e9",
+            "nchan": "128",
             "total_bw_hz": str(2.0e9),
             "velocity_resolution_kms": "20.0",
             "mean_summed_line_fraction_of_spw": "0.20",
@@ -239,6 +278,7 @@ def test_main_writes_summary_plots_and_eb_assignments(tmp_path):
             "mous_uid": "m1",
             "spw_id": "2",
             "center_freq_hz": "110e9",
+            "nchan": "128",
             "total_bw_hz": str(2.0e9),
             "velocity_resolution_kms": "20.0",
             "mean_summed_line_fraction_of_spw": "0.10",
@@ -248,9 +288,10 @@ def test_main_writes_summary_plots_and_eb_assignments(tmp_path):
             "mous_uid": "m2",
             "spw_id": "3",
             "center_freq_hz": "90e9",
+            "nchan": "240",
             "total_bw_hz": str(0.1e9),
             "velocity_resolution_kms": "0.1",
-            "mean_summed_line_fraction_of_spw": "0.05",
+            "mean_summed_line_fraction_of_spw": "0.00",
             "n_ebs_parsed": "1",
         },
     ]
@@ -261,6 +302,7 @@ def test_main_writes_summary_plots_and_eb_assignments(tmp_path):
                 "mous_uid",
                 "spw_id",
                 "center_freq_hz",
+                "nchan",
                 "total_bw_hz",
                 "velocity_resolution_kms",
                 "mean_summed_line_fraction_of_spw",
@@ -282,17 +324,27 @@ def test_main_writes_summary_plots_and_eb_assignments(tmp_path):
     assert (output_dir / "setup_summary.csv").exists()
     assert (output_dir / "setup_summary.md").exists()
     assert (output_dir / "eb_setup_assignments.csv").exists()
+    assert (output_dir / "mixed_resolution_summary.csv").exists()
+    assert (output_dir / "mous_spw_line_fraction.csv").exists()
     assert (output_dir / "bandwidth_hist_eb_spw.png").exists()
     assert (output_dir / "resolution_hist_eb_spw.png").exists()
+    assert (output_dir / "line_fraction_hist_cont.png").exists()
+    assert (output_dir / "line_fraction_hist_fine.png").exists()
+    assert (output_dir / "line_fraction_hist_medium.png").exists()
+    assert (output_dir / "line_fraction_hist_coarse.png").exists()
 
     summary_text = (output_dir / "setup_summary.md").read_text(encoding="utf-8")
-    assert "Bandwidth cuts (GHz, fixed): low=0.090000, high=1.200000" in summary_text
+    assert "Bandwidth cuts (GHz, fixed): low=0.09, high=1.2" in summary_text
+    assert "CONT definition: nchan <= 128 and bandwidth >= 1.88 GHz." in summary_text
     assert "Top 1 Setup Signatures" in summary_text
     assert "covering 50% of EBs target" in summary_text
-    assert "EB-SPWs (66.67%)" in summary_text
+    assert "EB-SPWs (66.7%)" in summary_text
+    assert "Mixed Resolution At EB Level" in summary_text
+    assert "fully empty fraction = 0%" in summary_text
     assert "mean EB data rate" in summary_text
 
     cut_metadata = json.loads((output_dir / "cut_metadata.json").read_text(encoding="utf-8"))
     assert cut_metadata["n_unique_eb_spw"] == 3
+    assert cut_metadata["n_cont_eb_spw"] == 2
     assert cut_metadata["selected_setup_count"] == 1
     assert cut_metadata["bandwidth"]["mode"] == "fixed"

@@ -1,0 +1,312 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage[hidelinks]{hyperref}
+
+\title{2026 Update to WSU Data-Properties Projections}
+\author{Draft memo}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Purpose}
+This note records an update to the existing WSU data-properties projections using
+the 2026 sidecar analysis results and the updated rollout spreadsheet in
+\texttt{WSU SDD data volume.xlsx} (\texttt{rollout v2} worksheet).  It is
+intended as a concise numerical update rather than a full replacement for the
+existing methodology memos.
+
+\section{Inputs from the ryanCy11 sidecar analysis}
+The current-data intent summary over the matched sample contains 2336 MOUS and
+5559 EBs.  The main current EB-level volume-fraction results are given in
+Table~\ref{tab:ebfrac}.  These values are the current-data fractions before any
+WSU projection.
+
+\begin{table}[h]
+\centering
+\caption{EB-level current-data volume fractions from the sidecar analysis.}
+\label{tab:ebfrac}
+\begin{tabular}{lcccc}
+\toprule
+Bucket & Mean & Median & Q25 & Q75 \\
+\midrule
+science & 0.685 & 0.678 & 0.524 & 0.930 \\
+phase & 0.0728 & 0.0711 & 0.0191 & 0.101 \\
+bandpass & 0.116 & 0.0880 & 0.0302 & 0.152 \\
+check\_source & 0.0104 & 0 & 0 & 0 \\
+pointing & 0.0176 & 0.00730 & 0.00140 & 0.0207 \\
+polarization & 0.00120 & 0 & 0 & 0 \\
+diffgain\_reference & 0.000200 & 0 & 0 & 0 \\
+diffgain\_on\_source & 0.000500 & 0 & 0 & 0 \\
+atmosphere & 0.0970 & 0.0451 & 0.0108 & 0.146 \\
+other & 0 & 0 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The sidecar setup summary used 28253 unique EB-SPW rows for 2336 MOUS and 5559
+EBs.  The dominant setup signatures remain four-SPW wide/coarse and wide/mid
+configurations.  The sample-driven WSU projection factors from the same
+analysis are summarized in Table~\ref{tab:sidecarproj}.
+
+\begin{table}[h]
+\centering
+\caption{Sample-driven WSU projection factors from the ryanCy11 sidecar analysis.}
+\label{tab:sidecarproj}
+\begin{tabular}{llccc}
+\toprule
+Milestone & Method & Sample-total & Mean EB & Median EB \\
+\midrule
+M1 & memo\_uniform\_binned & 18.4x & 9.82x & 4.80x \\
+M1 & memo\_uniform\_exact & 16.8x & 7.35x & 2.18x \\
+M1 & distributed\_binned & 10.7x & 6.51x & 3.96x \\
+M1 & distributed\_exact & 8.99x & 4.32x & 1.58x \\
+\addlinespace
+M4 & memo\_uniform\_binned & 33.8x & 15.8x & 7.38x \\
+M4 & memo\_uniform\_exact & 30.5x & 10.5x & 2.98x \\
+M4 & distributed\_binned & 20.6x & 11.2x & 5.28x \\
+M4 & distributed\_exact & 16.7x & 6.39x & 2.35x \\
+\addlinespace
+M5 & memo\_uniform\_binned & 90.0x & 38.6x & 14.4x \\
+M5 & memo\_uniform\_exact & 82.0x & 27.2x & 8.52x \\
+M5 & distributed\_binned & 53.2x & 26.3x & 11.0x \\
+M5 & distributed\_exact & 44.0x & 16.1x & 5.08x \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Updated rollout-v2 projections}
+Table~\ref{tab:rollout-main} transcribes the main rollout-v2 numbers.  The
+milestones are MS1, MS4, and MS5; the spreadsheet also lists the current
+BLC+ACA spectral baseline for comparison where applicable.
+
+\begin{table}[p]
+\centering
+\caption{Updated rollout-v2 projection numbers.}
+\label{tab:rollout-main}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.9in}cccc}
+\toprule
+Quantity & MS1 & MS4 & MS5 & Units \\
+\midrule
+Raw data vol (12m+7m+TP) & 0.184 & 0.867 & 2.10 & PB/yr \\
+Time averaged raw data rate (12m+7m+TP) & 0.0198 & 0.0929 & 0.227 & GB/s \\
+Expected peak data rate (not limiting) & 0.218 & 1.74 & 3.48 & GB/s \\
+Max data rate (12m+7m+TP, Sys-Req-610) & 0.309 & 2.24 & 4.43 & GB/s \\
+Prod Vol (12m+7m+TP) & 1.32 & 1.49 & 3.56 & PB/yr \\
+Prod vol (compressed) & 0.860 & 0.969 & 2.31 & PB/yr \\
+Mitigated prod vol (compressed) & 0.215 & 0.485 & 2.31 & PB/yr \\
+Mitig.\ prod vol with GOUS & 0.215 & 0.659 & 3.14 & PB/yr \\
+Total data volume & 0.399 & 1.53 & 5.24 & PB/yr \\
+Estimated system performance & 0.0124 & 0.0553 & 0.239 & PFLOP/s \\
+Cores & 1130 & 1500 & 6510 & cores \\
+Years from compute quote (2024 or 2023) & 6 & 10 & 12 & years \\
+Nodes (year in question nodes; full replacement) & 1.92 & 1.46 & 3.80 & nodes \\
+Additional year-in-question nodes & --- & 1.00 & 4.41 & nodes \\
+Compute cost (80k/node MS1; 60k/node later) & 153 & 60.0 & 264 & cost units \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For comparison, Table~\ref{tab:rollout-pdr} gives the baseline PDR rollout-plan
+values before the later correction-chain adjustments.
+
+\begin{table}[p]
+\centering
+\caption{Baseline PDR rollout-plan numbers.}
+\label{tab:rollout-pdr}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.9in}cccc}
+\toprule
+Quantity & MS1 & MS4 & MS5 & Units \\
+\midrule
+Raw data vol (12m+7m+TP) & 0.613 & 2.06 & 5.00 & PB/yr \\
+Time averaged raw data rate (12m+7m+TP) & 0.0660 & 0.221 & 0.540 & GB/s \\
+Expected peak data rate (not limiting) & 0.218 & 1.74 & 3.48 & GB/s \\
+Max data rate (12m+7m+TP, Sys-Req-610) & 0.309 & 2.24 & 4.43 & GB/s \\
+Prod Vol (12m+7m+TP) & 4.50 & 5.07 & 12.1 & PB/yr \\
+Prod vol (compressed) & 2.92 & 3.30 & 7.87 & PB/yr \\
+Mitigated prod vol (compressed) & 0.585 & 3.30 & 7.87 & PB/yr \\
+Mitig.\ prod vol with GOUS & 0.585 & 4.48 & 10.7 & PB/yr \\
+Total data volume & 1.20 & 6.55 & 15.7 & PB/yr \\
+Estimated system performance & 0.00990 & 0.263 & 0.570 & PFLOP/s \\
+Cores & 3080 & 7160 & 15500 & cores \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The spreadsheet also records the further mitigations and optimizations assumed
+for this rollout:
+
+\begin{center}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.8in}cccll}
+\toprule
+Mitigation / optimization & MS1 & MS4 & MS5 & Impacts vis? & Impacts prod? \\
+\midrule
+Tint = 6\,s except (M4+) long baseline & 0.500 & 0.810 & 0.810 & yes & no \\
+5 pix/beam $\rightarrow$ 3.5 pix/beam & 0.490 & 0.490 & 0.490 & no & yes \\
+Empirical Nchan projection & 0.600 & 0.600 & 0.600 & yes & yes \\
+FindCont ROI --- use assumed mitigation instead & 0.250 & 0.500 & 1.00 & no & yes \\
+Cap calibrators at 1 km/s & 0.950 & 0.950 & 0.950 & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Notes carried in the spreadsheet:
+\begin{itemize}
+\item MS1 assumes 6\,s and 47 antennas; current CASA+pipeline implies that the
+  original SoC methodology is not directly applicable, so scaling from the
+  current cluster is recommended.
+\item MS4 and MS5 assume 3\,s integration time.
+\item The FLOPS-based system-performance estimate should be divided by 2
+  (4k hr versus 8.7k hr) and multiplied by 3 as a safety factor before
+  converting to cores, as in the Compute TSI and SDD.
+\item The max-data-rate line uses the IST value for the 12\,m MS5 peak to give a
+  consistent top-line total of 4.434 GB/s.
+\end{itemize}
+
+\section{Alternate scenario: smart mitigation / ROI sub-cube imaging}
+The workbook also gives an alternate scenario that applies ``smart
+mitigation'' / ROI sub-cube imaging for all cycles.  Table~\ref{tab:smart}
+transcribes those results.
+
+In this alternate scenario, the spreadsheet notes that MS4 and later benefit
+from RADPS-ALMA efficiency improvements.
+
+\section{Summary}
+The 2026 sidecar analysis continues to support a substantial reduction relative
+to the original uniform-finest-resolution extrapolation when the current SPW
+resolution distribution is preserved.  The rollout-v2 spreadsheet then applies
+additional operational and product-side mitigations to reach the updated top-line
+data-volume, rate, and compute numbers summarized above.
+
+\clearpage
+\appendix
+\section{Spectral-setup summary}
+This appendix records the current setup-summary snapshot generated for the
+matched 2336-MOUS / 5559-EB sample using \texttt{spw\_setup\_summary.py} on
+\texttt{ryanCy11out/spw\_level\_table.csv} and
+\texttt{ryanCy11out/mous\_spw\_summary.csv}.  The continuum-like carve-out is
+\texttt{CONT}, defined here as $N_{\mathrm{chan}} \le 128$ and total bandwidth
+$\ge 1.875$ GHz.
+
+\begin{table}[h]
+\centering
+\caption{Current setup-summary cut definitions and category counts.}
+\label{tab:setupcuts}
+\small
+\begin{tabular}{p{3.6in}r}
+\toprule
+Quantity & Value \\
+\midrule
+Unique EB-SPW rows in sample & 28253 \\
+CONT EB-SPW rows & 6107 \\
+Non-CONT EB-SPW rows used for non-CONT cuts & 22146 \\
+Bandwidth low / high cuts for non-CONT rows & 0.09 / 1.2 GHz \\
+Resolution low / high cuts for non-CONT rows & 0.317 / 1.81 km\,s$^{-1}$ \\
+Non-CONT bandwidth-bin counts (narrow / medium / wide) & 5927 / 5622 / 10597 \\
+Non-CONT resolution-bin counts (fine / mid / coarse) & 7382 / 7382 / 7382 \\
+Top setup signatures retained in detailed summary & 40 \\
+Coverage of top setups in EBs / EB-SPWs & 85.4\% / 82.0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{EB-level mixed-resolution combinations at the CONT / FINE / MEDIUM / COARSE level.}
+\label{tab:mixedres}
+\small
+\begin{tabular}{lrr}
+\toprule
+Resolution combination & EBs & Fraction of EBs \\
+\midrule
+COARSE only & 1458 & 26.2\% \\
+CONT only & 851 & 15.3\% \\
+MEDIUM only & 591 & 10.6\% \\
+FINE only & 73 & 1.31\% \\
+FINE + MEDIUM & 1083 & 19.5\% \\
+CONT + COARSE & 550 & 9.89\% \\
+CONT + MEDIUM & 546 & 9.82\% \\
+MEDIUM + COARSE & 207 & 3.72\% \\
+CONT + FINE & 88 & 1.58\% \\
+FINE + COARSE & 85 & 1.53\% \\
+Three-class combinations (all types combined) & 27 & 0.486\% \\
+\midrule
+Any mixed-resolution EB & 2586 & 46.5\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\scriptsize
+\begin{longtable}{>{\ttfamily\raggedright\arraybackslash}p{2.55in}>{\raggedleft\arraybackslash}p{0.42in}>{\raggedleft\arraybackslash}p{0.50in}>{\raggedleft\arraybackslash}p{0.55in}>{\raggedleft\arraybackslash}p{0.70in}>{\raggedleft\arraybackslash}p{0.72in}}
+\caption{Leading setup signatures in the current sample.  These top 10
+signatures sum to 60.9\% of EBs.  The ``fully empty'' fraction is the fraction
+of MOUS instances in that signature with zero detected line fraction.}
+\label{tab:setupsigs}\\
+\toprule
+Setup signature & MOUS & EBs & EB \% & Mean line \% & Mean rate \\
+\midrule
+\endfirsthead
+\toprule
+Setup signature & MOUS & EBs & EB \% & Mean line \% & Mean rate \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\texttt{[WC,WC,WC,WC]} & 394 & 1047 & 18.8 & 33.6 & 0.00230 \\
+\texttt{[CONT,CONT,CONT,CONT]} & 511 & 814 & 14.6 & 21.4 & 0.000980 \\
+\texttt{[WM,WM,WM,WM]} & 221 & 421 & 7.57 & 31.5 & 0.00688 \\
+\texttt{[CONT,CONT,CONT,WC]} & 147 & 228 & 4.10 & 20.1 & 0.00159 \\
+\texttt{[CONT,MM,MM,MM,WM]} & 33 & 209 & 3.76 & 25.0 & 0.00230 \\
+\texttt{[MC,WC,WC,WC]} & 48 & 164 & 2.95 & 20.7 & 0.00253 \\
+\texttt{[CONT,CONT,CONT,MC]} & 40 & 154 & 2.77 & 21.0 & 0.000256 \\
+\texttt{[MF,NF,NF,NF,NF,NF,NF,NF,NF,WM]} & 13 & 124 & 2.23 & 41.6 & 0.00299 \\
+\texttt{[MF,NF,NF,NF,NF,WM,WM]} & 18 & 115 & 2.07 & 51.4 & 0.00531 \\
+\texttt{[MC,MC,WC,WC]} & 15 & 111 & 2.00 & 23.7 & 0.000676 \\
+\end{longtable}
+\normalsize
+
+For the leading setup signatures above, the fully-empty fraction is 0.00\% in
+every case.  The full machine-readable appendix products are written under
+\texttt{memo2026/setup\_summary\_appendix/}.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.92\textwidth]{setup_summary_appendix/bandwidth_hist_eb_spw.png}
+\caption{EB-SPW total-bandwidth distribution for the matched sample.  The
+vertical lines show the fixed non-CONT narrow/medium/wide cuts and the dotted
+CONT threshold at 1.875 GHz.}
+\label{fig:setupbw}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.92\textwidth]{setup_summary_appendix/resolution_hist_eb_spw.png}
+\caption{EB-SPW velocity-resolution distribution for the matched sample.  The
+vertical lines show the non-CONT fine/mid/coarse cuts.}
+\label{fig:setupres}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=0.48\textwidth]{setup_summary_appendix/line_fraction_hist_cont.png}
+\includegraphics[width=0.48\textwidth]{setup_summary_appendix/line_fraction_hist_fine.png}
+
+\includegraphics[width=0.48\textwidth]{setup_summary_appendix/line_fraction_hist_medium.png}
+\includegraphics[width=0.48\textwidth]{setup_summary_appendix/line_fraction_hist_coarse.png}
+\caption{MOUS-SPW line-fraction distributions for the CONT, FINE, MEDIUM, and
+COARSE resolution classes.  Each histogram uses the MOUS-SPW-level summed line
+fraction of the SPW.}
+\label{fig:linefracres}
+\end{figure}
+
+\end{document}

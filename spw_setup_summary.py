@@ -52,6 +52,9 @@ FIDUCIAL_NANT_7M = 10
 BYTES_PER_CORRELATION = 4.0
 DEFAULT_BANDWIDTH_LOW_CUT_MHZ = 90.0
 DEFAULT_BANDWIDTH_HIGH_CUT_MHZ = 1200.0
+CONT_MAX_NCHAN = 128
+CONT_MIN_BANDWIDTH_GHZ = 1.875
+RESOLUTION_BUCKET_ORDER = ("CONT", "FINE", "MEDIUM", "COARSE")
 
 
 @dataclass
@@ -155,6 +158,14 @@ def finite_median(values: list[float]) -> float:
     return float(median(finite)) if finite else math.nan
 
 
+def format_sigfig(value: float, sig: int = 3) -> str:
+    if not math.isfinite(value):
+        return "nan"
+    if value == 0:
+        return "0"
+    return f"{value:.{sig}g}"
+
+
 def parse_int_list(text: str) -> list[int]:
     inner = text.strip()[1:-1].strip()
     if not inner:
@@ -207,6 +218,21 @@ def dedupe_eb_spw_rows(spw_level_rows: list[dict[str, str]]) -> list[dict[str, s
     return sorted(unique.values(), key=lambda row: (row["mous_uid"], row["eb_uid"], int(row["spw_id"])))
 
 
+def is_cont_spw(row: dict[str, str]) -> bool:
+    return int(row["nchan"]) <= CONT_MAX_NCHAN and float(row["total_bw_hz"]) / 1.0e9 >= CONT_MIN_BANDWIDTH_GHZ
+
+
+def resolution_bucket(row: dict[str, str], resolution_cuts: dict[str, float]) -> str:
+    if is_cont_spw(row):
+        return "CONT"
+    return classify(
+        float(row["velocity_resolution_kms"]),
+        resolution_cuts["low_cut"],
+        resolution_cuts["high_cut"],
+        ("FINE", "MEDIUM", "COARSE"),
+    )
+
+
 def derive_cut_metadata(
     eb_spw_rows: list[dict[str, str]],
     *,
@@ -214,8 +240,12 @@ def derive_cut_metadata(
     bandwidth_low_cut_mhz: float,
     bandwidth_high_cut_mhz: float,
 ) -> dict[str, Any]:
-    bandwidths_ghz = [float(row["total_bw_hz"]) / 1.0e9 for row in eb_spw_rows]
-    resolutions_kms = [float(row["velocity_resolution_kms"]) for row in eb_spw_rows]
+    non_cont_rows = [row for row in eb_spw_rows if not is_cont_spw(row)]
+    if not non_cont_rows:
+        raise ValueError("need at least one non-CONT EB-SPW row to derive non-CONT setup cuts")
+
+    bandwidths_ghz = [float(row["total_bw_hz"]) / 1.0e9 for row in non_cont_rows]
+    resolutions_kms = [float(row["velocity_resolution_kms"]) for row in non_cont_rows]
 
     if bandwidth_cut_mode == "fixed":
         bw_low = {
@@ -258,6 +288,12 @@ def derive_cut_metadata(
             "high_gap": [res_high["lower_value"], res_high["upper_value"]],
         },
         "n_unique_eb_spw": len(eb_spw_rows),
+        "n_non_cont_eb_spw": len(non_cont_rows),
+        "n_cont_eb_spw": len(eb_spw_rows) - len(non_cont_rows),
+        "cont_definition": {
+            "max_nchan": CONT_MAX_NCHAN,
+            "min_bandwidth_ghz": CONT_MIN_BANDWIDTH_GHZ,
+        },
     }
 
 
@@ -268,6 +304,9 @@ def signature_from_rows(
 ) -> tuple[str, list[str]]:
     tokens: list[str] = []
     for row in sorted(rows, key=lambda item: (float(item["center_freq_hz"]), int(item["spw_id"]))):
+        if is_cont_spw(row):
+            tokens.append("CONT")
+            continue
         bw_ghz = float(row["total_bw_hz"]) / 1.0e9
         res_kms = float(row["velocity_resolution_kms"])
         bw_code = classify(bw_ghz, bandwidth_cuts["low_cut"], bandwidth_cuts["high_cut"], ("N", "M", "W"))
@@ -297,6 +336,7 @@ def build_mous_assignments(
             total_spw_bw_hz += total_bw_hz
             total_line_bw_hz += total_bw_hz * float(row["mean_summed_line_fraction_of_spw"])
         line_fraction_percent = 100.0 * total_line_bw_hz / total_spw_bw_hz if total_spw_bw_hz else math.nan
+        is_fully_empty = math.isfinite(line_fraction_percent) and line_fraction_percent == 0.0
         assignments.append(
             {
                 "mous_uid": mous_uid,
@@ -305,6 +345,7 @@ def build_mous_assignments(
                 "setup_signature": signature,
                 "setup_tokens": " ".join(tokens),
                 "line_fraction_percent": line_fraction_percent,
+                "is_fully_empty": is_fully_empty,
             }
         )
     return assignments
@@ -419,6 +460,7 @@ def build_eb_assignments(
                 "eb_uid": eb_uid,
                 "setup_signature": mous_signature_map[mous_uid],
                 "actual_n_spws": len(group),
+                "actual_cont_spws": sum(1 for row in group if is_cont_spw(row)),
                 "actual_total_nchan": sum(int(row["nchan"]) for row in group),
                 "science_interval_median_s": metadata.science_interval_median_s,
                 "actual_antenna_count": metadata.actual_antenna_count if metadata.actual_antenna_count is not None else "",
@@ -456,6 +498,7 @@ def summarize_setups(
         mous_count = len(mous_members)
         eb_count = len(eb_members)
         eb_spw_count = sum(int(member["actual_n_spws"]) for member in eb_members)
+        fully_empty_mous_count = sum(1 for member in mous_members if bool(member["is_fully_empty"]))
         summaries.append(
             {
                 "setup_signature": signature,
@@ -466,6 +509,8 @@ def summarize_setups(
                 "eb_spw_count": eb_spw_count,
                 "eb_spw_percent": 100.0 * eb_spw_count / total_eb_spws if total_eb_spws else math.nan,
                 "line_stat_mous_count": sum(1 for value in line_fracs if math.isfinite(value)),
+                "fully_empty_mous_count": fully_empty_mous_count,
+                "fully_empty_mous_fraction": fully_empty_mous_count / mous_count if mous_count else math.nan,
                 "mean_line_fraction_percent": mean(line_fracs),
                 "median_line_fraction_percent": finite_median(line_fracs),
                 "stddev_line_fraction_percent": population_stddev(line_fracs),
@@ -482,6 +527,58 @@ def summarize_setups(
         )
     )
     return summaries
+
+
+def summarize_mixed_resolution_ebs(
+    eb_spw_rows: list[dict[str, str]],
+    resolution_cuts: dict[str, float],
+) -> list[dict[str, Any]]:
+    eb_groups: dict[tuple[str, str], list[str]] = defaultdict(list)
+    for row in eb_spw_rows:
+        eb_groups[(row["mous_uid"], row["eb_uid"])].append(resolution_bucket(row, resolution_cuts))
+
+    total_ebs = len(eb_groups)
+    combo_counts: Counter[tuple[str, ...]] = Counter()
+    for buckets in eb_groups.values():
+        combo = tuple(sorted(set(buckets), key=RESOLUTION_BUCKET_ORDER.index))
+        combo_counts[combo] += 1
+
+    rows: list[dict[str, Any]] = []
+    for combo, count in combo_counts.items():
+        rows.append(
+            {
+                "resolution_combo": " + ".join(combo),
+                "n_resolution_classes": len(combo),
+                "is_mixed": len(combo) > 1,
+                "eb_count": count,
+                "eb_fraction": count / total_ebs if total_ebs else math.nan,
+            }
+        )
+    rows.sort(
+        key=lambda row: (
+            int(row["n_resolution_classes"]),
+            -int(row["eb_count"]),
+            str(row["resolution_combo"]),
+        )
+    )
+    return rows
+
+
+def build_mous_spw_line_fraction_rows(
+    mous_spw_rows: list[dict[str, str]],
+    resolution_cuts: dict[str, float],
+) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for row in sorted(mous_spw_rows, key=lambda item: (item["mous_uid"], int(item["spw_id"]))):
+        rows.append(
+            {
+                "mous_uid": row["mous_uid"],
+                "spw_id": row["spw_id"],
+                "resolution_bucket": resolution_bucket(row, resolution_cuts),
+                "line_fraction_percent": 100.0 * float(row["mean_summed_line_fraction_of_spw"]),
+            }
+        )
+    return rows
 
 
 def select_top_rows_by_coverage(setup_rows: list[dict[str, Any]], coverage_fraction: float) -> list[dict[str, Any]]:
@@ -542,11 +639,14 @@ def plot_histogram(
     *,
     log_x: bool = False,
     xticks: list[float] | None = None,
+    extra_vlines: list[tuple[float, str, str]] | None = None,
 ) -> None:
     fig, ax = plt.subplots(figsize=(9.5, 5.8))
     ax.hist(values, bins=bin_edges, color="#4C78A8", edgecolor="white", alpha=0.9)
     ax.axvline(low_cut, color="#E45756", linestyle="--", linewidth=2, label=f"lower cut = {low_cut:.4g}")
     ax.axvline(high_cut, color="#72B7B2", linestyle="--", linewidth=2, label=f"upper cut = {high_cut:.4g}")
+    for value, color, label in extra_vlines or []:
+        ax.axvline(value, color=color, linestyle=":", linewidth=2, label=label)
     if log_x:
         ax.set_xscale("log")
     if xticks:
@@ -560,6 +660,23 @@ def plot_histogram(
     plt.close(fig)
 
 
+def plot_line_fraction_histogram(values: list[float], title: str, path: Path) -> None:
+    fig, ax = plt.subplots(figsize=(8.4, 5.0))
+    finite = [value for value in values if math.isfinite(value)]
+    bins = [idx * 2.5 for idx in range(41)]
+    if finite:
+        ax.hist(finite, bins=bins, color="#54A24B", edgecolor="white", alpha=0.9)
+    else:
+        ax.text(0.5, 0.5, "No MOUS-SPW rows", ha="center", va="center", transform=ax.transAxes)
+    ax.set_xlim(0.0, 100.0)
+    ax.set_title(title)
+    ax.set_xlabel("Summed line fraction of SPW (%)")
+    ax.set_ylabel("MOUS-SPW count")
+    fig.tight_layout()
+    fig.savefig(path, dpi=180)
+    plt.close(fig)
+
+
 def write_summary_markdown(
     path: Path,
     cut_metadata: dict[str, Any],
@@ -568,6 +685,7 @@ def write_summary_markdown(
     selected_rows: list[dict[str, Any]],
     bandwidth_counts: Counter[str],
     resolution_counts: Counter[str],
+    mixed_resolution_rows: list[dict[str, Any]],
 ) -> None:
     total_mous = sum(int(row["mous_count"]) for row in setup_rows)
     total_ebs = sum(int(row["eb_count"]) for row in setup_rows)
@@ -580,14 +698,14 @@ def write_summary_markdown(
     res = cut_metadata["resolution"]
     if bw["mode"] == "fixed":
         bandwidth_cut_line = (
-            f"- Bandwidth cuts (GHz, fixed): low={bw['low_cut']:.6f}, "
-            f"high={bw['high_cut']:.6f}"
+            f"- Bandwidth cuts (GHz, fixed): low={format_sigfig(float(bw['low_cut']))}, "
+            f"high={format_sigfig(float(bw['high_cut']))}"
         )
     else:
         bandwidth_cut_line = (
-            f"- Bandwidth cuts (GHz, percentile): q33={bw['q33']:.6f}, q66={bw['q66']:.6f}, "
-            f"applied at {bw['low_cut']:.6f} between {bw['low_gap'][0]:.6f} and {bw['low_gap'][1]:.6f}, "
-            f"and {bw['high_cut']:.6f} between {bw['high_gap'][0]:.6f} and {bw['high_gap'][1]:.6f}"
+            f"- Bandwidth cuts (GHz, percentile): q33={format_sigfig(float(bw['q33']))}, q66={format_sigfig(float(bw['q66']))}, "
+            f"applied at {format_sigfig(float(bw['low_cut']))} between {format_sigfig(float(bw['low_gap'][0]))} and {format_sigfig(float(bw['low_gap'][1]))}, "
+            f"and {format_sigfig(float(bw['high_cut']))} between {format_sigfig(float(bw['high_gap'][0]))} and {format_sigfig(float(bw['high_gap'][1]))}"
         )
 
     lines = [
@@ -596,6 +714,8 @@ def write_summary_markdown(
         "## Inputs",
         "",
         f"- Unique EB-SPW rows used for binning: {cut_metadata['n_unique_eb_spw']}",
+        f"- CONT EB-SPW rows excluded before deriving non-CONT cuts: {cut_metadata['n_cont_eb_spw']}",
+        f"- Non-CONT EB-SPW rows used to derive cuts: {cut_metadata['n_non_cont_eb_spw']}",
         f"- Total MOUS assigned a setup: {total_mous}",
         f"- Total EBs represented by those MOUS: {total_ebs}",
         f"- Total EB-SPWs represented by those EBs: {total_eb_spws}",
@@ -604,42 +724,62 @@ def write_summary_markdown(
         "",
         bandwidth_cut_line,
         (
-            f"- Resolution cuts (km/s): q33={res['q33']:.6f}, q66={res['q66']:.6f}, "
-            f"applied at {res['low_cut']:.6f} between {res['low_gap'][0]:.6f} and {res['low_gap'][1]:.6f}, "
-            f"and {res['high_cut']:.6f} between {res['high_gap'][0]:.6f} and {res['high_gap'][1]:.6f}"
+            f"- CONT definition: nchan <= {cut_metadata['cont_definition']['max_nchan']} "
+            f"and bandwidth >= {format_sigfig(float(cut_metadata['cont_definition']['min_bandwidth_ghz']))} GHz."
         ),
-        "- Token convention: first letter is bandwidth (`N`, `M`, `W`), second letter is resolution (`F`, `M`, `C`).",
+        (
+            f"- Resolution cuts (km/s): q33={format_sigfig(float(res['q33']))}, q66={format_sigfig(float(res['q66']))}, "
+            f"applied at {format_sigfig(float(res['low_cut']))} between {format_sigfig(float(res['low_gap'][0]))} and {format_sigfig(float(res['low_gap'][1]))}, "
+            f"and {format_sigfig(float(res['high_cut']))} between {format_sigfig(float(res['high_gap'][0]))} and {format_sigfig(float(res['high_gap'][1]))}"
+        ),
+        "- Token convention: `CONT` marks TDM-like continuum SPWs; non-CONT tokens use bandwidth (`N`, `M`, `W`) plus resolution (`F`, `M`, `C`).",
         "- EB data rate uses fiducial Nant = 43 for 12m and 10 for 7m, with 4 bytes per complex correlation product and the science-scan median integration time per SPW.",
         "",
         "## Category Counts",
         "",
-        f"- Bandwidth bins over EB-SPW rows: {dict(sorted(bandwidth_counts.items()))}",
-        f"- Resolution bins over EB-SPW rows: {dict(sorted(resolution_counts.items()))}",
+        f"- CONT count over EB-SPW rows: {cut_metadata['n_cont_eb_spw']}",
+        f"- Bandwidth bins over non-CONT EB-SPW rows: {dict(sorted(bandwidth_counts.items()))}",
+        f"- Resolution bins over non-CONT EB-SPW rows: {dict(sorted(resolution_counts.items()))}",
         "",
-        f"## Top {len(selected_rows)} Setup Signatures (covering {coverage_fraction:.0%} of EBs target)",
+        "## Mixed Resolution At EB Level",
         "",
     ]
+    for row in mixed_resolution_rows:
+        lines.append(
+            "- "
+            + f"{row['resolution_combo']}: "
+            + f"{row['eb_count']} EBs ({format_sigfig(100.0 * float(row['eb_fraction']))}%), "
+            + ("mixed" if bool(row["is_mixed"]) else "single-class")
+        )
+    lines.extend(
+        [
+            "",
+        f"## Top {len(selected_rows)} Setup Signatures (covering {coverage_fraction:.0%} of EBs target)",
+        "",
+        ]
+    )
     for row in selected_rows:
         lines.append(
             "- "
             + f"{row['setup_signature']}: "
-            + f"{row['mous_count']} MOUS ({float(row['mous_percent']):.2f}%), "
-            + f"{row['eb_count']} EBs ({float(row['eb_percent']):.2f}%), "
-            + f"{row['eb_spw_count']} EB-SPWs ({float(row['eb_spw_percent']):.2f}%), "
-            + f"mean EB data rate = {float(row['mean_eb_data_rate_gbps']):.4f} GB/s, "
+            + f"{row['mous_count']} MOUS ({format_sigfig(float(row['mous_percent']))}%), "
+            + f"{row['eb_count']} EBs ({format_sigfig(float(row['eb_percent']))}%), "
+            + f"{row['eb_spw_count']} EB-SPWs ({format_sigfig(float(row['eb_spw_percent']))}%), "
+            + f"mean EB data rate = {format_sigfig(float(row['mean_eb_data_rate_gbps']))} GB/s, "
+            + f"fully empty fraction = {format_sigfig(100.0 * float(row['fully_empty_mous_fraction']))}%, "
             + f"line fraction mean/median/stddev = "
-            + f"{float(row['mean_line_fraction_percent']):.2f}% / "
-            + f"{float(row['median_line_fraction_percent']):.2f}% / "
-            + f"{float(row['stddev_line_fraction_percent']):.2f}%"
+            + f"{format_sigfig(float(row['mean_line_fraction_percent']))}% / "
+            + f"{format_sigfig(float(row['median_line_fraction_percent']))}% / "
+            + f"{format_sigfig(float(row['stddev_line_fraction_percent']))}%"
         )
     lines.extend(
         [
             "",
             f"## Coverage Of Top {len(selected_rows)} Setups",
             "",
-            f"- Top {len(selected_rows)} setups cover {top_mous} / {total_mous} MOUS ({100.0 * top_mous / total_mous:.2f}%).",
-            f"- Top {len(selected_rows)} setups cover {top_ebs} / {total_ebs} EBs ({100.0 * top_ebs / total_ebs:.2f}%).",
-            f"- Top {len(selected_rows)} setups cover {top_eb_spws} / {total_eb_spws} EB-SPWs ({100.0 * top_eb_spws / total_eb_spws:.2f}%).",
+            f"- Top {len(selected_rows)} setups cover {top_mous} / {total_mous} MOUS ({format_sigfig(100.0 * top_mous / total_mous)}%).",
+            f"- Top {len(selected_rows)} setups cover {top_ebs} / {total_ebs} EBs ({format_sigfig(100.0 * top_ebs / total_ebs)}%).",
+            f"- Top {len(selected_rows)} setups cover {top_eb_spws} / {total_eb_spws} EB-SPWs ({format_sigfig(100.0 * top_eb_spws / total_eb_spws)}%).",
         ]
     )
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -680,19 +820,27 @@ def main(argv: list[str] | None = None) -> int:
 
     bandwidth_values_ghz = [float(row["total_bw_hz"]) / 1.0e9 for row in eb_spw_rows]
     resolution_values_kms = [float(row["velocity_resolution_kms"]) for row in eb_spw_rows]
+    non_cont_bandwidth_values_ghz = [
+        float(row["total_bw_hz"]) / 1.0e9 for row in eb_spw_rows if not is_cont_spw(row)
+    ]
+    non_cont_resolution_values_kms = [
+        float(row["velocity_resolution_kms"]) for row in eb_spw_rows if not is_cont_spw(row)
+    ]
     bandwidth_labels = Counter(
         classify(value, bandwidth_cuts["low_cut"], bandwidth_cuts["high_cut"], ("narrow", "medium", "wide"))
-        for value in bandwidth_values_ghz
+        for value in non_cont_bandwidth_values_ghz
     )
     resolution_labels = Counter(
         classify(value, resolution_cuts["low_cut"], resolution_cuts["high_cut"], ("fine", "mid", "coarse"))
-        for value in resolution_values_kms
+        for value in non_cont_resolution_values_kms
     )
+    mixed_resolution_rows = summarize_mixed_resolution_ebs(eb_spw_rows, resolution_cuts)
+    mous_spw_line_fraction_rows = build_mous_spw_line_fraction_rows(mous_spw_rows, resolution_cuts)
 
     write_csv(
         args.output_dir / "mous_setup_assignments.csv",
         mous_assignments,
-        ["mous_uid", "n_ebs", "n_spws", "setup_signature", "setup_tokens", "line_fraction_percent"],
+        ["mous_uid", "n_ebs", "n_spws", "setup_signature", "setup_tokens", "line_fraction_percent", "is_fully_empty"],
     )
     write_csv(
         args.output_dir / "eb_setup_assignments.csv",
@@ -702,6 +850,7 @@ def main(argv: list[str] | None = None) -> int:
             "eb_uid",
             "setup_signature",
             "actual_n_spws",
+            "actual_cont_spws",
             "actual_total_nchan",
             "science_interval_median_s",
             "actual_antenna_count",
@@ -723,11 +872,23 @@ def main(argv: list[str] | None = None) -> int:
             "eb_spw_count",
             "eb_spw_percent",
             "line_stat_mous_count",
+            "fully_empty_mous_count",
+            "fully_empty_mous_fraction",
             "mean_line_fraction_percent",
             "median_line_fraction_percent",
             "stddev_line_fraction_percent",
             "mean_eb_data_rate_gbps",
         ],
+    )
+    write_csv(
+        args.output_dir / "mixed_resolution_summary.csv",
+        mixed_resolution_rows,
+        ["resolution_combo", "n_resolution_classes", "is_mixed", "eb_count", "eb_fraction"],
+    )
+    write_csv(
+        args.output_dir / "mous_spw_line_fraction.csv",
+        mous_spw_line_fraction_rows,
+        ["mous_uid", "spw_id", "resolution_bucket", "line_fraction_percent"],
     )
 
     cut_metadata["coverage_fraction"] = args.coverage_fraction
@@ -743,6 +904,7 @@ def main(argv: list[str] | None = None) -> int:
         args.output_dir / "bandwidth_hist_eb_spw.png",
         discrete_bin_edges(bandwidth_values_ghz),
         xticks=sorted(set(bandwidth_values_ghz)),
+        extra_vlines=[(CONT_MIN_BANDWIDTH_GHZ, "#B279A2", f"CONT threshold = {CONT_MIN_BANDWIDTH_GHZ:.3f}")],
     )
     plot_histogram(
         resolution_values_kms,
@@ -754,6 +916,12 @@ def main(argv: list[str] | None = None) -> int:
         log_hist_edges(resolution_values_kms),
         log_x=True,
     )
+    for bucket in ("CONT", "FINE", "MEDIUM", "COARSE"):
+        plot_line_fraction_histogram(
+            [row["line_fraction_percent"] for row in mous_spw_line_fraction_rows if row["resolution_bucket"] == bucket],
+            f"MOUS-SPW Line Fraction Distribution ({bucket})",
+            args.output_dir / f"line_fraction_hist_{bucket.lower()}.png",
+        )
 
     write_summary_markdown(
         args.output_dir / "setup_summary.md",
@@ -763,6 +931,7 @@ def main(argv: list[str] | None = None) -> int:
         selected_rows,
         bandwidth_labels,
         resolution_labels,
+        mixed_resolution_rows,
     )
     return 0
 
