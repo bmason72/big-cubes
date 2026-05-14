@@ -55,11 +55,11 @@ analysis are summarized in Table~\ref{tab:sidecarproj}.
 
 \begin{table}[h]
 \centering
-\caption{Sample-driven WSU projection factors from the ryanCy11 sidecar analysis.}
+\caption{Raw visibility volume, relative to current, for different WSU projection scnearios.}
 \label{tab:sidecarproj}
 \begin{tabular}{llccc}
 \toprule
-Milestone & Method & Sample-total & Mean EB & Median EB \\
+Milestone & Method & Total & Mean EB & Median EB \\
 \midrule
 M1 & memo\_uniform\_binned & 18.4x & 9.82x & 4.80x \\
 M1 & memo\_uniform\_exact & 16.8x & 7.35x & 2.18x \\
@@ -151,7 +151,7 @@ for this rollout:
 \toprule
 Mitigation / optimization & MS1 & MS4 & MS5 & Impacts vis? & Impacts prod? \\
 \midrule
-Tint = 6\,s except (M4+) long baseline & 0.500 & 0.810 & 0.810 & yes & no \\
+Tint = 6\,s except (M4+) long baseline & 0.500 & 0.70 & 0.70 & yes & no \\
 5 pix/beam $\rightarrow$ 3.5 pix/beam & 0.490 & 0.490 & 0.490 & no & yes \\
 Empirical Nchan projection & 0.600 & 0.600 & 0.600 & yes & yes \\
 FindCont ROI --- use assumed mitigation instead & 0.250 & 0.500 & 1.00 & no & yes \\
