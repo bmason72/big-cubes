@@ -1,0 +1,40 @@
+{
+  "bandwidth": {
+    "mode": "fixed",
+    "q33": NaN,
+    "q66": NaN,
+    "low_cut": 0.09,
+    "high_cut": 1.2,
+    "low_gap": [
+      NaN,
+      NaN
+    ],
+    "high_gap": [
+      NaN,
+      NaN
+    ]
+  },
+  "resolution": {
+    "q33": 0.3172954876653734,
+    "q66": 1.8129593295147493,
+    "low_cut": 0.3172954246208101,
+    "high_cut": 1.812959440847097,
+    "low_gap": [
+      0.31729523548712024,
+      0.3172956137545
+    ],
+    "high_gap": [
+      1.8129591068500535,
+      1.8129597748441406
+    ]
+  },
+  "n_unique_eb_spw": 28253,
+  "n_non_cont_eb_spw": 22146,
+  "n_cont_eb_spw": 6107,
+  "cont_definition": {
+    "max_nchan": 128,
+    "min_bandwidth_ghz": 1.875
+  },
+  "coverage_fraction": 0.85,
+  "selected_setup_count": 40
+}
