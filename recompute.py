@@ -49,7 +49,11 @@ import config as config_module
 from config import MEMO_CONFIG, MitigationCaps, ScenarioConfig
 from pipeline import load_database
 from run_layout import next_run_dir, write_config_json
-from wsu_projection import load_mous_spw_templates_csv, normalize_mous_uid
+from wsu_projection import (
+    load_mous_tuning_groups_csv,
+    normalize_mous_uid,
+    project_nchan_agg_for_tuning_groups,
+)
 from wsu_projection import project_nchan_agg_for_templates
 
 log = logging.getLogger("wsu_pipeline.recompute")
@@ -324,9 +328,10 @@ def _apply_nchan_projection_to_db(db: Table, scenario: ScenarioConfig) -> Table:
     """Return a copy of ``db`` with WSU ``nchan_agg`` columns reprojected.
 
     The base per-MOUS DB stores one representative WSU spectral resolution
-    per MOUS.  ``distributed_binned`` augments that with a MOUS/SPW sidecar
-    and recomputes the milestone aggregate channel counts from the current
-    within-MOUS SPW resolution mix.
+    per MOUS.  ``distributed_binned`` augments that with a MOUS/tuning/SPW
+    sidecar and recomputes the milestone aggregate channel counts from the
+    current within-MOUS SPW resolution mix while preserving spectral-scan
+    tuning structure.
 
     Only the aggregate ``nchan_agg_*`` columns are overwritten.  Downstream
     derived quantities use those columns directly, so productsize, datarate,
@@ -357,7 +362,7 @@ def _apply_nchan_projection_to_db(db: Table, scenario: ScenarioConfig) -> Table:
             f"MOUS id column {proj.mous_id_column!r} not present in database"
         )
 
-    templates_by_mous = load_mous_spw_templates_csv(proj.sidecar_path)
+    tuning_groups_by_mous = load_mous_tuning_groups_csv(proj.sidecar_path)
     out = QTable(db, copy=True)
     mous_values = np.asarray(db[proj.mous_id_column])
     covered = 0
@@ -376,14 +381,17 @@ def _apply_nchan_projection_to_db(db: Table, scenario: ScenarioConfig) -> Table:
         changed = 0
         for i, mous_value in enumerate(mous_values):
             mous_uid = normalize_mous_uid(mous_value)
-            templates = templates_by_mous.get(mous_uid)
-            if not templates or not np.isfinite(nspw_arr[i]) or nspw_arr[i] <= 0:
+            tuning_groups = tuning_groups_by_mous.get(mous_uid)
+            if not tuning_groups or not np.isfinite(nspw_arr[i]) or nspw_arr[i] <= 0:
                 continue
-            new_agg[i] = project_nchan_agg_for_templates(
+            # The stored DB carries fractional SPW-equivalents at M4/M5
+            # (e.g. band 6: 11 GHz / 2 GHz = 5.5); the projection convention
+            # is a whole number of 2 GHz SPWs at every milestone.
+            new_agg[i] = project_nchan_agg_for_tuning_groups(
                 mode="distributed_binned",
                 milestone=ms,
-                templates=templates,
-                projected_nspw=float(nspw_arr[i]),
+                tuning_groups=tuning_groups,
+                projected_nspw_total=float(np.ceil(nspw_arr[i])),
             )
             changed += 1
 

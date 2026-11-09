@@ -676,9 +676,9 @@ class TestDistributedBinnedProjection:
         path.write_text(
             "\n".join(
                 [
-                    "mous_uid,spw_id,center_freq_hz,velocity_resolution_kms,band",
-                    "uid___A001_X1_X1,1,230000000000.0,0.25,6",
-                    "uid___A001_X1_X1,2,231000000000.0,12.0,6",
+                    "mous_uid,tuning_group_id,tuning_total_bw_hz,spw_id,center_freq_hz,velocity_resolution_kms",
+                    "uid___A001_X1_X1,TG01,4000000000.0,1,230000000000.0,0.25",
+                    "uid___A001_X1_X1,TG01,4000000000.0,2,231000000000.0,12.0",
                 ]
             )
             + "\n",
@@ -706,8 +706,8 @@ class TestDistributedBinnedProjection:
         from dataclasses import replace
         from config import MEMO_CONFIG, NchanProjection
         from recompute import _apply_nchan_projection_to_db
-        from wsu_projection import load_mous_spw_templates_csv
-        from wsu_projection import project_nchan_agg_for_templates
+        from wsu_projection import load_mous_tuning_groups_csv
+        from wsu_projection import project_nchan_agg_for_tuning_groups
 
         sidecar = self._write_sidecar(tmp_path / "sidecar.csv")
         scenario = replace(
@@ -719,16 +719,17 @@ class TestDistributedBinnedProjection:
         )
         db = self._mini_db()
         out = _apply_nchan_projection_to_db(db, scenario)
-        templates = load_mous_spw_templates_csv(sidecar)["uid___A001_X1_X1"]
+        tuning_groups = load_mous_tuning_groups_csv(sidecar)["uid___A001_X1_X1"]
 
-        expected_m1 = project_nchan_agg_for_templates(
-            "distributed_binned", "M1", templates, projected_nspw=6.0
+        expected_m1 = project_nchan_agg_for_tuning_groups(
+            "distributed_binned", "M1", tuning_groups, projected_nspw_total=6.0
         )
-        expected_m4 = project_nchan_agg_for_templates(
-            "distributed_binned", "M4", templates, projected_nspw=5.5
+        # DB stores fractional 5.5 SPW-equivalents; recompute ceils to 6 whole SPWs
+        expected_m4 = project_nchan_agg_for_tuning_groups(
+            "distributed_binned", "M4", tuning_groups, projected_nspw_total=6.0
         )
-        expected_m5 = project_nchan_agg_for_templates(
-            "distributed_binned", "M5", templates, projected_nspw=16.0
+        expected_m5 = project_nchan_agg_for_tuning_groups(
+            "distributed_binned", "M5", tuning_groups, projected_nspw_total=16.0
         )
 
         assert out["wsu_nchan_agg_stepped2_initial"][0] == pytest.approx(expected_m1)

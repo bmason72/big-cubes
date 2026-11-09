@@ -31,6 +31,7 @@ Main pipeline - run as
   
   - spw_tabulate.py
       - tabulates individual SPW characteristics (nchan, frequency, bandwidth, resolution, line-free fraction) from listobs and cont.dat
+      - also emits explicit EB tuning-group and MOUS representative tuning-group tables so spectral scans are not flattened into one SPW union
   - spw_setup_summary.py
       - summarizes the distribution of spectral setups and their characteristics
   - ryan_cy11_current_data_intents_summary.py
@@ -45,7 +46,7 @@ Main pipeline - run as
       - by default reproduces the legacy science-only sample projection
       - optionally adds an intent-aware EB-level projection for science, bandpass, phase, and check-source scans, with an optional calibrator-only spectral-resolution cap
   - wsu_projection.py
-      - shared helper code for projecting aggregate MOUS nchan from a current per-SPW setup under selectable projection logic
+      - shared helper code for projecting aggregate MOUS nchan from a current per-SPW / per-tuning setup under selectable projection logic
       - this is the only part of the current sidecar workflow that already feeds into the main recompute path
       - current supported modes:
           - memo_uniform_binned - original memo logic: all projected SPWs at one stepped2-binned resolution, based on the finest current SPW
@@ -134,10 +135,14 @@ The projection outputs include:
 
 - `eb_projection_factors.csv`: per-EB current rates and projected M1/M4/M5
   rates/factors for each method.
-- `mous_spw_templates.csv`: MOUS/SPW sidecar capturing the current
-  within-MOUS SPW resolution distribution. This is the file the main
-  recompute path can consume for `distributed_binned` WSU channel
+- `mous_tuning_spw_templates.csv`: MOUS/tuning/SPW sidecar capturing the
+  current within-MOUS SPW resolution distribution together with
+  representative spectral-scan tuning structure. This is the file the main
+  recompute path now consumes for `distributed_binned` WSU channel
   projections.
+- `summary_overall_nchan.csv` and `summary_overall_nchan.tex`: the same
+  Cy11 comparison summary format as the raw-volume table, but for aggregate
+  science `Nchan` relative to current.
 - `summary_overall.csv`: aggregate factors over the full sample.
 - `summary_by_array.csv`: the same split by `12m` and `7m`.
 - `summary.md`: human-readable summary with the method definitions and
@@ -166,11 +171,12 @@ The main config-driven recompute layer in `recompute.py` now supports one
 optional sidecar-driven WSU aggregate-channel projection:
 
 - `stored`: default behavior; use the DB's stored `wsu_nchan_agg_*` values.
-- `distributed_binned`: recompute `wsu_nchan_agg_*` from a MOUS/SPW sidecar
-  that preserves the current within-MOUS SPW resolution mix while still
-  mapping each SPW through the existing stepped2 binning.
+- `distributed_binned`: recompute `wsu_nchan_agg_*` from a
+  MOUS/tuning/SPW sidecar that preserves the current within-MOUS SPW
+  resolution mix and spectral-scan tuning structure while still mapping
+  each SPW through the existing stepped2 binning.
 
-At present, this MOUS/SPW sidecar is the only output from the `ryanCy11`
+At present, this MOUS/tuning/SPW sidecar is the only output from the `ryanCy11`
 workflow that feeds into the main `recompute.py` path.  The current-data
 intent summary and the EB-level intent-aware calibrator-capping analysis are
 parallel analyses only; they are not yet consumed by `pipeline.py` or
@@ -468,5 +474,4 @@ wsu_data_rates* file columns:
      'mit_hm_cell', # cell size mitigation information
      'mit_field', # number of fields mitigation information
      'mit_spw', # number of spws mitigation information
-
 

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 6may26
 
@@ -21,6 +22,15 @@ To Do:
  -1km/s cap for calibrator visibilities
  -3 pix/bm
  -'smart mitigation'
+=======
+9jun2026
+-the old code appears to handle fractional spectral windows inconsistently for M1 and M4
+  this matters for B6, which as 11.5 GHz.
+ For M1, this was rounded up to 6 SPWs of 2 GHz ea
+ For M4, the exact number of bw-proportional channels was used
+ Furthermore the memo says 11.5 GHz but the code appears to implement 11.0 GHz...
+
+>>>>>>> f32ca51 ( changes (from laptop test account) for 11aug26 memo)
 
 ==========
 

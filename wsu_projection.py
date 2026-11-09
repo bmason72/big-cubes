@@ -41,6 +41,14 @@ class MousSpwTemplate:
     band: int
 
 
+@dataclass(frozen=True)
+class TuningGroupTemplate:
+    mous_uid: str
+    tuning_group_id: str
+    total_bw_hz: float
+    spw_templates: tuple[MousSpwTemplate, ...]
+
+
 def normalize_mous_uid(value: str) -> str:
     """Normalize uid:// and uid___ MOUS identifiers to one form."""
     text = str(value).strip()
@@ -111,11 +119,16 @@ def projected_nchan_per_spw(
 
 
 def projected_spw_equivalents(milestone: str, band: int) -> float:
-    """Return the milestone-specific WSU SPW-equivalent count for a band."""
+    """Return the milestone-specific WSU SPW count for a band.
+
+    The SPW count is the milestone bandwidth divided by the assumed 2 GHz SPW
+    width, rounded up to a whole number of SPWs at every milestone (the full
+    bandwidth is prioritized; only Band 6's 11 GHz 2x bandwidth is affected).
+    The stored Cy7/8 DB instead used exact fractional SPW-equivalents at
+    M4/M5, so values here can exceed the DB's wsu_nspw_* by the same rounding.
+    """
     bandwidth_ghz = DEFAULT_CONFIG.milestones[milestone].bandwidth_for(band)
-    if milestone == "M1":
-        return math.ceil(bandwidth_ghz / DEFAULT_CONFIG.spw_bandwidth_GHz)
-    return bandwidth_ghz / DEFAULT_CONFIG.spw_bandwidth_GHz
+    return math.ceil(bandwidth_ghz / DEFAULT_CONFIG.spw_bandwidth_GHz)
 
 
 def project_nchan_agg_for_templates(
@@ -138,7 +151,8 @@ def project_nchan_agg_for_templates(
         finest = min(template.velocity_resolution_kms for template in templates)
         target = finest if mode.endswith("exact") else stepped2_floor_velocity(finest)
         mean_freq = sum(template.center_freq_hz for template in templates) / len(templates)
-        band = alma_band_from_freq_hz(mean_freq)
+        # the mean of SPWs from different bands can fall in an inter-band gap
+        band = min(templates, key=lambda t: abs(t.center_freq_hz - mean_freq)).band
         nchan = projected_nchan_per_spw(
             requested_vel_kms=target,
             original_vel_kms=finest,
@@ -199,9 +213,94 @@ def build_templates_from_rows(
     return out
 
 
+def build_tuning_groups_from_rows(
+    rows: Iterable[dict[str, str]],
+    mous_field: str = "mous_uid",
+    tuning_field: str = "tuning_group_id",
+    spw_field: str = "spw_id",
+    freq_field: str = "center_freq_hz",
+    vel_field: str = "velocity_resolution_kms",
+    tuning_bw_field: str = "tuning_total_bw_hz",
+) -> dict[str, list[TuningGroupTemplate]]:
+    """Aggregate rows into one template list per MOUS/tuning group."""
+    grouped: dict[tuple[str, str], list[dict[str, str]]] = defaultdict(list)
+    for row in rows:
+        mous_uid = normalize_mous_uid(row[mous_field])
+        tuning_group_id = str(row[tuning_field])
+        grouped[(mous_uid, tuning_group_id)].append(row)
+
+    out: dict[str, list[TuningGroupTemplate]] = defaultdict(list)
+    for (mous_uid, tuning_group_id), group in grouped.items():
+        spw_templates: list[MousSpwTemplate] = []
+        total_bw_hz = float(group[0][tuning_bw_field])
+        for row in sorted(group, key=lambda item: int(item[spw_field])):
+            center_freq = float(row[freq_field])
+            spw_templates.append(
+                MousSpwTemplate(
+                    mous_uid=mous_uid,
+                    spw_id=int(row[spw_field]),
+                    center_freq_hz=center_freq,
+                    velocity_resolution_kms=float(row[vel_field]),
+                    band=alma_band_from_freq_hz(center_freq),
+                )
+            )
+        out[mous_uid].append(
+            TuningGroupTemplate(
+                mous_uid=mous_uid,
+                tuning_group_id=tuning_group_id,
+                total_bw_hz=total_bw_hz,
+                spw_templates=tuple(spw_templates),
+            )
+        )
+    for mous_uid in out:
+        out[mous_uid].sort(
+            key=lambda group: (
+                sum(template.center_freq_hz for template in group.spw_templates) / len(group.spw_templates),
+                group.tuning_group_id,
+            )
+        )
+    return out
+
+
+def project_nchan_agg_for_tuning_groups(
+    mode: str,
+    milestone: str,
+    tuning_groups: list[TuningGroupTemplate],
+    projected_nspw_total: float | None = None,
+) -> float:
+    """Project aggregate nchan from a tuning-aware current sidecar."""
+    if not tuning_groups:
+        return float("nan")
+    all_templates = [
+        template
+        for group in tuning_groups
+        for template in group.spw_templates
+    ]
+    if projected_nspw_total is None:
+        band = all_templates[0].band
+        total_bw_ghz = sum(group.total_bw_hz for group in tuning_groups) / 1.0e9
+        milestone_bw_ghz = DEFAULT_CONFIG.milestones[milestone].bandwidth_for(band)
+        projected_tuning_groups = max(1, math.ceil(total_bw_ghz / milestone_bw_ghz))
+        projected_nspw_total = projected_tuning_groups * projected_spw_equivalents(milestone, band)
+    return project_nchan_agg_for_templates(
+        mode=mode,
+        milestone=milestone,
+        templates=all_templates,
+        projected_nspw=projected_nspw_total,
+    )
+
+
 def load_mous_spw_templates_csv(path: str | Path) -> dict[str, list[MousSpwTemplate]]:
     """Load a MOUS/SPW sidecar CSV for distributed WSU projection."""
     csv_path = Path(path)
     with csv_path.open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
     return build_templates_from_rows(rows)
+
+
+def load_mous_tuning_groups_csv(path: str | Path) -> dict[str, list[TuningGroupTemplate]]:
+    """Load a MOUS/tuning/SPW sidecar CSV for tuning-aware projection."""
+    csv_path = Path(path)
+    with csv_path.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    return build_tuning_groups_from_rows(rows)

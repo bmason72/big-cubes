@@ -4,12 +4,23 @@ Key files:
 
 *nchan_pipeline.py - top-level driver for the ryanCy11 sidecar workflow.  It runs
    SPW tabulation, setup summarization, the current-data intent summary, and the
-   sample-driven WSU projection.
+   sample-driven WSU projection.  The current implementation now keeps
+   spectral-scan tuning groups explicit in the sidecar/projection path.
 
 *ryan_cy11_current_data_intents_summary.py - intent-aware summary of current EB/MOUS
    scan classes and their current data-volume fractions from the full-MS listobs.
    This is the current-state tabulation used to understand science, bandpass,
    phase, check-source, atmosphere, and related buckets without double counting.
+
+*cy11_integration_time_summary.py - reproducible one-row-per-MOUS summary of the
+   actual Cycle-11 science visibility integration times in the indexed listobs
+   sample.  It also records proposal/SB identifiers, array, receiver band, exact
+   SPW setup signatures, pipeline L80 ranges, and explicitly estimated array
+   configurations.  Outputs are written under `ryanCy11out/integration_times`.
+
+*cy11_integration_time_table.py - produces compact 12m and 7m tables of mean
+   science integration time by receiver band and L80-estimated configuration,
+   including population standard deviation and MOUS count per cell.
 
 *ryan_cy11_wsu_projection.py - sample-driven WSU projection for the ryanCy11 sidecar
    sample.  By default it reproduces the legacy science-only projection; with the

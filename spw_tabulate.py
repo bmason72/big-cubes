@@ -119,7 +119,17 @@ class ScanInfo:
     field_id: int
     field_name: str
     spw_ids: list[int]
+    intervals_s: list[float]
     scan_intents: list[str]
+    start_s: float
+    end_s: float
+
+    @property
+    def duration_s(self) -> float:
+        end_s = self.end_s
+        if end_s < self.start_s:
+            end_s += 24.0 * 3600.0
+        return end_s - self.start_s
 
 
 @dataclass
@@ -161,6 +171,11 @@ def parse_token_list(text: str) -> list[str]:
     if not inner:
         return []
     return [item.strip() for item in inner.split(",") if item.strip()]
+
+
+def parse_time_of_day(value: str) -> float:
+    hh, mm, ss = value.split(":")
+    return int(hh) * 3600.0 + int(mm) * 60.0 + float(ss)
 
 
 def is_target_listobs_path(path: Path) -> bool:
@@ -278,7 +293,12 @@ def parse_listobs(path: Path, mous_uid: str) -> ListobsParseResult:
                     field_id=int(match.group("field_id")),
                     field_name=match.group("field_name"),
                     spw_ids=parse_int_list(match.group("spw_ids")),
+                    intervals_s=[
+                        float(value) for value in parse_token_list(match.group("intervals"))
+                    ],
                     scan_intents=parse_token_list(match.group("intents")),
+                    start_s=parse_time_of_day(match.group("start")),
+                    end_s=parse_time_of_day(match.group("end")),
                 )
             )
             continue
@@ -350,6 +370,150 @@ def parse_listobs(path: Path, mous_uid: str) -> ListobsParseResult:
             )
         )
     return result
+
+
+def unique_science_scans(result: ListobsParseResult) -> list[ScanInfo]:
+    """Return one row per science scan, deduping repeated mosaic field rows."""
+    grouped: dict[int, ScanInfo] = {}
+    for scan in result.scans:
+        if not any("OBSERVE_TARGET" in intent for intent in scan.scan_intents):
+            continue
+        prev = grouped.get(scan.scan_id)
+        if prev is None:
+            grouped[scan.scan_id] = scan
+            continue
+        same_shape = (
+            tuple(prev.spw_ids) == tuple(scan.spw_ids)
+            and tuple(prev.scan_intents) == tuple(scan.scan_intents)
+            and tuple(prev.intervals_s) == tuple(scan.intervals_s)
+            and math.isclose(prev.start_s, scan.start_s)
+            and math.isclose(prev.end_s, scan.end_s)
+        )
+        if not same_shape:
+            result.issues.append(
+                ParseIssue(
+                    mous_uid=result.mous_uid,
+                    file_type="listobs",
+                    path=str(result.path),
+                    severity="warning",
+                    eb_uid=result.eb_uid,
+                    message=(
+                        f"scan_id={scan.scan_id} repeated with inconsistent target-scan "
+                        "metadata across fields"
+                    ),
+                )
+            )
+    return [grouped[scan_id] for scan_id in sorted(grouped)]
+
+
+def _tuning_signature(spw_ids: Iterable[int]) -> str:
+    return ",".join(str(spw_id) for spw_id in sorted(spw_ids))
+
+
+def extract_eb_tuning_rows(
+    result: ListobsParseResult,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Return EB-level tuning summaries and one row per tuning/SPW."""
+    science_scans = unique_science_scans(result)
+    by_signature: dict[tuple[int, ...], list[ScanInfo]] = defaultdict(list)
+    for scan in science_scans:
+        by_signature[tuple(sorted(scan.spw_ids))].append(scan)
+
+    ordered_signatures = sorted(
+        by_signature,
+        key=lambda signature: (
+            safe_median(result.spws[spw_id].center_freq_hz for spw_id in signature),
+            signature,
+        ),
+    )
+    tuning_summaries: list[dict[str, Any]] = []
+    tuning_spw_rows: list[dict[str, Any]] = []
+    total_current_science_bw_hz = 0.0
+    current_nchan_agg = 0
+
+    for idx, signature in enumerate(ordered_signatures, start=1):
+        scans = by_signature[signature]
+        tuning_group_id = f"TG{idx:02d}"
+        signature_text = _tuning_signature(signature)
+        intervals_by_spw: dict[int, list[float]] = defaultdict(list)
+        target_names: set[str] = set()
+        total_scan_time_s = 0.0
+        for scan in scans:
+            total_scan_time_s += scan.duration_s
+            field_name = result.fields.get(scan.field_id, scan.field_name)
+            target_names.add(field_name)
+            intervals = scan.intervals_s
+            if len(intervals) == 1 and len(scan.spw_ids) > 1:
+                intervals = intervals * len(scan.spw_ids)
+            for spw_id, interval_s in zip(scan.spw_ids, intervals):
+                intervals_by_spw[spw_id].append(interval_s)
+
+        tuning_total_bw_hz = sum(result.spws[spw_id].total_bw_hz for spw_id in signature if spw_id in result.spws)
+        tuning_center_freq_hz = safe_median(
+            result.spws[spw_id].center_freq_hz for spw_id in signature if spw_id in result.spws
+        )
+        total_current_science_bw_hz += tuning_total_bw_hz
+        current_nchan_agg += sum(result.spws[spw_id].nchan for spw_id in signature if spw_id in result.spws)
+
+        tuning_summaries.append(
+            {
+                "mous_uid": result.mous_uid,
+                "eb_uid": result.eb_uid,
+                "listobs_path": str(result.path),
+                "tuning_group_id": tuning_group_id,
+                "tuning_group_index": idx,
+                "tuning_signature": signature_text,
+                "target_names": ";".join(sorted(target_names)),
+                "n_spw_in_tuning": len(signature),
+                "tuning_total_bw_hz": tuning_total_bw_hz,
+                "tuning_center_freq_hz": tuning_center_freq_hz,
+                "n_scans_in_tuning": len(scans),
+                "total_scan_time_s": total_scan_time_s,
+            }
+        )
+        for spw_id in signature:
+            spw = result.spws.get(spw_id)
+            if spw is None:
+                continue
+            tuning_spw_rows.append(
+                {
+                    "mous_uid": result.mous_uid,
+                    "eb_uid": result.eb_uid,
+                    "listobs_path": str(result.path),
+                    "tuning_group_id": tuning_group_id,
+                    "tuning_group_index": idx,
+                    "tuning_signature": signature_text,
+                    "n_spw_in_tuning": len(signature),
+                    "tuning_total_bw_hz": tuning_total_bw_hz,
+                    "target_names": ";".join(sorted(target_names)),
+                    "spw_id": spw.spw_id,
+                    "spw_name": spw.spw_name,
+                    "nchan": spw.nchan,
+                    "center_freq_hz": spw.center_freq_hz,
+                    "freq_min_hz": spw.freq_min_hz,
+                    "freq_max_hz": spw.freq_max_hz,
+                    "total_bw_hz": spw.total_bw_hz,
+                    "abs_chan_width_hz": spw.abs_chan_width_hz,
+                    "velocity_resolution_kms": spw.velocity_resolution_kms,
+                    "corr_products": spw.corrs,
+                    "median_interval_s": safe_median(intervals_by_spw.get(spw_id, [])),
+                    "n_scans_in_tuning": len(scans),
+                    "total_scan_time_s": total_scan_time_s,
+                }
+            )
+
+    is_spectral_scan = len(tuning_summaries) > 1
+    for row in tuning_summaries:
+        row["n_tuning_groups_in_eb"] = len(tuning_summaries)
+        row["is_spectral_scan"] = is_spectral_scan
+        row["eb_total_science_bw_hz"] = total_current_science_bw_hz
+        row["eb_current_nchan_agg"] = current_nchan_agg
+    for row in tuning_spw_rows:
+        row["n_tuning_groups_in_eb"] = len(tuning_summaries)
+        row["is_spectral_scan"] = is_spectral_scan
+        row["eb_total_science_bw_hz"] = total_current_science_bw_hz
+        row["eb_current_nchan_agg"] = current_nchan_agg
+    return tuning_summaries, tuning_spw_rows
 
 
 def extract_spw_level_rows(result: ListobsParseResult) -> list[dict[str, Any]]:
@@ -633,6 +797,106 @@ def aggregate_mous_spw_summary(
     return out
 
 
+def aggregate_mous_tuning_summary(
+    mous_uid: str,
+    tuning_summary_rows: list[dict[str, Any]],
+    tuning_spw_rows: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
+    """Collapse EB tuning-group rows to one representative MOUS summary."""
+    by_eb_summary: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    by_eb_spw: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for row in tuning_summary_rows:
+        by_eb_summary[str(row["eb_uid"])].append(row)
+    for row in tuning_spw_rows:
+        by_eb_spw[str(row["eb_uid"])].append(row)
+
+    if not by_eb_summary:
+        return [], [], []
+
+    def eb_signature(eb_uid: str) -> tuple[tuple[int, int, int], ...]:
+        rows = sorted(by_eb_summary[eb_uid], key=lambda item: int(item["tuning_group_index"]))
+        return tuple(
+            (
+                int(row["tuning_group_index"]),
+                int(row["n_spw_in_tuning"]),
+                int(round(float(row["tuning_total_bw_hz"]))),
+            )
+            for row in rows
+        )
+
+    eb_uids = sorted(by_eb_summary)
+    representative_eb_uid = eb_uids[0]
+    representative_signature = eb_signature(representative_eb_uid)
+    inconsistent_ebs = [eb_uid for eb_uid in eb_uids if eb_signature(eb_uid) != representative_signature]
+    eb_consistency_flag = "consistent" if not inconsistent_ebs else "inconsistent"
+    eb_consistency_notes = ""
+    if inconsistent_ebs:
+        eb_consistency_notes = (
+            "tuning-group structure differs across EBs; representative EB="
+            f"{representative_eb_uid}; differing EBs={','.join(inconsistent_ebs)}"
+        )
+
+    rep_summary_rows = sorted(
+        by_eb_summary[representative_eb_uid],
+        key=lambda item: int(item["tuning_group_index"]),
+    )
+    rep_spw_rows = sorted(
+        by_eb_spw[representative_eb_uid],
+        key=lambda item: (int(item["tuning_group_index"]), int(item["spw_id"])),
+    )
+    eb_total_bw_values = [
+        float(rows[0]["eb_total_science_bw_hz"]) for rows in by_eb_summary.values() if rows
+    ]
+    eb_nchan_values = [
+        float(rows[0]["eb_current_nchan_agg"]) for rows in by_eb_summary.values() if rows
+    ]
+    mous_total_science_bw_hz = safe_median(eb_total_bw_values)
+    mous_current_nchan_agg = round(safe_median(eb_nchan_values))
+    n_tuning_groups_in_mous = len(rep_summary_rows)
+    is_spectral_scan = n_tuning_groups_in_mous > 1
+
+    mous_summary_rows: list[dict[str, Any]] = []
+    for row in rep_summary_rows:
+        out = dict(row)
+        out["representative_eb_uid"] = representative_eb_uid
+        out["n_ebs_parsed"] = len(eb_uids)
+        out["eb_tuning_consistency_flag"] = eb_consistency_flag
+        out["eb_tuning_consistency_notes"] = eb_consistency_notes
+        out["n_tuning_groups_in_mous"] = n_tuning_groups_in_mous
+        out["is_spectral_scan_mous"] = is_spectral_scan
+        out["mous_total_science_bw_hz"] = mous_total_science_bw_hz
+        out["mous_current_nchan_agg"] = mous_current_nchan_agg
+        mous_summary_rows.append(out)
+
+    mous_template_rows: list[dict[str, Any]] = []
+    for row in rep_spw_rows:
+        out = dict(row)
+        out["representative_eb_uid"] = representative_eb_uid
+        out["n_ebs_parsed"] = len(eb_uids)
+        out["eb_tuning_consistency_flag"] = eb_consistency_flag
+        out["eb_tuning_consistency_notes"] = eb_consistency_notes
+        out["n_tuning_groups_in_mous"] = n_tuning_groups_in_mous
+        out["is_spectral_scan_mous"] = is_spectral_scan
+        out["mous_total_science_bw_hz"] = mous_total_science_bw_hz
+        out["mous_current_nchan_agg"] = mous_current_nchan_agg
+        mous_template_rows.append(out)
+
+    mous_eb_rows = [
+        {
+            "mous_uid": mous_uid,
+            "representative_eb_uid": representative_eb_uid,
+            "n_ebs_parsed": len(eb_uids),
+            "n_tuning_groups_in_mous": n_tuning_groups_in_mous,
+            "is_spectral_scan_mous": is_spectral_scan,
+            "mous_total_science_bw_hz": mous_total_science_bw_hz,
+            "mous_current_nchan_agg": mous_current_nchan_agg,
+            "eb_tuning_consistency_flag": eb_consistency_flag,
+            "eb_tuning_consistency_notes": eb_consistency_notes,
+        }
+    ]
+    return mous_summary_rows, mous_template_rows, mous_eb_rows
+
+
 def load_metadata(path: Path | None) -> dict[str, dict[str, str]]:
     if path is None:
         return {}
@@ -816,17 +1080,25 @@ def write_summary(
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def process_mous_dir(mous_dir: Path, issues: list[ParseIssue]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+def process_mous_dir(
+    mous_dir: Path,
+    issues: list[ParseIssue],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
     mous_uid = parse_uid(mous_dir.name, MOUS_RE) or mous_dir.name
     listobs_files = sorted(
         path for path in (mous_dir / "listobs").glob("*.txt")
         if is_target_listobs_path(path)
     )
     spw_rows: list[dict[str, Any]] = []
+    tuning_summary_rows: list[dict[str, Any]] = []
+    tuning_spw_rows: list[dict[str, Any]] = []
     for listobs_file in listobs_files:
         result = parse_listobs(listobs_file, mous_uid)
         issues.extend(result.issues)
         spw_rows.extend(extract_spw_level_rows(result))
+        eb_tuning_rows, eb_tuning_spw_rows = extract_eb_tuning_rows(result)
+        tuning_summary_rows.extend(eb_tuning_rows)
+        tuning_spw_rows.extend(eb_tuning_spw_rows)
 
     cont_rows: list[dict[str, Any]] = []
     cont_path = mous_dir / "cont.dat"
@@ -888,7 +1160,7 @@ def process_mous_dir(mous_dir: Path, issues: list[ParseIssue]) -> tuple[list[dic
             )
         )
 
-    return spw_rows, cont_rows
+    return spw_rows, cont_rows, tuning_summary_rows, tuning_spw_rows
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -906,27 +1178,48 @@ def main(argv: list[str] | None = None) -> int:
     issues: list[ParseIssue] = []
     spw_rows: list[dict[str, Any]] = []
     cont_rows: list[dict[str, Any]] = []
+    eb_tuning_summary_rows: list[dict[str, Any]] = []
+    eb_tuning_spw_rows: list[dict[str, Any]] = []
 
     mous_dirs = sorted(path for path in args.input_dir.iterdir() if path.is_dir() and path.name.startswith("uid"))
     if args.max_mous is not None:
         mous_dirs = mous_dirs[: args.max_mous]
 
     for mous_dir in mous_dirs:
-        mous_spw_rows, mous_cont_rows = process_mous_dir(mous_dir, issues)
+        mous_spw_rows, mous_cont_rows, mous_tuning_rows, mous_tuning_spw_rows = process_mous_dir(mous_dir, issues)
         spw_rows.extend(mous_spw_rows)
         cont_rows.extend(mous_cont_rows)
+        eb_tuning_summary_rows.extend(mous_tuning_rows)
+        eb_tuning_spw_rows.extend(mous_tuning_spw_rows)
 
     mous_spw_summary_rows: list[dict[str, Any]] = []
+    mous_tuning_summary_rows: list[dict[str, Any]] = []
+    mous_tuning_template_rows: list[dict[str, Any]] = []
+    mous_tuning_overview_rows: list[dict[str, Any]] = []
     spw_by_mous: dict[str, list[dict[str, Any]]] = defaultdict(list)
     cont_by_mous: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    tuning_summary_by_mous: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    tuning_spw_by_mous: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for row in spw_rows:
         spw_by_mous[str(row["mous_uid"])].append(row)
     for row in cont_rows:
         cont_by_mous[str(row["mous_uid"])].append(row)
+    for row in eb_tuning_summary_rows:
+        tuning_summary_by_mous[str(row["mous_uid"])].append(row)
+    for row in eb_tuning_spw_rows:
+        tuning_spw_by_mous[str(row["mous_uid"])].append(row)
     for mous_uid in sorted(spw_by_mous):
         mous_spw_summary_rows.extend(
             aggregate_mous_spw_summary(mous_uid, spw_by_mous[mous_uid], cont_by_mous.get(mous_uid, []))
         )
+        tuning_rows, tuning_template_rows, tuning_overview_rows = aggregate_mous_tuning_summary(
+            mous_uid,
+            tuning_summary_by_mous.get(mous_uid, []),
+            tuning_spw_by_mous.get(mous_uid, []),
+        )
+        mous_tuning_summary_rows.extend(tuning_rows)
+        mous_tuning_template_rows.extend(tuning_template_rows)
+        mous_tuning_overview_rows.extend(tuning_overview_rows)
 
     vel_edges_parts = [part.strip() for part in args.velocity_bin_edges_kms.split(",") if part.strip()]
     bw_edges_parts = [part.strip() for part in args.bandwidth_bin_edges_ghz.split(",") if part.strip()]
@@ -1021,6 +1314,145 @@ def main(argv: list[str] | None = None) -> int:
             "n_ebs_parsed",
             "eb_consistency_flag",
             "eb_consistency_notes",
+        ],
+    )
+    write_csv(
+        output_dir / "eb_tuning_summary.csv",
+        eb_tuning_summary_rows,
+        [
+            "mous_uid",
+            "eb_uid",
+            "listobs_path",
+            "tuning_group_id",
+            "tuning_group_index",
+            "tuning_signature",
+            "target_names",
+            "n_spw_in_tuning",
+            "tuning_total_bw_hz",
+            "tuning_center_freq_hz",
+            "n_scans_in_tuning",
+            "total_scan_time_s",
+            "n_tuning_groups_in_eb",
+            "is_spectral_scan",
+            "eb_total_science_bw_hz",
+            "eb_current_nchan_agg",
+        ],
+    )
+    write_csv(
+        output_dir / "eb_tuning_spw_table.csv",
+        eb_tuning_spw_rows,
+        [
+            "mous_uid",
+            "eb_uid",
+            "listobs_path",
+            "tuning_group_id",
+            "tuning_group_index",
+            "tuning_signature",
+            "target_names",
+            "n_spw_in_tuning",
+            "tuning_total_bw_hz",
+            "spw_id",
+            "spw_name",
+            "nchan",
+            "center_freq_hz",
+            "freq_min_hz",
+            "freq_max_hz",
+            "total_bw_hz",
+            "abs_chan_width_hz",
+            "velocity_resolution_kms",
+            "corr_products",
+            "median_interval_s",
+            "n_scans_in_tuning",
+            "total_scan_time_s",
+            "n_tuning_groups_in_eb",
+            "is_spectral_scan",
+            "eb_total_science_bw_hz",
+            "eb_current_nchan_agg",
+        ],
+    )
+    write_csv(
+        output_dir / "mous_tuning_summary.csv",
+        mous_tuning_summary_rows,
+        [
+            "mous_uid",
+            "eb_uid",
+            "representative_eb_uid",
+            "listobs_path",
+            "tuning_group_id",
+            "tuning_group_index",
+            "tuning_signature",
+            "target_names",
+            "n_spw_in_tuning",
+            "tuning_total_bw_hz",
+            "tuning_center_freq_hz",
+            "n_scans_in_tuning",
+            "total_scan_time_s",
+            "n_tuning_groups_in_eb",
+            "is_spectral_scan",
+            "eb_total_science_bw_hz",
+            "eb_current_nchan_agg",
+            "n_ebs_parsed",
+            "eb_tuning_consistency_flag",
+            "eb_tuning_consistency_notes",
+            "n_tuning_groups_in_mous",
+            "is_spectral_scan_mous",
+            "mous_total_science_bw_hz",
+            "mous_current_nchan_agg",
+        ],
+    )
+    write_csv(
+        output_dir / "mous_tuning_spw_templates.csv",
+        mous_tuning_template_rows,
+        [
+            "mous_uid",
+            "eb_uid",
+            "representative_eb_uid",
+            "listobs_path",
+            "tuning_group_id",
+            "tuning_group_index",
+            "tuning_signature",
+            "target_names",
+            "n_spw_in_tuning",
+            "tuning_total_bw_hz",
+            "spw_id",
+            "spw_name",
+            "nchan",
+            "center_freq_hz",
+            "freq_min_hz",
+            "freq_max_hz",
+            "total_bw_hz",
+            "abs_chan_width_hz",
+            "velocity_resolution_kms",
+            "corr_products",
+            "median_interval_s",
+            "n_scans_in_tuning",
+            "total_scan_time_s",
+            "n_tuning_groups_in_eb",
+            "is_spectral_scan",
+            "eb_total_science_bw_hz",
+            "eb_current_nchan_agg",
+            "n_ebs_parsed",
+            "eb_tuning_consistency_flag",
+            "eb_tuning_consistency_notes",
+            "n_tuning_groups_in_mous",
+            "is_spectral_scan_mous",
+            "mous_total_science_bw_hz",
+            "mous_current_nchan_agg",
+        ],
+    )
+    write_csv(
+        output_dir / "mous_tuning_overview.csv",
+        mous_tuning_overview_rows,
+        [
+            "mous_uid",
+            "representative_eb_uid",
+            "n_ebs_parsed",
+            "n_tuning_groups_in_mous",
+            "is_spectral_scan_mous",
+            "mous_total_science_bw_hz",
+            "mous_current_nchan_agg",
+            "eb_tuning_consistency_flag",
+            "eb_tuning_consistency_notes",
         ],
     )
     write_csv(

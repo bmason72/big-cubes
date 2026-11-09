@@ -40,10 +40,13 @@ from config import DEFAULT_CONFIG
 from ryan_cy11_current_data_intents_summary import matched_full_listobs_path, parse_full_listobs, scan_metrics
 from wsu_projection import (
     MousSpwTemplate,
+    TuningGroupTemplate,
     alma_band_from_freq_hz,
     build_templates_from_rows,
+    build_tuning_groups_from_rows,
     normalize_mous_uid,
     project_nchan_agg_for_templates,
+    project_nchan_agg_for_tuning_groups,
     projected_nchan_per_spw,
     projected_spw_equivalents,
     stepped2_floor_velocity,
@@ -114,7 +117,7 @@ def read_csv_rows(path: Path) -> list[dict[str, str]]:
 
 def write_csv(path: Path, rows: list[dict[str, Any]], fieldnames: list[str]) -> None:
     with path.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, extrasaction="ignore")
         writer.writeheader()
         writer.writerows(rows)
 
@@ -150,6 +153,7 @@ def parse_listobs_runtime(path: Path) -> EbRuntime:
     all_science_intervals: list[float] = []
     science_time_s = 0.0
     in_scans = False
+    seen_scan_ids: set[int] = set()
 
     for raw in path.read_text(encoding="utf-8", errors="ignore").splitlines():
         line = raw.rstrip()
@@ -174,6 +178,10 @@ def parse_listobs_runtime(path: Path) -> EbRuntime:
         intents = parse_token_list(match.group("intents"))
         if not any("OBSERVE_TARGET" in intent for intent in intents):
             continue
+        scan_id = int(match.group("scan"))
+        if scan_id in seen_scan_ids:
+            continue
+        seen_scan_ids.add(scan_id)
 
         start_s = parse_time_of_day(match.group("start"))
         end_s = parse_time_of_day(match.group("end"))
@@ -285,7 +293,8 @@ def projected_channel_pol_agg_for_templates(
         if velocity_cap_kms is not None:
             target = max(target, velocity_cap_kms)
         mean_freq = sum(template.center_freq_hz for template in templates) / len(templates)
-        band = alma_band_from_freq_hz(mean_freq)
+        # the mean of SPWs from different bands can fall in an inter-band gap
+        band = min(templates, key=lambda t: abs(t.center_freq_hz - mean_freq)).band
         nchan = projected_nchan_per_spw(
             requested_vel_kms=target,
             original_vel_kms=finest,
@@ -316,6 +325,61 @@ def projected_channel_pol_agg_for_templates(
             * corr_count
         )
     return projected_nspw * (sum(projected_channel_pol) / len(projected_channel_pol))
+
+
+def build_eb_tuning_groups(rows: list[dict[str, str]]) -> list[TuningGroupTemplate]:
+    groups_by_mous = build_tuning_groups_from_rows(rows)
+    if not rows:
+        return []
+    mous_uid = normalize_mous_uid(rows[0]["mous_uid"])
+    return groups_by_mous.get(mous_uid, [])
+
+
+def current_eb_metrics_from_tuning_rows(
+    tuning_summary_rows: list[dict[str, str]],
+    tuning_spw_rows: list[dict[str, str]],
+    runtime: EbRuntime,
+) -> tuple[float, float, float]:
+    """Return current mean rate, total volume, and total science time for one EB."""
+    if runtime.actual_antenna_count is None:
+        return math.nan, math.nan, math.nan
+
+    summary_by_group = {
+        str(row["tuning_group_id"]): row for row in tuning_summary_rows
+    }
+    rows_by_group: dict[str, list[dict[str, str]]] = defaultdict(list)
+    for row in tuning_spw_rows:
+        rows_by_group[str(row["tuning_group_id"])].append(row)
+
+    total_time_s = 0.0
+    total_volume_gb = 0.0
+    for tuning_group_id, rows in rows_by_group.items():
+        summary_row = summary_by_group[tuning_group_id]
+        terms: list[tuple[float, float]] = []
+        for row in rows:
+            interval_s = float(row["median_interval_s"])
+            if not math.isfinite(interval_s) or interval_s <= 0.0:
+                interval_s = runtime.science_interval_median_s
+            terms.append(
+                (
+                    int(row["nchan"]) * count_corr_products(row["corr_products"]),
+                    interval_s,
+                )
+            )
+        group_rate = datarate_gbps(runtime.actual_antenna_count, terms, 1.0)
+        group_time_s = float(summary_row["total_scan_time_s"])
+        total_time_s += group_time_s
+        if math.isfinite(group_rate):
+            total_volume_gb += group_rate * group_time_s
+    if total_time_s <= 0.0:
+        return math.nan, math.nan, math.nan
+    return total_volume_gb / total_time_s, total_volume_gb, total_time_s
+
+
+def current_eb_nchan_agg_from_tuning_rows(tuning_summary_rows: list[dict[str, str]]) -> float:
+    if not tuning_summary_rows:
+        return math.nan
+    return float(tuning_summary_rows[0]["eb_current_nchan_agg"])
 
 
 def retained_scan_templates(scan, full_eb) -> tuple[list[MousSpwTemplate], list[int]]:
@@ -381,6 +445,48 @@ def summarize(values: list[float]) -> dict[str, float]:
 
 def format_factor(value: float) -> str:
     return "nan" if not math.isfinite(value) else f"{value:.3f}x"
+
+
+def latex_factor(value: float) -> str:
+    return "nan" if not math.isfinite(value) else f"{value:.3g}x"
+
+
+def write_latex_factor_table(
+    path: Path,
+    rows: list[dict[str, Any]],
+    caption: str,
+    label: str,
+) -> None:
+    lines = [
+        r"\begin{table}[h]",
+        r"\centering",
+        rf"\caption{{{caption}}}",
+        rf"\label{{{label}}}",
+        r"\begin{tabular}{llccc}",
+        r"\toprule",
+        r"Milestone & Method & Total & Mean EB & Median EB \\",
+        r"\midrule",
+    ]
+    for milestone in MILESTONES:
+        for i, method in enumerate(METHODS):
+            row = next(item for item in rows if item["milestone"] == milestone and item["method"] == method)
+            lines.append(
+                f"{milestone} & {method.replace('_', r'\_')} & "
+                f"{latex_factor(float(row['sample_total_factor']))} & "
+                f"{latex_factor(float(row['mean_eb_factor']))} & "
+                f"{latex_factor(float(row['median_eb_factor']))} \\\\"
+            )
+        if milestone != MILESTONES[-1]:
+            lines.append(r"\addlinespace")
+    lines.extend(
+        [
+            r"\bottomrule",
+            r"\end{tabular}",
+            r"\end{table}",
+            "",
+        ]
+    )
+    path.write_text("\n".join(lines), encoding="utf-8")
 
 
 def build_intent_aware_rows(
@@ -624,65 +730,109 @@ def main(argv: list[str] | None = None) -> int:
         key = (row["mous_uid"], row["eb_uid"], row["spw_id"])
         eb_unique.setdefault(key, row)
     eb_spw_rows = sorted(eb_unique.values(), key=lambda row: (row["mous_uid"], row["eb_uid"], int(row["spw_id"])))
-
-    mous_templates = build_templates_from_rows(eb_spw_rows)
-    mous_corr_counts: dict[str, list[int]] = defaultdict(list)
-    seen_corr_keys: set[tuple[str, int]] = set()
-    for row in eb_spw_rows:
-        mous_uid = normalize_mous_uid(row["mous_uid"])
-        spw_id = int(row["spw_id"])
-        key = (mous_uid, spw_id)
-        if key in seen_corr_keys:
-            continue
-        seen_corr_keys.add(key)
-        mous_corr_counts[mous_uid].append(count_corr_products(row["corr_products"]))
     eb_groups: dict[tuple[str, str], list[dict[str, str]]] = defaultdict(list)
     for row in eb_spw_rows:
         eb_groups[(row["mous_uid"], row["eb_uid"])].append(row)
+
+    eb_tuning_summary_all = read_csv_rows(args.tabulation_dir / "eb_tuning_summary.csv")
+    eb_tuning_spw_all = read_csv_rows(args.tabulation_dir / "eb_tuning_spw_table.csv")
+    mous_tuning_template_rows_all = read_csv_rows(args.tabulation_dir / "mous_tuning_spw_templates.csv")
+    eb_tuning_summary_groups: dict[tuple[str, str], list[dict[str, str]]] = defaultdict(list)
+    eb_tuning_spw_groups: dict[tuple[str, str], list[dict[str, str]]] = defaultdict(list)
+    for row in eb_tuning_summary_all:
+        eb_tuning_summary_groups[(row["mous_uid"], row["eb_uid"])].append(row)
+    for row in eb_tuning_spw_all:
+        eb_tuning_spw_groups[(row["mous_uid"], row["eb_uid"])].append(row)
 
     search_roots = [Path.cwd(), args.tabulation_dir.parent, Path(__file__).resolve().parent]
     runtime_cache: dict[str, EbRuntime] = {}
     eb_rows: list[dict[str, Any]] = []
 
     for (mous_uid, eb_uid), rows in sorted(eb_groups.items()):
-        resolved_path = resolve_local_path(rows[0]["listobs_path"], search_roots)
+        tuning_summary_rows = eb_tuning_summary_groups.get((mous_uid, eb_uid), [])
+        tuning_spw_rows = eb_tuning_spw_groups.get((mous_uid, eb_uid), [])
+        if not tuning_summary_rows or not tuning_spw_rows:
+            continue
+
+        resolved_path = resolve_local_path(tuning_summary_rows[0]["listobs_path"], search_roots)
         cache_key = str(resolved_path)
         if cache_key not in runtime_cache:
             runtime_cache[cache_key] = parse_listobs_runtime(resolved_path)
         runtime = runtime_cache[cache_key]
-        normalized_mous_uid = normalize_mous_uid(mous_uid)
-        templates = mous_templates[normalized_mous_uid]
-        corr_counts = mous_corr_counts[normalized_mous_uid]
-        band = templates[0].band
-        current_rate = current_eb_rate_gbps(rows, runtime)
-        current_volume = current_rate * runtime.science_time_s if math.isfinite(current_rate) else math.nan
+        tuning_groups = build_eb_tuning_groups(tuning_spw_rows)
+        if not tuning_groups:
+            continue
+        all_templates = [template for group in tuning_groups for template in group.spw_templates]
+        corr_counts = [
+            count_corr_products(row["corr_products"])
+            for row in sorted(
+                tuning_spw_rows,
+                key=lambda row: (int(row["tuning_group_index"]), int(row["spw_id"])),
+            )
+        ]
+        band = all_templates[0].band
+        current_rate, current_volume, current_science_time_s = current_eb_metrics_from_tuning_rows(
+            tuning_summary_rows,
+            tuning_spw_rows,
+            runtime,
+        )
+        current_nchan_agg = current_eb_nchan_agg_from_tuning_rows(tuning_summary_rows)
+        current_tuning_groups = int(tuning_summary_rows[0]["n_tuning_groups_in_eb"])
+        current_total_science_bw_hz = float(tuning_summary_rows[0]["eb_total_science_bw_hz"])
+        is_spectral_scan = str(tuning_summary_rows[0]["is_spectral_scan"]).lower() == "true"
 
         record: dict[str, Any] = {
             "mous_uid": mous_uid,
             "eb_uid": eb_uid,
             "array_type": runtime.array_type,
-            "current_science_time_s": runtime.science_time_s,
+            "current_science_time_s": current_science_time_s,
             "current_interval_median_s": runtime.science_interval_median_s,
             "current_rate_gbps": current_rate,
             "current_volume_gb": current_volume,
+            "current_nchan_agg": current_nchan_agg,
+            "current_tuning_groups": current_tuning_groups,
+            "current_total_science_bw_hz": current_total_science_bw_hz,
+            "is_spectral_scan": is_spectral_scan,
             "listobs_path": runtime.listobs_path,
             "band": band,
         }
 
         for milestone in MILESTONES:
             eq_nspw = projected_spw_equivalents(milestone, band)
+            milestone_bw_hz = DEFAULT_CONFIG.milestones[milestone].bandwidth_for(band) * 1.0e9
+            projected_tuning_groups = max(1, math.ceil(current_total_science_bw_hz / milestone_bw_hz))
+            projected_nspw_total = projected_tuning_groups * eq_nspw
             tint_s = projected_tint_s(runtime.array_type, runtime.science_interval_median_s, milestone)
             nant = projected_nant(runtime.array_type, milestone)
             for method in METHODS:
-                channel_pol_per_spw = projected_channel_pol_per_spw(
-                    method, milestone, templates, corr_counts
+                projected_nchan_agg = project_nchan_agg_for_tuning_groups(
+                    method,
+                    milestone,
+                    tuning_groups,
+                    projected_nspw_total=projected_nspw_total,
                 )
-                total_channel_pol = eq_nspw * channel_pol_per_spw
-                projected_rate = datarate_gbps(nant, [(total_channel_pol, tint_s)], 1.0)
-                projected_volume = projected_rate * runtime.science_time_s if math.isfinite(projected_rate) else math.nan
+                total_channel_pol = projected_channel_pol_agg_for_templates(
+                    method,
+                    milestone,
+                    all_templates,
+                    corr_counts,
+                    projected_nspw_total,
+                )
+                mean_channel_pol_per_tuning = total_channel_pol / projected_tuning_groups
+                projected_rate = datarate_gbps(nant, [(mean_channel_pol_per_tuning, tint_s)], 1.0)
+                projected_volume = projected_rate * current_science_time_s if math.isfinite(projected_rate) else math.nan
                 factor = projected_rate / current_rate if math.isfinite(projected_rate) and math.isfinite(current_rate) and current_rate > 0 else math.nan
+                nchan_factor = (
+                    projected_nchan_agg / current_nchan_agg
+                    if math.isfinite(projected_nchan_agg) and math.isfinite(current_nchan_agg) and current_nchan_agg > 0
+                    else math.nan
+                )
                 prefix = f"{milestone.lower()}_{method}"
-                record[f"{prefix}_eq_nspw"] = eq_nspw
+                record[f"{prefix}_eq_nspw_per_tuning"] = eq_nspw
+                record[f"{prefix}_projected_tuning_groups"] = projected_tuning_groups
+                record[f"{prefix}_projected_total_nspw"] = projected_nspw_total
+                record[f"{prefix}_nchan_agg"] = projected_nchan_agg
+                record[f"{prefix}_nchan_factor"] = nchan_factor
                 record[f"{prefix}_rate_gbps"] = projected_rate
                 record[f"{prefix}_volume_gb"] = projected_volume
                 record[f"{prefix}_factor"] = factor
@@ -692,35 +842,74 @@ def main(argv: list[str] | None = None) -> int:
     write_csv(args.output_dir / "eb_projection_factors.csv", eb_rows, eb_fieldnames)
 
     sidecar_rows = []
-    for mous_uid, templates in sorted(mous_templates.items()):
-        for template in templates:
-            sidecar_rows.append(
-                {
-                    "mous_uid": mous_uid,
-                    "spw_id": template.spw_id,
-                    "center_freq_hz": template.center_freq_hz,
-                    "velocity_resolution_kms": template.velocity_resolution_kms,
-                    "band": template.band,
-                }
-            )
+    for row in mous_tuning_template_rows_all:
+        out = dict(row)
+        out["band"] = alma_band_from_freq_hz(float(row["center_freq_hz"]))
+        sidecar_rows.append(out)
     write_csv(
         args.output_dir / "mous_spw_templates.csv",
         sidecar_rows,
-        ["mous_uid", "spw_id", "center_freq_hz", "velocity_resolution_kms", "band"],
+        [
+            "mous_uid",
+            "representative_eb_uid",
+            "tuning_group_id",
+            "tuning_group_index",
+            "tuning_total_bw_hz",
+            "spw_id",
+            "center_freq_hz",
+            "velocity_resolution_kms",
+            "band",
+            "n_tuning_groups_in_mous",
+            "is_spectral_scan_mous",
+            "mous_total_science_bw_hz",
+            "mous_current_nchan_agg",
+            "eb_tuning_consistency_flag",
+            "eb_tuning_consistency_notes",
+        ],
+    )
+    write_csv(
+        args.output_dir / "mous_tuning_spw_templates.csv",
+        sidecar_rows,
+        [
+            "mous_uid",
+            "representative_eb_uid",
+            "tuning_group_id",
+            "tuning_group_index",
+            "tuning_total_bw_hz",
+            "spw_id",
+            "center_freq_hz",
+            "velocity_resolution_kms",
+            "band",
+            "n_tuning_groups_in_mous",
+            "is_spectral_scan_mous",
+            "mous_total_science_bw_hz",
+            "mous_current_nchan_agg",
+            "eb_tuning_consistency_flag",
+            "eb_tuning_consistency_notes",
+        ],
     )
 
     summary_rows: list[dict[str, Any]] = []
     by_array_rows: list[dict[str, Any]] = []
+    nchan_summary_rows: list[dict[str, Any]] = []
+    nchan_by_array_rows: list[dict[str, Any]] = []
     for milestone in MILESTONES:
         for method in METHODS:
             prefix = f"{milestone.lower()}_{method}"
             factors = [float(row[f"{prefix}_factor"]) for row in eb_rows]
             projected_volumes = [float(row[f"{prefix}_volume_gb"]) for row in eb_rows]
             current_volumes = [float(row["current_volume_gb"]) for row in eb_rows]
+            nchan_factors = [float(row[f"{prefix}_nchan_factor"]) for row in eb_rows]
+            projected_nchan = [float(row[f"{prefix}_nchan_agg"]) for row in eb_rows]
+            current_nchan = [float(row["current_nchan_agg"]) for row in eb_rows]
             total_current = sum(value for value in current_volumes if math.isfinite(value))
             total_projected = sum(value for value in projected_volumes if math.isfinite(value))
             total_factor = total_projected / total_current if total_current > 0 else math.nan
+            total_current_nchan = sum(value for value in current_nchan if math.isfinite(value))
+            total_projected_nchan = sum(value for value in projected_nchan if math.isfinite(value))
+            total_nchan_factor = total_projected_nchan / total_current_nchan if total_current_nchan > 0 else math.nan
             stats = summarize(factors)
+            nchan_stats = summarize(nchan_factors)
             summary_rows.append(
                 {
                     "milestone": milestone,
@@ -733,6 +922,18 @@ def main(argv: list[str] | None = None) -> int:
                     "projected_total_volume_gb": total_projected,
                 }
             )
+            nchan_summary_rows.append(
+                {
+                    "milestone": milestone,
+                    "method": method,
+                    "n_eb": len(eb_rows),
+                    "sample_total_factor": total_nchan_factor,
+                    "mean_eb_factor": nchan_stats["mean"],
+                    "median_eb_factor": nchan_stats["median"],
+                    "current_total_nchan_agg": total_current_nchan,
+                    "projected_total_nchan_agg": total_projected_nchan,
+                }
+            )
             for array_type in ("12m", "7m"):
                 sub = [row for row in eb_rows if row["array_type"] == array_type]
                 if not sub:
@@ -740,10 +941,21 @@ def main(argv: list[str] | None = None) -> int:
                 sub_factors = [float(row[f"{prefix}_factor"]) for row in sub]
                 sub_proj = [float(row[f"{prefix}_volume_gb"]) for row in sub]
                 sub_cur = [float(row["current_volume_gb"]) for row in sub]
+                sub_nchan_factors = [float(row[f"{prefix}_nchan_factor"]) for row in sub]
+                sub_proj_nchan = [float(row[f"{prefix}_nchan_agg"]) for row in sub]
+                sub_cur_nchan = [float(row["current_nchan_agg"]) for row in sub]
                 sub_current_total = sum(value for value in sub_cur if math.isfinite(value))
                 sub_projected_total = sum(value for value in sub_proj if math.isfinite(value))
                 sub_total_factor = sub_projected_total / sub_current_total if sub_current_total > 0 else math.nan
+                sub_current_nchan_total = sum(value for value in sub_cur_nchan if math.isfinite(value))
+                sub_projected_nchan_total = sum(value for value in sub_proj_nchan if math.isfinite(value))
+                sub_total_nchan_factor = (
+                    sub_projected_nchan_total / sub_current_nchan_total
+                    if sub_current_nchan_total > 0
+                    else math.nan
+                )
                 sub_stats = summarize(sub_factors)
+                sub_nchan_stats = summarize(sub_nchan_factors)
                 by_array_rows.append(
                     {
                         "milestone": milestone,
@@ -753,6 +965,17 @@ def main(argv: list[str] | None = None) -> int:
                         "sample_total_factor": sub_total_factor,
                         "mean_eb_factor": sub_stats["mean"],
                         "median_eb_factor": sub_stats["median"],
+                    }
+                )
+                nchan_by_array_rows.append(
+                    {
+                        "milestone": milestone,
+                        "method": method,
+                        "array_type": array_type,
+                        "n_eb": len(sub),
+                        "sample_total_factor": sub_total_nchan_factor,
+                        "mean_eb_factor": sub_nchan_stats["mean"],
+                        "median_eb_factor": sub_nchan_stats["median"],
                     }
                 )
 
@@ -782,6 +1005,39 @@ def main(argv: list[str] | None = None) -> int:
             "mean_eb_factor",
             "median_eb_factor",
         ],
+    )
+    write_csv(
+        args.output_dir / "summary_overall_nchan.csv",
+        nchan_summary_rows,
+        [
+            "milestone",
+            "method",
+            "n_eb",
+            "sample_total_factor",
+            "mean_eb_factor",
+            "median_eb_factor",
+            "current_total_nchan_agg",
+            "projected_total_nchan_agg",
+        ],
+    )
+    write_csv(
+        args.output_dir / "summary_by_array_nchan.csv",
+        nchan_by_array_rows,
+        [
+            "milestone",
+            "method",
+            "array_type",
+            "n_eb",
+            "sample_total_factor",
+            "mean_eb_factor",
+            "median_eb_factor",
+        ],
+    )
+    write_latex_factor_table(
+        args.output_dir / "summary_overall_nchan.tex",
+        nchan_summary_rows,
+        "Science aggregate channel count, relative to current, for different WSU projection scenarios.",
+        "tab:sidecarproj_nchan",
     )
 
     intent_summary_lines: list[str] = []
@@ -887,6 +1143,7 @@ def main(argv: list[str] | None = None) -> int:
             intent_summary_lines.append("")
 
     rows_by_key = {(row["milestone"], row["method"]): row for row in summary_rows}
+    nchan_rows_by_key = {(row["milestone"], row["method"]): row for row in nchan_summary_rows}
     summary_lines = [
         "# ryanCy11 WSU Projection Summary",
         "",
@@ -931,6 +1188,27 @@ def main(argv: list[str] | None = None) -> int:
             ]
         )
 
+    summary_lines.extend(
+        [
+            "## Aggregate Nchan Results",
+            "",
+            "These factors are based on tuning-aware aggregate science channel counts over the whole EB, not raw visibility volume.",
+            "",
+        ]
+    )
+    for milestone in MILESTONES:
+        summary_lines.append(f"### {milestone} Aggregate Nchan")
+        summary_lines.append("")
+        for method in METHODS:
+            row = nchan_rows_by_key[(milestone, method)]
+            summary_lines.append(
+                "- "
+                + f"{method}: sample-total factor {format_factor(float(row['sample_total_factor']))}, "
+                + f"mean EB factor {format_factor(float(row['mean_eb_factor']))}, "
+                + f"median EB factor {format_factor(float(row['median_eb_factor']))}"
+            )
+        summary_lines.append("")
+
     if intent_summary_lines:
         summary_lines.extend(intent_summary_lines)
 
@@ -942,12 +1220,14 @@ def main(argv: list[str] | None = None) -> int:
                 "n_eb": len(eb_rows),
                 "methods": list(METHODS),
                 "milestones": list(MILESTONES),
-                "mous_spw_sidecar": str(args.output_dir / "mous_spw_templates.csv"),
+                "mous_spw_sidecar": str(args.output_dir / "mous_tuning_spw_templates.csv"),
                 "intent_aware": intent_aware_requested,
                 "apply_calibrator_cap": args.apply_calibrator_cap,
                 "calibrator_cap_kms": args.calibrator_cap_kms,
                 "intent_projection_buckets": list(INTENT_PROJECTION_BUCKETS),
                 "calibrator_cap_buckets": list(CALIBRATOR_CAP_BUCKETS),
+                "nchan_summary": str(args.output_dir / "summary_overall_nchan.csv"),
+                "nchan_summary_latex": str(args.output_dir / "summary_overall_nchan.tex"),
                 "intent_aware_summary": (
                     str(args.output_dir / "summary_overall_intent_aware.csv") if intent_aware_requested else None
                 ),

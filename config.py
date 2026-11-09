@@ -442,9 +442,10 @@ class NchanProjection:
     """Optional override for the stored per-MOUS WSU nchan projection.
 
     ``stored`` preserves the database exactly and underpins MEMO_CONFIG.
-    ``distributed_binned`` recomputes ``wsu_nchan_agg_*`` from a MOUS/SPW
-    sidecar that preserves the current within-MOUS SPW resolution mix while
-    still mapping each SPW through the stepped2 binning.
+    ``distributed_binned`` recomputes ``wsu_nchan_agg_*`` from a
+    MOUS/tuning/SPW sidecar that preserves the current within-MOUS SPW
+    resolution mix and spectral-scan tuning structure while still mapping
+    each SPW through the stepped2 binning.
     """
 
     mode: str = "stored"  # or "distributed_binned"
